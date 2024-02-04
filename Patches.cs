@@ -14,9 +14,10 @@ namespace Labworks_Ammo_Saver
         {
             string previousTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = SceneStreamer.Session.Level.Barcode;
-            if (previousTitle == "LabWorksBoneworksPort" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksRedactedChamber" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu")
+            if (previousTitle == "LabWorksBoneworksPort" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksRedactedChamber" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksLoadingScreen")
             {
-                AmmoFunctions.SaveAmmo();
+                MelonLogger.Msg("Load Patch Triggered, running Save Ammo with parameter " + AmmoFunctions.GetLevelIndexFromBarcode(barcode) + " where the barcode is " + barcode);
+                AmmoFunctions.SaveAmmo(AmmoFunctions.GetLevelIndexFromBarcode(barcode));
             }
         }
     }
@@ -29,9 +30,9 @@ namespace Labworks_Ammo_Saver
         {
             string previousTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = SceneStreamer.Session.Level.Barcode;
-            if (previousTitle == "LabWorksBoneworksPort" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksRedactedChamber" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu")
+            if (previousTitle == "LabWorksBoneworksPort" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksRedactedChamber" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu" && barcode != "volx4.LabWorksBoneworksPort.Level.BoneworksLoadingScreen")
             {
-                AmmoFunctions.SaveAmmo();
+                AmmoFunctions.SaveAmmo(AmmoFunctions.GetLevelIndexFromBarcode(barcode));
             }
         }
     }

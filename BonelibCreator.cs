@@ -28,9 +28,13 @@ namespace Labworks_Ammo_Saver
             labworksAmmoSaverCategory.CreateFunctionElement("Reset Ammo", Color.yellow, () => AmmoFunctions.ClearAmmo());
 
             category = MelonPreferences.CreateCategory("Labworks_Ammo_Saver");
-            ammo = category.CreateEntry<List<int>>("Ammo", null);
+            ammo = category.CreateEntry<List<int>>("Ammo", new List<int>(AmmoFunctions.numberOfLevels * 3) { 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0});
+            savePoint = category.CreateEntry<List<float>>("Save Point", null);
+
         }
 
         public static MelonPreferences_Entry<List<int>> ammo;
+
+        public static MelonPreferences_Entry<List<float>> savePoint;
     }
 }
