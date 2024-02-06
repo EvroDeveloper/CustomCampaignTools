@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
     [RegisterTypeInIl2Cpp]
     public class LabWorksSavePoint : MonoBehaviour
@@ -20,9 +20,7 @@ namespace Labworks_Ammo_Saver
         {
             string barcode = SceneStreamer.Session.Level.Barcode;
 
-            int levelIndex = AmmoFunctions.levelBarcodes.IndexOf(barcode);
-
-            SavepointFunctions.SavePlayer(levelIndex, transform.position);
+            SavepointFunctions.SavePlayer(barcode, transform.position);
         }
     }
 }

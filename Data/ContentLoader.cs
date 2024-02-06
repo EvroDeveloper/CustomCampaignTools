@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
     public static class ContentLoader
     {

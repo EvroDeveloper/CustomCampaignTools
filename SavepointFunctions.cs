@@ -1,4 +1,6 @@
-﻿using MelonLoader;
+﻿using Labworks.Data;
+using Labworks.Utilities;
+using MelonLoader;
 using SLZ.Marrow.Warehouse;
 using System;
 using System.Collections.Generic;
@@ -7,17 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
     internal class SavepointFunctions
     {
         public static bool WasLastLoadByContinue = false;
 
-        public static void SavePlayer(float levelIndex, Vector3 position)
+        public static void SavePlayer(string levelBarcode, Vector3 position)
         {
-            BonelibCreator.savePoint.Value = new List<float> { levelIndex, position.x, position.y, position.z };
+            LabworksSaving.LoadedSavePoint = new LabworksSaving.SavePoint(levelBarcode, position);
 
-            BonelibCreator.savePoint.Save();
+            LabworksSaving.SaveToDisk();
         }
 
 
@@ -25,17 +27,19 @@ namespace Labworks_Ammo_Saver
         {
             WasLastLoadByContinue = false;
 
-            List<float> saveData = BonelibCreator.savePoint.Value;
-            if (saveData[1] == 0 && saveData[2] == 0 && saveData[3] == 0) return;
+            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint)) 
+                return;
 
-            BoneLib.Player.rigManager.Teleport(new UnityEngine.Vector3(saveData[1], saveData[2], saveData[3]));
+            LabworksSaving.SavePoint savePoint = LabworksSaving.LoadedSavePoint;
+
+            BoneLib.Player.rigManager.Teleport(new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ));
         }
 
         public static void ClearSavePoint()
         {
-            BonelibCreator.savePoint.Value = null;
+            LabworksSaving.LoadedSavePoint = new LabworksSaving.SavePoint(string.Empty, Vector3.zero);
 
-            BonelibCreator.savePoint.Save();
+            LabworksSaving.SaveToDisk();
         }
 
     }

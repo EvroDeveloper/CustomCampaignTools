@@ -2,104 +2,78 @@
 using MelonLoader;
 using System;
 using System.Collections.Generic;
+using SLZ.Utilities;
 using UnityEngine;
+using Labworks.Data;
+using Labworks.Utilities;
+using SLZ.Marrow.SceneStreaming;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
     public static class AmmoFunctions
     {
-        public static int numberOfLevels = 12;
-
-        public static List<string> levelBarcodes = new List<string> { 
-            "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks02Museum",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks03Streets",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks04Runoff",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks05Sewers",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks06Warehouse",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks07CentralStation",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks08Tower",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena" };
-
-        public static void SaveAmmo(int levelIndex)
-        {
-            var previousAmmo = GetPreviousLevelsAmmo(levelIndex);
-
-            if(BonelibCreator.ammo.Value.Count == 0)
-            {
-                BonelibCreator.ammo.Value = new List<int>(numberOfLevels * 3) { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            }
-
-            BonelibCreator.ammo.Value[levelIndex * 3] = Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmo.x;
-            BonelibCreator.ammo.Value[levelIndex * 3 + 1] = Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmo.y;
-            BonelibCreator.ammo.Value[levelIndex * 3 + 2] = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmo.z;
-
-            BonelibCreator.ammo.Save();
-        }
-
         public static void ClearAmmo()
         {
-            Player.rigManager.AmmoInventory.ClearAmmo();
+            if (LevelParsing.IsLabworksCampaign(SceneStreamer.Session.Level.Pallet.Title, SceneStreamer.Session.Level.Barcode))
+                Player.rigManager.AmmoInventory.ClearAmmo();
 
-            BonelibCreator.ammo.Value = new List<int>(3 * numberOfLevels);
+            LabworksSaving.LoadedAmmoSaves.Clear();
 
-            BonelibCreator.ammo.Save();
+            LabworksSaving.SaveToDisk();
         }
 
-        public static int GetAmmoTotalByLevel(int level)
+        public static int GetAmmoTotalByLevel(string levelBarcode)
         {
-            List<int> ammoCount = BonelibCreator.ammo.Value;
+            LabworksSaving.AmmoSave ammoSave = LabworksSaving.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
 
-            return ammoCount[level * 3] + ammoCount[level * 3 + 1] + ammoCount[level * 3 + 2];
+            return ammoSave.LightAmmo + ammoSave.MediumAmmo + ammoSave.HeavyAmmo;
         }
 
-        public static Vector3Int GetPreviousLevelsAmmo(int currentLevel)
+        public static void LoadAmmoAtLevel(string levelBarcode)
         {
-            Vector3Int output = Vector3Int.zero;
-
-            MelonLogger.Msg("Accumulating Previous Ammo for Calculations, Level Saving from is " + levelBarcodes[currentLevel]);
-
-            if (currentLevel == 0) return output;
-
-            List<int> ammoCount = BonelibCreator.ammo.Value;
-
-            for (int i = 0; i < currentLevel; i++)
+            foreach (var savedAmmo in LabworksSaving.LoadedAmmoSaves)
             {
-                output.x += ammoCount[i * 3];
-                output.y += ammoCount[i * 3 + 1];
-                output.z += ammoCount[i * 3 + 2];
+                if (savedAmmo.LevelBarcode == levelBarcode)
+                {
+                    Player.rigManager.AmmoInventory.ClearAmmo();
 
-                MelonLogger.Msg("Added ammo from level, " + levelBarcodes[i]);
-            }
-
-            MelonLogger.Msg("Previous Ammo Accumulation complete, the previous levels ammo is " + output.ToString());
-
-            return output;
-        }
-
-        public static void LoadAmmoAtLevel(int levelIndex)
-        {
-            for(int i = 0; i < levelIndex; i++)
-            {
-                GiveAmmoForLevel(i);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.lightAmmoGroup, savedAmmo.LightAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.mediumAmmoGroup, savedAmmo.MediumAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.heavyAmmoGroup, savedAmmo.HeavyAmmo);
+                }
             }
         }
 
-        private static void GiveAmmoForLevel(int levelIndex)
+        public static void SaveAmmo(string levelBarcode)
         {
-            List<int> ammoCount = BonelibCreator.ammo.Value;
+            if (!SaveParsing.DoesSavedAmmoExist(levelBarcode))
+            {
+                LabworksSaving.LoadedAmmoSaves.Add(new LabworksSaving.AmmoSave
+                {
+                    LevelBarcode = levelBarcode,
+                    LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light"),
+                    MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium"),
+                    HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy")
+                });
+            }
+            else
+            {
+                for (int i = 0; i < LabworksSaving.LoadedAmmoSaves.Count; i++)
+                {
+                    if (LabworksSaving.LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
+                    {
+                        LabworksSaving.LoadedAmmoSaves[i] = new LabworksSaving.AmmoSave
+                        {
+                            LevelBarcode = levelBarcode,
+                            LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light"),
+                            MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium"),
+                            HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy")
+                        };
+                    }
+                }
+            }
 
-            Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.lightAmmoGroup, ammoCount[levelIndex * 3]);
-            Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.mediumAmmoGroup, ammoCount[levelIndex * 3 + 1]);
-            Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.heavyAmmoGroup, ammoCount[levelIndex * 3 + 2]);
-        }
-
-        public static int GetLevelIndexFromBarcode(string barcode)
-        {
-            MelonLogger.Msg("Index got from Barcode, returning " + levelBarcodes.IndexOf(barcode));
-            return levelBarcodes.IndexOf(barcode);
+            LabworksSaving.SaveToDisk();
         }
     }
 }

@@ -5,32 +5,40 @@ using System;
 using UnityEngine;
 using SLZ.Marrow.SceneStreaming;
 using System.Collections.Generic;
+using Labworks.Utilities;
+using Labworks.Bonemenu;
+using Labworks.Data;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
-    internal partial class Main : MelonMod
+    internal class Main : MelonMod
     {
         public override void OnInitializeMelon()
         {
-            base.OnInitializeMelon();
+            BoneMenuCreator.CreateBoneMenu();
+            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
         }
 
         public override void OnLateInitializeMelon()
         {
-            base.OnLateInitializeMelon();
-            BonelibCreator.CreateBoneMenu();
-
-            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
+            LabworksSaving.LoadFromDisk();
         }
 
         internal static void LevelInitialized(LevelInfo info)
         {
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
-            string barcodeTitle = SceneStreamer.Session.Level.Barcode;
-            if (palletTitle == "LabWorksBoneworksPort" && barcodeTitle != "volx4.LabWorksBoneworksPort.Level.BoneworksRedactedChamber" && barcodeTitle != "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu" && barcodeTitle != "volx4.LabWorksBoneworksPort.Level.BoneworksLoadingScreen")
+            string barcodeTitle = SceneStreamer.Session.Level.Barcode.ID;
+#if DEBUG
+            MelonLogger.Msg("Level initialized: " + palletTitle + " " + barcodeTitle);
+#endif
+
+            if (LevelParsing.IsLabworksCampaign(palletTitle, barcodeTitle))
             {
+#if DEBUG
                 MelonLogger.Msg("Level is Labworks!");
-                AmmoFunctions.LoadAmmoAtLevel(AmmoFunctions.GetLevelIndexFromBarcode(barcodeTitle));
+#endif
+
+                AmmoFunctions.LoadAmmoAtLevel(barcodeTitle);
 
                 if (SavepointFunctions.WasLastLoadByContinue)
                 {
@@ -38,23 +46,11 @@ namespace Labworks_Ammo_Saver
                 }
                 else
                 {
-                    MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + AmmoFunctions.GetLevelIndexFromBarcode(barcodeTitle));
-                    SavepointFunctions.SavePlayer(AmmoFunctions.GetLevelIndexFromBarcode(barcodeTitle), Vector3.zero);
+#if DEBUG
+                    MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcodeTitle);
+#endif
+                    SavepointFunctions.SavePlayer(barcodeTitle, Vector3.zero);
                 }
-            }
-
-            if (SceneStreamer.Session.Level.Title == "15 - Void G114")
-            {
-                AssetBundle Contentbundle = 
-
-                GameObject shop = GameObject.Instantiate(FusionContentLoader.PointShopPrefab);
-
-
-                shop.SetActive(false);
-                shop.transform.position = Vector3.zero;
-                shop.transform.rotation = Quaternion.identity;
-                shop.transform.localScale = Vector3.one;
-                shop.SetActive(true);
             }
         }
     }

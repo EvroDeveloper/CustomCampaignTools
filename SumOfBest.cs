@@ -4,21 +4,21 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-namespace Labworks_Ammo_Saver
+namespace Labworks
 {
     [RegisterTypeInIl2Cpp]
     public class SumOfBest : MonoBehaviour
     {
         public SumOfBest(IntPtr ptr) : base(ptr) { }
 
-        private int levelIndex;
+        private string levelBarcode;
 
         // Use this for initialization
         void Start()
         {
-            levelIndex = int.Parse(gameObject.name);
+            levelBarcode = gameObject.name;
 
-            transform.parent.GetComponent<TextMeshProUGUI>().text = AmmoFunctions.GetAmmoTotalByLevel(levelIndex).ToString();
+            transform.parent.GetComponent<TextMeshProUGUI>().text = AmmoFunctions.GetAmmoTotalByLevel(levelBarcode).ToString();
         }
     }
 }
