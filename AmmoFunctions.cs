@@ -29,34 +29,63 @@ namespace Labworks
             return ammoSave.LightAmmo + ammoSave.MediumAmmo + ammoSave.HeavyAmmo;
         }
 
-        public static void LoadAmmoAtLevel(string levelBarcode)
+        public static LabworksSaving.AmmoSave GetAmmoFromLevel(string levelBarcode)
         {
-            foreach (var savedAmmo in LabworksSaving.LoadedAmmoSaves)
-            {
-                if (savedAmmo.LevelBarcode == levelBarcode)
-                {
-                    Player.rigManager.AmmoInventory.ClearAmmo();
+            return LabworksSaving.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
+        }
 
-                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.lightAmmoGroup, savedAmmo.LightAmmo);
-                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.mediumAmmoGroup, savedAmmo.MediumAmmo);
-                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.heavyAmmoGroup, savedAmmo.HeavyAmmo);
+        public static void LoadAmmoFromLevel(string levelBarcode, bool isLoadCheckpoint)
+        {
+            int levelIndex = LevelParsing.GetLevelIndex(levelBarcode);
+
+            Player.rigManager.AmmoInventory.ClearAmmo();
+
+            if (!isLoadCheckpoint)
+                for (int i = 0; i < levelIndex; i++)
+                {
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.lightAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).LightAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.mediumAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).MediumAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.heavyAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).HeavyAmmo);
                 }
+            else
+                for (int i = 0; i <= levelIndex; i++)
+                {
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.lightAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).LightAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.mediumAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).MediumAmmo);
+                    Player.rigManager.AmmoInventory.AddCartridge(Player.rigManager.AmmoInventory.heavyAmmoGroup, GetAmmoFromLevel(LevelParsing.GetLevelBarcodeByIndex(i)).HeavyAmmo);
+                }
+        }
+
+        public static LabworksSaving.AmmoSave GetPreviousLevelsAmmoSave(string levelBarcode)
+        {
+            int levelIndex = LevelParsing.GetLevelIndex(levelBarcode);
+
+            LabworksSaving.AmmoSave previousLevelsAmmoSave = new();
+
+            for (int i = 0; i < levelIndex; i++)
+            {
+                previousLevelsAmmoSave.LightAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).LightAmmo;
+                previousLevelsAmmoSave.MediumAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).MediumAmmo;
+                previousLevelsAmmoSave.HeavyAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).HeavyAmmo;
             }
+
+            return previousLevelsAmmoSave;
         }
 
         public static void SaveAmmo(string levelBarcode)
         {
+            LabworksSaving.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+
             if (!SaveParsing.DoesSavedAmmoExist(levelBarcode))
             {
                 LabworksSaving.LoadedAmmoSaves.Add(new LabworksSaving.AmmoSave
                 {
                     LevelBarcode = levelBarcode,
-                    LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light"),
-                    MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium"),
-                    HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy")
+                    LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
+                    MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
+                    HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                 });
-            }
-            else
+            } else
             {
                 for (int i = 0; i < LabworksSaving.LoadedAmmoSaves.Count; i++)
                 {
@@ -65,9 +94,9 @@ namespace Labworks
                         LabworksSaving.LoadedAmmoSaves[i] = new LabworksSaving.AmmoSave
                         {
                             LevelBarcode = levelBarcode,
-                            LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light"),
-                            MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium"),
-                            HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy")
+                            LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
+                            MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
+                            HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                         };
                     }
                 }
