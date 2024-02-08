@@ -23,6 +23,7 @@ namespace Labworks.Bonemenu
             MenuCategory labworksCategory = MenuManager.CreateCategory("Labworks", Color.yellow);
 
             InventoryMenu.CreateBoneMenu(labworksCategory);
+            BWOptionsMenu.CreateBoneMenu(labworksCategory);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
+using System.IO;
 
 namespace Labworks.Data
 {
@@ -15,19 +16,21 @@ namespace Labworks.Data
 
         internal static SavePoint LoadedSavePoint { get; set; }
         internal static List<AmmoSave> LoadedAmmoSaves = new List<AmmoSave>();
+        internal static bool IsFordOnlyMode = false;
 
         /// <summary>
         /// Saves the current loaded save data to file.
         /// </summary>
         internal static void SaveToDisk()
         {
-            if (!System.IO.Directory.Exists($"{MelonUtils.UserDataDirectory}/Labworks"))
-                System.IO.Directory.CreateDirectory($"{MelonUtils.UserDataDirectory}/Labworks");
+            if (!Directory.Exists($"{MelonUtils.UserDataDirectory}/Labworks"))
+                Directory.CreateDirectory($"{MelonUtils.UserDataDirectory}/Labworks");
 
             SaveData saveData = new SaveData
             {
                 SavePoint = LoadedSavePoint,
-                AmmoSaves = LoadedAmmoSaves
+                AmmoSaves = LoadedAmmoSaves,
+                IsFordOnlyMode = IsFordOnlyMode
             };
 
             var settings = new JsonSerializerSettings
@@ -38,7 +41,7 @@ namespace Labworks.Data
 
             string json = JsonConvert.SerializeObject(saveData, settings);
 
-            System.IO.File.WriteAllText(SavePath, json);
+            File.WriteAllText(SavePath, json);
         }
 
         /// <summary>
@@ -46,13 +49,13 @@ namespace Labworks.Data
         /// </summary>
         internal static void LoadFromDisk()
         {
-            if (!System.IO.Directory.Exists($"{MelonUtils.UserDataDirectory}/Labworks"))
-                System.IO.Directory.CreateDirectory($"{MelonUtils.UserDataDirectory}/Labworks");
+            if (!Directory.Exists($"{MelonUtils.UserDataDirectory}/Labworks"))
+                Directory.CreateDirectory($"{MelonUtils.UserDataDirectory}/Labworks");
 
-            if (!System.IO.File.Exists(SavePath))
+            if (!File.Exists(SavePath))
                 return;
 
-            string json = System.IO.File.ReadAllText(SavePath);
+            string json = File.ReadAllText(SavePath);
 
             var settings = new JsonSerializerSettings
             {
@@ -64,12 +67,14 @@ namespace Labworks.Data
 
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
+            IsFordOnlyMode = saveData.IsFordOnlyMode;
         }
 
         public class SaveData
         {
             public SavePoint SavePoint { get; set; }
             public List<AmmoSave> AmmoSaves { get; set; }
+            public bool IsFordOnlyMode { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position)

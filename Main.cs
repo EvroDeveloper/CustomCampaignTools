@@ -13,15 +13,13 @@ namespace Labworks
 {
     internal class Main : MelonMod
     {
-        public override void OnInitializeMelon()
-        {
-            BoneMenuCreator.CreateBoneMenu();
-            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
-        }
-
         public override void OnLateInitializeMelon()
         {
+            // Load Save Data
             LabworksSaving.LoadFromDisk();
+
+            BoneMenuCreator.CreateBoneMenu();
+            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
         }
 
         internal static void LevelInitialized(LevelInfo info)
@@ -32,13 +30,16 @@ namespace Labworks
             MelonLogger.Msg("Level initialized: " + palletTitle + " " + barcodeTitle);
 #endif
 
+            #region Save Data
             if (LevelParsing.IsLabworksCampaign(palletTitle, barcodeTitle))
             {
 #if DEBUG
                 MelonLogger.Msg("Level is Labworks!");
 #endif
-
-                AmmoFunctions.LoadAmmoAtLevel(barcodeTitle);
+                
+                int levelIndex = LevelParsing.GetLevelIndex(barcodeTitle);
+                string previousLevelBarcode = LevelParsing.GetLevelBarcodeByIndex(levelIndex - 1);
+                AmmoFunctions.LoadAmmoFromLevel(barcodeTitle, SavepointFunctions.WasLastLoadByContinue);
 
                 if (SavepointFunctions.WasLastLoadByContinue)
                 {
@@ -52,6 +53,11 @@ namespace Labworks
                     SavepointFunctions.SavePlayer(barcodeTitle, Vector3.zero);
                 }
             }
+            #endregion
+
+            #region Ford Only Mode
+            FordOnlyMode.InitializeLevel();
+            #endregion
         }
     }
 }
