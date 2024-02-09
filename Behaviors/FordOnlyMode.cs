@@ -8,23 +8,20 @@ using Labworks.Data;
 using SLZ.Marrow.SceneStreaming;
 using SLZ.Props;
 using SLZ.VRMK;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Labworks
 {
     internal class FordOnlyMode
     {
-        public static async Task InitializeLevel()
+        public static void InitializeLevel()
         {
             if (LabworksSaving.IsFordOnlyMode)
             {
                 if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort")
                 {
-                    var pullCordDevice = Player.physicsRig.transform.GetComponentInChildren<PullCordDevice>(true);
-                    while (pullCordDevice.isActiveAndEnabled)
-                    {
-                        pullCordDevice.gameObject.SetActive(false);
-                        await Task.Delay(10);
-                    }
+                    var camera = Player.rigManager.GetComponentInChildren<Camera>(true);
                     Player.rigManager.SwapAvatarCrate("SLZ.BONELAB.Content.Avatar.FordBW");
                 }
             }

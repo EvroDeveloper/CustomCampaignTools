@@ -3,6 +3,7 @@ using HarmonyLib;
 using Labworks.Data;
 using MelonLoader;
 using SLZ.Marrow.SceneStreaming;
+using SLZ.Props;
 using SLZ.Rig;
 using SLZ.VRMK;
 using System;
@@ -18,17 +19,12 @@ namespace Labworks.Patching
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(RigManager.SwapAvatarCrate))]
-        public static bool OnAvatarCrateChanged(string barcode, bool cache = false, Il2CppSystem.Action<bool> callback = null)
+        public static void OnAvatarCrateChanged(ref string barcode, bool cache = false, Il2CppSystem.Action<bool> callback = null)
         {
-            if (SceneStreamer.Session.Level.Pallet.Title != "LabWorksBoneworksPort")
+            if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort" && LabworksSaving.IsFordOnlyMode)
             {
-                if (LabworksSaving.IsFordOnlyMode)
-                {
-                    barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
-                }
+                barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
             }
-
-            return true;
         }
     }
 }

@@ -42,6 +42,7 @@
     <Compile Include="Bonemenu\BWOptionsMenu.cs" />
     <Compile Include="Bonemenu\InventoryMenu.cs" />
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
+    <Compile Include="Patching\PullCordDevicePatches.cs" />
     <Compile Include="Patching\RigManagerPatches.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="Data\ContentLoader.cs" />
