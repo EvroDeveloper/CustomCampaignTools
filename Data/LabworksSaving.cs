@@ -17,6 +17,7 @@ namespace Labworks.Data
         internal static SavePoint LoadedSavePoint { get; set; }
         internal static List<AmmoSave> LoadedAmmoSaves = new List<AmmoSave>();
         internal static bool IsFordOnlyMode = false;
+        internal static bool IsClassicNPCs = false;
 
         /// <summary>
         /// Saves the current loaded save data to file.
@@ -30,7 +31,8 @@ namespace Labworks.Data
             {
                 SavePoint = LoadedSavePoint,
                 AmmoSaves = LoadedAmmoSaves,
-                IsFordOnlyMode = IsFordOnlyMode
+                IsFordOnlyMode = IsFordOnlyMode,
+                IsClassicNPCs = IsClassicNPCs,
             };
 
             var settings = new JsonSerializerSettings
@@ -68,6 +70,7 @@ namespace Labworks.Data
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
             IsFordOnlyMode = saveData.IsFordOnlyMode;
+            IsClassicNPCs = saveData.IsClassicNPCs;
         }
 
         public class SaveData
@@ -75,6 +78,7 @@ namespace Labworks.Data
             public SavePoint SavePoint { get; set; }
             public List<AmmoSave> AmmoSaves { get; set; }
             public bool IsFordOnlyMode { get; set; }
+            public bool IsClassicNPCs { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position)

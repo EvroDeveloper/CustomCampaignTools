@@ -54,10 +54,6 @@ namespace Labworks
                 }
             }
             #endregion
-
-            #region Ford Only Mode
-            FordOnlyMode.InitializeLevel();
-            #endregion
         }
     }
 }

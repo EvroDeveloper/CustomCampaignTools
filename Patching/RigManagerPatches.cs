@@ -23,7 +23,10 @@ namespace Labworks.Patching
         {
             if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort" && LabworksSaving.IsFordOnlyMode)
             {
-                barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
+                if (barcode != "SLZ.BONELAB.Content.Avatar.FordBW")
+                {
+                    barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
+                }
             }
         }
     }
