@@ -6,25 +6,20 @@ using UnityEngine;
 
 namespace Labworks.Behaviors
 {
-#if MELONLOADER
     [RegisterTypeInIl2Cpp]
-#endif
     public class SumOfBest : MonoBehaviour
     {
-#if MELONLOADER
         public SumOfBest(IntPtr ptr) : base(ptr) { }
-#endif
 
         private string levelBarcode;
+        private int levelIndex;
 
         // Use this for initialization
         void Start()
         {
-#if MELONLOADER
             levelBarcode = gameObject.name;
 
             transform.parent.GetComponent<TextMeshProUGUI>().text = AmmoFunctions.GetAmmoTotalByLevel(levelBarcode).ToString();
-#endif
         }
     }
 }
