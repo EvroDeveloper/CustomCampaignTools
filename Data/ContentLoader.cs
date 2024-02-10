@@ -12,13 +12,23 @@ namespace Labworks
 {
     public static class ContentLoader
     {
-        public static AssetBundle ContentBundle { get; private set; }
-
         public static GameObject ElevatorPrefab { get; private set; }
+
+        private const string ElevatorPrefabPath = "Assets/elevator/elevator_gauntlet.prefab";
 
         public static void OnBundleLoad()
         {
-            // Kitchen Boy Help Plz i want to load an embedded asset bundle but idk how to and fusions code for this is so sprawled out womp womp.
+            var assembly = Assembly.GetExecutingAssembly();
+            if (HelperMethods.IsAndroid())
+            {
+                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, "Labworks_Addon.Resources.Android.elevator.labworks");
+                ElevatorPrefab = bundle.LoadPersistentAsset<GameObject>(ElevatorPrefabPath);
+            }
+            else
+            {
+                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, "Labworks_Addon.Resources.Windows.elevator.labworks");
+                ElevatorPrefab = bundle.LoadPersistentAsset<GameObject>(ElevatorPrefabPath);
+            }
         }
     }
 }

@@ -15,20 +15,22 @@ namespace Labworks
     {
         public override void OnLateInitializeMelon()
         {
+            // Create Bonemenu
+            BoneMenuCreator.CreateBoneMenu();
+
+            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
+
             // Load Save Data
             LabworksSaving.LoadFromDisk();
 
-            BoneMenuCreator.CreateBoneMenu();
-            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
+            // Load Content
+            ContentLoader.OnBundleLoad();
         }
 
         internal static void LevelInitialized(LevelInfo info)
         {
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcodeTitle = SceneStreamer.Session.Level.Barcode.ID;
-#if DEBUG
-            MelonLogger.Msg("Level initialized: " + palletTitle + " " + barcodeTitle);
-#endif
 
             #region Save Data
             if (LevelParsing.IsLabworksCampaign(palletTitle, barcodeTitle))
@@ -36,6 +38,12 @@ namespace Labworks
 #if DEBUG
                 MelonLogger.Msg("Level is Labworks!");
 #endif
+
+                if (info.barcode == CommonBarcodes.Maps.VoidG114)
+                {
+                    var elevator = GameObject.Instantiate<GameObject>(ContentLoader.ElevatorPrefab);
+                    elevator.transform.position = new Vector3(0, 0, 0);
+                }
                 
                 int levelIndex = LevelParsing.GetLevelIndex(barcodeTitle);
                 string previousLevelBarcode = LevelParsing.GetLevelBarcodeByIndex(levelIndex - 1);

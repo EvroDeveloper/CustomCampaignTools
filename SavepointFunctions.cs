@@ -27,7 +27,7 @@ namespace Labworks
         {
             WasLastLoadByContinue = false;
 
-            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint, out bool hasSpawnPoint)) 
+            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint, out bool hasSpawnPoint))
                 return;
 
             if (hasSpawnPoint)
