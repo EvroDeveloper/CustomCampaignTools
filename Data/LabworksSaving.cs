@@ -17,7 +17,11 @@ namespace Labworks.Data
         internal static SavePoint LoadedSavePoint { get; set; }
         internal static List<AmmoSave> LoadedAmmoSaves = new List<AmmoSave>();
         internal static bool IsFordOnlyMode = false;
-        internal static bool IsClassicNPCs = false;
+        internal static bool IsClassicNullBody = false;
+        internal static bool IsClasssicCorruptedNullBody = false;
+        internal static bool IsClassicNullRat = false;
+        internal static bool IsClassicEarlyExit = false;
+        internal static bool IsArmCollisionEnabled = false;
 
         /// <summary>
         /// Saves the current loaded save data to file.
@@ -32,7 +36,11 @@ namespace Labworks.Data
                 SavePoint = LoadedSavePoint,
                 AmmoSaves = LoadedAmmoSaves,
                 IsFordOnlyMode = IsFordOnlyMode,
-                IsClassicNPCs = IsClassicNPCs,
+                IsClassicNullBody = IsClassicNullBody,
+                IsClasssicCorruptedNullBody = IsClasssicCorruptedNullBody,
+                IsClassicNullRat = IsClassicNullRat,
+                IsClassicEarlyExit = IsClassicEarlyExit,
+                IsArmCollisionEnabled = IsArmCollisionEnabled
             };
 
             var settings = new JsonSerializerSettings
@@ -70,7 +78,11 @@ namespace Labworks.Data
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
             IsFordOnlyMode = saveData.IsFordOnlyMode;
-            IsClassicNPCs = saveData.IsClassicNPCs;
+            IsClassicNullBody = saveData.IsClassicNullBody;
+            IsClasssicCorruptedNullBody = saveData.IsClasssicCorruptedNullBody;
+            IsClassicNullRat = saveData.IsClassicNullRat;
+            IsClassicEarlyExit = saveData.IsClassicEarlyExit;
+            IsArmCollisionEnabled = saveData.IsArmCollisionEnabled;
         }
 
         public class SaveData
@@ -78,7 +90,11 @@ namespace Labworks.Data
             public SavePoint SavePoint { get; set; }
             public List<AmmoSave> AmmoSaves { get; set; }
             public bool IsFordOnlyMode { get; set; }
-            public bool IsClassicNPCs { get; set; }
+            public bool IsClassicNullBody { get; set; }
+            public bool IsClasssicCorruptedNullBody { get; set; }
+            public bool IsClassicNullRat { get; set; }
+            public bool IsClassicEarlyExit { get; set; }
+            public bool IsArmCollisionEnabled { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position)

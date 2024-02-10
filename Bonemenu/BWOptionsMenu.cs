@@ -16,14 +16,15 @@ namespace Labworks.Bonemenu
     {
         public static void CreateBoneMenu(MenuCategory category)
         {
-            var bwOptionsCategory = category.CreateCategory("BW Options", Color.grey);
+            var bwOptionsCategory = category.CreateCategory("Settings", Color.grey);
 
-            var fordOnlyPanel = bwOptionsCategory.CreateSubPanel("Ford Only Explained", Color.yellow);
+            var playerSettingsCategory = bwOptionsCategory.CreateCategory("Player Settings", Color.yellow);
+            var fordOnlyPanel = playerSettingsCategory.CreateSubPanel("Ford Only Explained", Color.yellow);
             fordOnlyPanel.CreateFunctionElement("Ford Only locks the character to Ford", Color.white, null);
             fordOnlyPanel.CreateFunctionElement("and disables the body log inside of", Color.white, null);
             fordOnlyPanel.CreateFunctionElement("Labworks levels.", Color.white, null);
 
-            bwOptionsCategory.CreateBoolElement("Ford ONLY", Color.red, LabworksSaving.IsFordOnlyMode, (option) =>
+            playerSettingsCategory.CreateBoolElement("Ford ONLY", Color.red, LabworksSaving.IsFordOnlyMode, (option) =>
             {
                 LabworksSaving.IsFordOnlyMode = option;
 
@@ -37,9 +38,27 @@ namespace Labworks.Bonemenu
                 LabworksSaving.SaveToDisk();
             });
 
-            bwOptionsCategory.CreateBoolElement("Enable Original NPCs", Color.yellow, LabworksSaving.IsClassicNPCs, (option) =>
+            var npcSettingsCategory = bwOptionsCategory.CreateCategory("NPC Settings", Color.green);
+
+            npcSettingsCategory.CreateBoolElement("Enable Original NullBody", Color.cyan, LabworksSaving.IsClassicNullBody, (option) =>
             {
-                LabworksSaving.IsClassicNPCs = option;
+                LabworksSaving.IsClassicNullBody = option;
+                LabworksSaving.SaveToDisk();
+            });
+            npcSettingsCategory.CreateBoolElement("Enable Original Corrupted NullBody", Color.cyan, LabworksSaving.IsClasssicCorruptedNullBody, (option) =>
+            {
+                LabworksSaving.IsClasssicCorruptedNullBody = option;
+                LabworksSaving.SaveToDisk();
+            });
+            npcSettingsCategory.CreateBoolElement("Enable Original NullRat", Color.cyan, LabworksSaving.IsClassicNullRat, (option) =>
+            {
+                LabworksSaving.IsClassicNullRat = option;
+                LabworksSaving.SaveToDisk();
+            });
+            npcSettingsCategory.CreateBoolElement("Enable Original EarlyExit", Color.cyan, LabworksSaving.IsClassicEarlyExit, (option) =>
+            {
+                LabworksSaving.IsClassicEarlyExit = option;
+                LabworksSaving.SaveToDisk();
             });
         }
     }

@@ -116,6 +116,10 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TideFusion\Core\managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
