@@ -36,6 +36,11 @@ namespace Labworks.Bonemenu
 
                 LabworksSaving.SaveToDisk();
             });
+
+            bwOptionsCategory.CreateBoolElement("Enable Original NPCs", Color.yellow, LabworksSaving.IsClassicNPCs, (option) =>
+            {
+                LabworksSaving.IsClassicNPCs = option;
+            });
         }
     }
 }
