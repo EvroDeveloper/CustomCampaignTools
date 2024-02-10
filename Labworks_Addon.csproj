@@ -43,6 +43,7 @@
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
     <Compile Include="Patching\PullCordDevicePatches.cs" />
     <Compile Include="Patching\RigManagerPatches.cs" />
+    <Compile Include="Patching\ZoneSpawnerPatches.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="Data\ContentLoader.cs" />
     <Compile Include="Data\LabworksSaving.cs" />
