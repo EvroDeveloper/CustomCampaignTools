@@ -30,7 +30,16 @@ namespace Labworks.Bonemenu
 
                 if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort")
                 {
-                    Player.physicsRig.transform.GetComponentInChildren<PullCordDevice>(true).gameObject.SetActive(!LabworksSaving.IsFordOnlyMode);
+                    var bodyLog = Player.physicsRig.transform.GetComponentInChildren<PullCordDevice>(true);
+                    bodyLog.gameObject.SetActive(!LabworksSaving.IsFordOnlyMode);
+
+                    if (!LabworksSaving.IsFordOnlyMode)
+                    {
+                        Player.rigManager.bodyVitals.bodyLogEnabled = true;
+                        Player.rigManager.bodyVitals.PROPEGATE();
+                        bodyLog.LoadFavoriteAvatars();
+                    }
+
                     if (Player.rigManager.AvatarCrate.Barcode.ID != "SLZ.BONELAB.Content.Avatar.FordBW")
                         Player.rigManager.SwapAvatarCrate("SLZ.BONELAB.Content.Avatar.FordBW");
                 }

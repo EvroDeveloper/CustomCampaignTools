@@ -27,12 +27,15 @@ namespace Labworks
         {
             WasLastLoadByContinue = false;
 
-            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint)) 
+            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint, out bool hasSpawnPoint)) 
                 return;
 
-            LabworksSaving.SavePoint savePoint = LabworksSaving.LoadedSavePoint;
+            if (hasSpawnPoint)
+            {
+                LabworksSaving.SavePoint savePoint = LabworksSaving.LoadedSavePoint;
 
-            BoneLib.Player.rigManager.Teleport(new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ));
+                BoneLib.Player.rigManager.Teleport(new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ));
+            }
         }
 
         public static void ClearSavePoint()

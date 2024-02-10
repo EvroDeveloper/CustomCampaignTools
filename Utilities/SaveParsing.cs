@@ -15,12 +15,14 @@ namespace Labworks.Utilities
         /// </summary>
         /// <param name="savePoint"></param>
         /// <returns></returns>
-        public static bool IsSavePointValid(LabworksSaving.SavePoint savePoint)
+        public static bool IsSavePointValid(LabworksSaving.SavePoint savePoint, out bool hasSpawnPoint)
         {
-            if (savePoint.LevelBarcode == string.Empty)
-                return false;
-
             if (new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ) == Vector3.zero)
+                hasSpawnPoint = false;
+            else
+                hasSpawnPoint = true;
+
+            if (savePoint.LevelBarcode == string.Empty)
                 return false;
 
             return true;
