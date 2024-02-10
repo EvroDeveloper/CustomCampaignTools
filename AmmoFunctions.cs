@@ -26,7 +26,7 @@ namespace Labworks
         {
             LabworksSaving.AmmoSave ammoSave = LabworksSaving.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
 
-            return ammoSave.LightAmmo + ammoSave.MediumAmmo + ammoSave.HeavyAmmo;
+            return ammoSave.GetCombinedTotal();
         }
 
         public static LabworksSaving.AmmoSave GetAmmoFromLevel(string levelBarcode)
@@ -87,6 +87,8 @@ namespace Labworks
                 });
             } else
             {
+                LabworksSaving.AmmoSave previousHighScore = GetAmmoFromLevel(levelBarcode);
+
                 for (int i = 0; i < LabworksSaving.LoadedAmmoSaves.Count; i++)
                 {
                     if (LabworksSaving.LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
@@ -94,9 +96,9 @@ namespace Labworks
                         LabworksSaving.LoadedAmmoSaves[i] = new LabworksSaving.AmmoSave
                         {
                             LevelBarcode = levelBarcode,
-                            LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
-                            MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
-                            HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
+                            LightAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo, previousHighScore.LightAmmo),
+                            MediumAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo, previousHighScore.MediumAmmo),
+                            HeavyAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo, previousHighScore.HeavyAmmo)
                         };
                     }
                 }

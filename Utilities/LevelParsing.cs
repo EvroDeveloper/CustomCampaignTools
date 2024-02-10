@@ -21,7 +21,8 @@ namespace Labworks.Utilities
             "volx4.LabWorksBoneworksPort.Level.Boneworks08Tower",
             "volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower",
             "volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena" };
+            "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom" };
 
         /// <summary>
         /// Returns true if the level barcode is part of the Labworks campaign.

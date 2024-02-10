@@ -95,6 +95,11 @@ namespace Labworks.Data
             public int LightAmmo { get; set; }
             public int MediumAmmo { get; set; }
             public int HeavyAmmo { get; set; }
+
+            public int GetCombinedTotal()
+            {
+                return (LightAmmo + MediumAmmo + HeavyAmmo);
+            }
         }
     }
 }
