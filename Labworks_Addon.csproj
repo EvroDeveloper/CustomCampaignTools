@@ -97,6 +97,9 @@
     <Reference Include="SLZ.Serialize">
       <HintPath>..\..\TideFusion\Core\managed\SLZ.Serialize.dll</HintPath>
     </Reference>
+    <Reference Include="UltEvents">
+      <HintPath>..\..\TideFusion\Core\managed\UltEvents.dll</HintPath>
+    </Reference>
     <Reference Include="UnhollowerBaseLib">
       <HintPath>..\..\TideFusion\Core\managed\UnhollowerBaseLib.dll</HintPath>
     </Reference>

@@ -21,12 +21,16 @@ namespace Labworks
             var assembly = Assembly.GetExecutingAssembly();
             if (HelperMethods.IsAndroid())
             {
-                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, "Labworks_Addon.Resources.Android.elevator.labworks");
+                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, $"Labworks_Addon.Resources.Android.elevator.labworks");
                 ElevatorPrefab = bundle.LoadPersistentAsset<GameObject>(ElevatorPrefabPath);
             }
             else
             {
-                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, "Labworks_Addon.Resources.Windows.elevator.labworks");
+                foreach (var name in assembly.GetManifestResourceNames())
+                {
+                    MelonLoader.MelonLogger.Msg(name);
+                }
+                var bundle = HelperMethods.LoadEmbeddedAssetBundle(assembly, $"Labworks_Addon.Resources.Windows.elevator.labworks");
                 ElevatorPrefab = bundle.LoadPersistentAsset<GameObject>(ElevatorPrefabPath);
             }
         }
