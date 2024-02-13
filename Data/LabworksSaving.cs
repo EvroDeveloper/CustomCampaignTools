@@ -97,7 +97,7 @@ namespace Labworks.Data
             public bool IsArmCollisionEnabled { get; set; }
         }
 
-        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<string> boxContainedBarcodes)
+        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<string> boxContainedBarcodes, Vector3 boxContainerPosition)
         {
             public string LevelBarcode = levelBarcode;
             public float PositionX = position.x;
@@ -112,6 +112,10 @@ namespace Labworks.Data
             //public string HeadSlotBarcode = headSlotBarcode;
 
             public List<string> BoxContainedBarcodes = boxContainedBarcodes;
+
+            public float BoxContainedX = boxContainerPosition.x;
+            public float BoxContainedY = boxContainerPosition.y;
+            public float BoxContainedZ = boxContainerPosition.z;
         }
 
         public struct AmmoSave
