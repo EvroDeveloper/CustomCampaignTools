@@ -21,8 +21,8 @@ namespace Labworks.Behaviors
         void Start()
         {
             transform.GetChild(0).gameObject.SetActive(true);
-            //ItemBox = transform.GetChild(1).GetComponent<BoxCollider>();
-            ItemBox = transform.parent.Find("ItemCollector").GetComponent<BoxCollider>();
+            ItemBox = transform.GetChild(1).GetComponent<BoxCollider>();
+            //ItemBox = transform.parent.Find("ItemCollector").GetComponent<BoxCollider>();
         }
 
         public void ActivateSave()
@@ -31,7 +31,6 @@ namespace Labworks.Behaviors
 
             List<string> gatheredBarcodes = new List<string>();
 
-            //TODO: Uncomment Later once build is done
             RaycastHit[] hits = Physics.BoxCastAll(ItemBox.center, ItemBox.size / 2, Vector3.up, Quaternion.identity, 1f);
             foreach (RaycastHit potentialObject in hits)
             {
