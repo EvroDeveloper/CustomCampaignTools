@@ -1,4 +1,6 @@
-﻿using Labworks.Behaviors;
+﻿using BoneLib.Nullables;
+using BoneLib;
+using Labworks.Behaviors;
 using Labworks.Data;
 using Labworks.Utilities;
 using MelonLoader;
@@ -6,13 +8,13 @@ using SLZ.Interaction;
 using SLZ.Marrow.Data;
 using SLZ.Marrow.Pool;
 using SLZ.Marrow.Warehouse;
+using SLZ.Props.Weapons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static Labworks.Data.LabworksSaving;
 
 namespace Labworks
 {
@@ -78,10 +80,27 @@ namespace Labworks
         {
             if (barcode == string.Empty) return;
 
-            // grah i need to fix this later
-            //BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver.SpawnInSlotAsync(new SpawnableCrateReference(barcode).Barcode);
-            Action<GameObject> callBack = (go) => BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver.InsertInSlot(go.GetComponent<InteractableHost>());
-            AssetSpawner.Spawn(new Spawnable() { crateRef = new SpawnableCrateReference(barcode) }, spawnCallback: callBack);
+            var slot = BoneLib.Player.rigManager.inventory.bodySlots[arraySlot];
+            var head = Player.playerHead.transform;
+
+            var reference = new SpawnableCrateReference(barcode);
+
+            var spawnable = new Spawnable()
+            {
+                crateRef = reference
+            };
+
+            AssetSpawner.Register(spawnable);
+
+            AssetSpawner.Spawn(spawnable, head.position + head.forward, default, new BoxedNullable<Vector3>(null), false, new BoxedNullable<int>(null), (Action<GameObject>)Action);
+            return;
+
+            void Action(GameObject go)
+            {
+                slot.GetComponent<InventorySlotReceiver>().DropWeapon();
+                MelonLogger.Msg("Loaded object in holster with barcode ");
+                slot.GetComponent<InventorySlotReceiver>().InsertInSlot(go.GetComponent<InteractableHost>());
+            }
         }
 
         public static void ClearSavePoint()

@@ -58,7 +58,7 @@ namespace Labworks
 #if DEBUG
                     MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcodeTitle);
 #endif
-                    SavepointFunctions.SavePlayer(barcodeTitle, Vector3.zero);
+                    SavepointFunctions.SavePlayer(barcodeTitle, Vector3.zero, Vector3.zero);
                 }
             }
             #endregion
