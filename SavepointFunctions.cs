@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Labworks.Data.LabworksSaving;
 
 namespace Labworks
 {
@@ -78,13 +79,14 @@ namespace Labworks
             if (barcode == string.Empty) return;
 
             // grah i need to fix this later
-            BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver.SpawnInSlotAsync(new SpawnableCrateReference(barcode).Barcode);
+            //BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver.SpawnInSlotAsync(new SpawnableCrateReference(barcode).Barcode);
+            Action<GameObject> callBack = (go) => BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver.InsertInSlot(go.GetComponent<InteractableHost>());
+            AssetSpawner.Spawn(new Spawnable() { crateRef = new SpawnableCrateReference(barcode) }, spawnCallback: callBack);
         }
 
         public static void ClearSavePoint()
         {
             LabworksSaving.LoadedSavePoint = new LabworksSaving.SavePoint(string.Empty, Vector3.zero, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, null, Vector3.zero);
-
             LabworksSaving.SaveToDisk();
         }
 
