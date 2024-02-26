@@ -18,17 +18,17 @@ namespace Labworks.Patching
     [HarmonyPatch(typeof(RigManager))]
     internal class RigManagerPatches
     {
-        [HarmonyPrefix]
-        [HarmonyPatch(nameof(RigManager.SwapAvatarCrate))]
-        public static void OnAvatarCrateChanged(ref string barcode, bool cache = false, Il2CppSystem.Action<bool> callback = null)
-        {
-            if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort" && LabworksSaving.IsFordOnlyMode)
-            {
-                if (barcode != "SLZ.BONELAB.Content.Avatar.FordBW")
-                {
-                    barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
-                }
-            }
-        }
+        //[HarmonyPrefix]
+        //[HarmonyPatch(nameof(RigManager.SwapAvatarCrate))]
+        //public static void OnAvatarCrateChanged(ref string barcode)
+        //{
+        //    if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort" && LabworksSaving.IsFordOnlyMode)
+        //    {
+        //        if (barcode != "SLZ.BONELAB.Content.Avatar.FordBW")
+        //        {
+        //            barcode = "SLZ.BONELAB.Content.Avatar.FordBW";
+        //        }
+        //    }
+        //}
     }
 }

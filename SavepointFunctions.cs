@@ -71,16 +71,16 @@ namespace Labworks
 
             HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.LeftSidearmBarcode, 0);
             HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.LeftShoulderSlotBarcode, 2);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightSidearmBarcode, 3);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightShoulderSlotBarcode, 4);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.BackSlotBarcode, 5);
+            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightSidearmBarcode, 5);
+            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightShoulderSlotBarcode, 3);
+            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.BackSlotBarcode, 4);
         }
 
         public static void HolsterItemIfNotEmpty(string barcode, int arraySlot)
         {
             if (barcode == string.Empty) return;
 
-            var slot = BoneLib.Player.rigManager.inventory.bodySlots[arraySlot];
+            var slot = BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver;
             var head = Player.playerHead.transform;
 
             var reference = new SpawnableCrateReference(barcode);
@@ -97,9 +97,9 @@ namespace Labworks
 
             void Action(GameObject go)
             {
-                slot.GetComponent<InventorySlotReceiver>().DropWeapon();
+                slot.DropWeapon();
                 MelonLogger.Msg("Loaded object in holster with barcode ");
-                slot.GetComponent<InventorySlotReceiver>().InsertInSlot(go.GetComponent<InteractableHost>());
+                slot.InsertInSlot(go.GetComponent<InteractableHost>());
             }
         }
 

@@ -38,7 +38,6 @@ namespace Labworks.Behaviors
                     gatheredBarcodes.Add(poolee.spawnableCrate.Barcode.ID);
             }
 
-            // do something with the spawnable crates
             SavepointFunctions.SavePlayer(barcode, transform.position, ItemBox.transform.position, gatheredBarcodes);
         }
 
