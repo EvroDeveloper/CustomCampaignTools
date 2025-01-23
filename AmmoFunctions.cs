@@ -81,9 +81,9 @@ namespace Labworks
                 LabworksSaving.LoadedAmmoSaves.Add(new LabworksSaving.AmmoSave
                 {
                     LevelBarcode = levelBarcode,
-                    LightAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
-                    MediumAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
-                    HeavyAmmo = Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
+                    LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
+                    MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
+                    HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                 });
             } else
             {

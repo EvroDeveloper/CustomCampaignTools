@@ -11,7 +11,7 @@ namespace Labworks.Behaviors
 
         public void SetNPCUsage(int index, bool classic)
         {
-
+            
         }
 
         public void SetFordOnly(bool b)
