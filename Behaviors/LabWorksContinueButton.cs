@@ -18,6 +18,8 @@ namespace Labworks.Behaviors
         public LabWorksContinueButton(IntPtr ptr) : base(ptr) { }
 
         ButtonsToHubAndReset loader;
+        ZoneLevelLoader levelLoader;
+        UltEventHolder invokeLoad;
 
         void Start()
         {
@@ -26,21 +28,16 @@ namespace Labworks.Behaviors
 
             transform.GetChild(0).gameObject.SetActive(true);
 
-            loader = gameObject.AddComponent<ButtonsToHubAndReset>();
-            loader.loadScreenLevel = new LevelCrateReference("volx4.LabWorksBoneworksPort.Level.BoneworksLoadingScreen");
-            loader.hubCrate = new LevelCrateReference("c2534c5a-6b79-40ec-8e98-e58c5363656e");
-            loader.nextLevel = new LevelCrateReference(LabworksSaving.LoadedSavePoint.LevelBarcode);
+            levelLoader = GetComponentInChildren<ZoneLevelLoader>();
+            invokeLoad = GetComponentInChildren<UltEventHolder>();
 
-            loader.vfxFadeOutSpawnable = new SLZ.Marrow.Data.Spawnable() { 
-                crateRef = new SpawnableCrateReference("c1534c5a-dac0-44a1-b656-6c235646584c")
-            };
+            levelLoader.level = new LevelCrateReference(LabworksSaving.LoadedSavePoint.LevelBarcode);
         }
 
         public void OnButtonPressed()
         {
             SavepointFunctions.WasLastLoadByContinue = true;
-
-            loader.NextLevel();
+            invokeLoad.Invoke();
         }
     }
 }

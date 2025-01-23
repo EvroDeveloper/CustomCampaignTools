@@ -10,13 +10,14 @@ using HarmonyLib;
 
 namespace Labworks.Patching
 {
-    [HarmonyPatch(typeof(ZoneSpawner))]
+    [HarmonyPatch(typeof(CrateSpawner))]
     internal class ZoneSpawnerPatches
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(ZoneSpawner.Awake))]
-        public static void SwitchToClassicNPC(ref ZoneSpawner __instance)
+        public static void SwitchToClassicNPC(ref CrateSpawner __instance)
         {
+            return; // OBSOLETE
             if (SceneStreamer.Session.Level.Pallet.Title == "LabWorksBoneworksPort")
             {
                 string result = "";

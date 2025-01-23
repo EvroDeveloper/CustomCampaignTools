@@ -20,7 +20,7 @@ namespace Labworks.Bonemenu
     {
         public static void CreateBoneMenu()
         {
-            MenuCategory labworksCategory = MenuManager.CreateCategory("Labworks", Color.yellow);
+            Page labworksCategory = Page.Root.CreatePage("Labworks", Color.yellow);
 
             InventoryMenu.CreateBoneMenu(labworksCategory);
             //BWOptionsMenu.CreateBoneMenu(labworksCategory);

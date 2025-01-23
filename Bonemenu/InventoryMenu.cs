@@ -10,10 +10,10 @@ namespace Labworks.Bonemenu
 {
     internal class InventoryMenu
     {
-        public static void CreateBoneMenu(MenuCategory category)
+        public static void CreateBoneMenu(Page category)
         {
-            var inventoryCategory = category.CreateCategory("Inventory", Color.white);
-            inventoryCategory.CreateFunctionElement("Reset Ammo", Color.yellow, () => AmmoFunctions.ClearAmmo());
+            var inventoryCategory = category.CreatePage("Inventory", Color.white);
+            inventoryCategory.CreateFunction("Reset Ammo", Color.yellow, () => AmmoFunctions.ClearAmmo());
         }
     }
 }

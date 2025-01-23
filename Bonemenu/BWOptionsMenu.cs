@@ -19,12 +19,12 @@ namespace Labworks.Bonemenu
             var bwOptionsCategory = category.CreateCategory("Settings", Color.grey);
 
             var playerSettingsCategory = bwOptionsCategory.CreateCategory("Player Settings", Color.yellow);
-            var fordOnlyPanel = playerSettingsCategory.CreateSubPanel("Ford Only Explained", Color.yellow);
-            fordOnlyPanel.CreateFunctionElement("Ford Only locks the character to Ford", Color.white, null);
-            fordOnlyPanel.CreateFunctionElement("and disables the body log inside of", Color.white, null);
-            fordOnlyPanel.CreateFunctionElement("Labworks levels.", Color.white, null);
+            //var fordOnlyPanel = playerSettingsCategory.CreateSubPanel("Ford Only Explained", Color.yellow);
+            //fordOnlyPanel.CreateFunction("Ford Only locks the character to Ford", Color.white, null);
+            //fordOnlyPanel.CreateFunction("and disables the body log inside of", Color.white, null);
+            //fordOnlyPanel.CreateFunction("Labworks levels.", Color.white, null);
 
-            playerSettingsCategory.CreateBoolElement("Ford ONLY", Color.red, LabworksSaving.IsFordOnlyMode, (option) =>
+            playerSettingsCategory.CreateBool("Ford ONLY", Color.red, LabworksSaving.IsFordOnlyMode, (option) =>
             {
                 LabworksSaving.IsFordOnlyMode = option;
 
