@@ -72,6 +72,7 @@ namespace Labworks
             return previousLevelsAmmoSave;
         }
 
+        [Obsolete("Save ammo via CampaignSaveData.SaveAmmoFromLevel")]
         public static void SaveAmmo(Campaign campaign, string levelBarcode)
         {
             CampaignSaveData.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(campaign, levelBarcode);

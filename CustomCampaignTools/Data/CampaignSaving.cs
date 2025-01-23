@@ -16,6 +16,63 @@ namespace CustomCampaignTools
             LoadFromDisk();
         }
 
+        public void SaveAmmoForLevel(string levelBarcode)
+        {
+            AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+
+            if (!DoesSavedAmmoExist(levelBarcode))
+            {
+                LoadedAmmoSaves.Add(new AmmoSave
+                {
+                    LevelBarcode = levelBarcode,
+                    LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
+                    MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
+                    HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
+                });
+            } 
+            else
+            {
+                CampaignSaveData.AmmoSave previousHighScore = GetAmmoFromLevel(levelBarcode);
+
+                for (int i = 0; i < LoadedAmmoSaves.Count; i++)
+                {
+                    if (LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
+                    {
+                        LoadedAmmoSaves[i] = new CampaignSaveData.AmmoSave
+                        {
+                            LevelBarcode = levelBarcode,
+                            LightAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo, previousHighScore.LightAmmo),
+                            MediumAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo, previousHighScore.MediumAmmo),
+                            HeavyAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo, previousHighScore.HeavyAmmo)
+                        };
+                    }
+                }
+            }
+
+            campaign.saveData.SaveToDisk();
+        }
+
+        public AmmoSave GetPreviousLevelsAmmoSave(string levelBarcode)
+        {
+            int levelIndex = campaign.GetLevelIndex(levelBarcode);
+
+            AmmoSave previousLevelsAmmoSave = new AmmoSave();
+
+            for (int i = 0; i < levelIndex; i++)
+            {
+                previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).LightAmmo;
+                previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).MediumAmmo;
+                previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).HeavyAmmo;
+            }
+
+            return previousLevelsAmmoSave;
+        }
+
+        public AmmoSave GetSavedAmmo(string levelBarcode)
+        {
+            return LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
+        }
+
         public bool DoesSavedAmmoExist(string levelBarcode)
         {
             if (LoadedAmmoSaves == null)

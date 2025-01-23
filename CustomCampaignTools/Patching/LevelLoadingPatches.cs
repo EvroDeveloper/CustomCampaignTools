@@ -34,7 +34,7 @@ namespace CustomCampaignTools.Patching
 #if DEBUG
                 MelonLogger.Msg("Current level is a Campaign! Saving ammo to Save Data...");
 #endif
-                AmmoFunctions.SaveAmmo(campaign, barcode);
+                campaign.saveData.SaveAmmoForLevel(barcode);
             }
         }
     }
