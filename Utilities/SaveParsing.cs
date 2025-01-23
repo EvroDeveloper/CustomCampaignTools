@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Labworks.Utilities
+namespace CustomCampaignTools.Utilities
 {
     public class SaveParsing
     {
@@ -15,7 +15,8 @@ namespace Labworks.Utilities
         /// </summary>
         /// <param name="savePoint"></param>
         /// <returns></returns>
-        public static bool IsSavePointValid(LabworksSaving.SavePoint savePoint, out bool hasSpawnPoint)
+        [Obsolete]
+        public static bool IsSavePointValid(CampaignSaveData.SavePoint savePoint, out bool hasSpawnPoint)
         {
             if (new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ) == Vector3.zero)
                 hasSpawnPoint = false;
@@ -28,6 +29,7 @@ namespace Labworks.Utilities
             return true;
         }
 
+        [Obsolete]
         public static bool DoesSavedAmmoExist(Campaign campaign, string levelBarcode)
         {
             if (campaign.saveData.LoadedAmmoSaves == null)
@@ -42,6 +44,7 @@ namespace Labworks.Utilities
             return false;
         }
 
+        [Obsolete]
         public static LabworksSaving.AmmoSave GetSavedAmmo(string levelBarcode)
         {
             return campaign.saveData.LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);

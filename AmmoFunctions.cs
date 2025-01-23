@@ -12,26 +12,26 @@ namespace Labworks
 {
     public static class AmmoFunctions
     {
-        public static void ClearAmmo()
+        public static void ClearAmmo(Campaign campaign)
         {
-            if (LevelParsing.IsLabworksCampaign(SceneStreamer.Session.Level.Pallet.Title, SceneStreamer.Session.Level.Barcode))
+            if (LevelParsing.IsCampaignLevel(SceneStreamer.Session.Level.Pallet.Title, SceneStreamer.Session.Level.Barcode))
                 Player.rigManager.AmmoInventory.ClearAmmo();
 
-            LabworksSaving.LoadedAmmoSaves.Clear();
+            campaign.saveData.LoadedAmmoSaves.Clear();
 
-            LabworksSaving.SaveToDisk();
+            campaign.saveData.SaveToDisk();
         }
 
-        public static int GetAmmoTotalByLevel(string levelBarcode)
+        public static int GetAmmoTotalByLevel(Campaign campaign, string levelBarcode)
         {
-            LabworksSaving.AmmoSave ammoSave = LabworksSaving.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
+            CampaignSaveData.AmmoSave ammoSave = campaign.saveData.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
 
             return ammoSave.GetCombinedTotal();
         }
 
-        public static LabworksSaving.AmmoSave GetAmmoFromLevel(string levelBarcode)
+        public static CampaignSaveData.AmmoSave GetAmmoFromLevel(Campaign campaign, string levelBarcode)
         {
-            return LabworksSaving.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
+            return campaign.saveData.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
         }
 
         public static void LoadAmmoFromLevel(string levelBarcode, bool isLoadCheckpoint)
@@ -56,11 +56,11 @@ namespace Labworks
                 }
         }
 
-        public static LabworksSaving.AmmoSave GetPreviousLevelsAmmoSave(Campaign campaign, string levelBarcode)
+        public static CampaignSaveData.AmmoSave GetPreviousLevelsAmmoSave(Campaign campaign, string levelBarcode)
         {
             int levelIndex = LevelParsing.GetLevelIndex(campaign, levelBarcode);
 
-            LabworksSaving.AmmoSave previousLevelsAmmoSave = new();
+            CampaignSaveData.AmmoSave previousLevelsAmmoSave = new();
 
             for (int i = 0; i < levelIndex; i++)
             {
@@ -74,11 +74,11 @@ namespace Labworks
 
         public static void SaveAmmo(Campaign campaign, string levelBarcode)
         {
-            LabworksSaving.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(campaign, levelBarcode);
+            CampaignSaveData.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(campaign, levelBarcode);
 
-            if (!SaveParsing.DoesSavedAmmoExist(levelBarcode))
+            if (!SaveParsing.DoesSavedAmmoExist(campaign, levelBarcode))
             {
-                LabworksSaving.LoadedAmmoSaves.Add(new LabworksSaving.AmmoSave
+                LabworksSaving.LoadedAmmoSaves.Add(new CampaignSaveData.AmmoSave
                 {
                     LevelBarcode = levelBarcode,
                     LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
@@ -87,13 +87,13 @@ namespace Labworks
                 });
             } else
             {
-                LabworksSaving.AmmoSave previousHighScore = GetAmmoFromLevel(levelBarcode);
+                CampaignSaveData.AmmoSave previousHighScore = GetAmmoFromLevel(levelBarcode);
 
-                for (int i = 0; i < LabworksSaving.LoadedAmmoSaves.Count; i++)
+                for (int i = 0; i < campaign.saveData.LoadedAmmoSaves.Count; i++)
                 {
-                    if (LabworksSaving.LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
+                    if (campaign.saveData.LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
                     {
-                        LabworksSaving.LoadedAmmoSaves[i] = new LabworksSaving.AmmoSave
+                        campaign.saveData.LoadedAmmoSaves[i] = new CampaignSaveData.AmmoSave
                         {
                             LevelBarcode = levelBarcode,
                             LightAmmo = Math.Max(Player.rigManager.AmmoInventory.GetCartridgeCount("light") - previousAmmoSave.LightAmmo, previousHighScore.LightAmmo),
@@ -104,7 +104,7 @@ namespace Labworks
                 }
             }
 
-            LabworksSaving.SaveToDisk();
+            campaign.saveData.SaveToDisk();
         }
     }
 }

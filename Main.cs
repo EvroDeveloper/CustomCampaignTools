@@ -20,6 +20,7 @@ namespace Labworks
 
             BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
 
+            RegisterCampaign("LabWorks", )
             // Load Save Data
             LabworksSaving.LoadFromDisk();
 
