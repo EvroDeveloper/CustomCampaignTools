@@ -20,7 +20,19 @@ namespace Labworks
 
             BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
 
-            RegisterCampaign("LabWorks", )
+            RegisterCampaign("LabWorks", new string[] {
+            "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks02Museum",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks03Streets",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks04Runoff",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks05Sewers",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks06Warehouse",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks07CentralStation",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks08Tower",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena",
+            "volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom" });
             // Load Save Data
             LabworksSaving.LoadFromDisk();
 
@@ -37,23 +49,16 @@ namespace Labworks
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcodeTitle = SceneStreamer.Session.Level.Barcode.ID;
 
-            //if (info.barcode == CommonBarcodes.Maps.VoidG114)
-            //{
-            //    var elevator = GameObject.Instantiate<GameObject>(ContentLoader.ElevatorPrefab);
-            //    elevator.transform.position = new Vector3(0, 0, 0);
-            //}
-
-
             #region Save Data
-            if (LevelParsing.IsLabworksCampaign(palletTitle, barcodeTitle))
+            if (LevelParsing.IsCampaignLevel(palletTitle, barcodeTitle, out Campaign campaign))
             {
 #if DEBUG
-                MelonLogger.Msg("Level is Labworks!");
+                MelonLogger.Msg("Level is Campaign!");
 #endif
 
                 
-                int levelIndex = LevelParsing.GetLevelIndex(barcodeTitle);
-                string previousLevelBarcode = LevelParsing.GetLevelBarcodeByIndex(levelIndex - 1);
+                int levelIndex = campaign.GetLevelIndex(barcodeTitle);
+                string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1);
                 AmmoFunctions.LoadAmmoFromLevel(barcodeTitle, SavepointFunctions.WasLastLoadByContinue);
 
                 if (SavepointFunctions.WasLastLoadByContinue)

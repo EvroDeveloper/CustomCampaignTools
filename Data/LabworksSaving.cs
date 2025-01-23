@@ -10,6 +10,7 @@ using System.IO;
 
 namespace Labworks.Data
 {
+    [Obsolete("Switch to using Campaign.saveData for generalized systems")]
     public class LabworksSaving
     {
         private static readonly string SavePath = $"{MelonUtils.UserDataDirectory}/Labworks/LabworksSave.json";

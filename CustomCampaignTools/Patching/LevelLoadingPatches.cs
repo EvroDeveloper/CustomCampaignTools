@@ -32,7 +32,7 @@ namespace CustomCampaignTools.Patching
             if (LevelParsing.IsCampaignLevel(previousTitle, barcode, out Campaign campaign))
             {
 #if DEBUG
-                MelonLogger.Msg("Current level is Labworks! Saving ammo...");
+                MelonLogger.Msg("Current level is a Campaign! Saving ammo to Save Data...");
 #endif
                 AmmoFunctions.SaveAmmo(campaign, barcode);
             }

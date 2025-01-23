@@ -58,7 +58,7 @@ namespace Labworks
 
         public static CampaignSaveData.AmmoSave GetPreviousLevelsAmmoSave(Campaign campaign, string levelBarcode)
         {
-            int levelIndex = LevelParsing.GetLevelIndex(campaign, levelBarcode);
+            int levelIndex = campaign.GetLevelIndex(levelBarcode);
 
             CampaignSaveData.AmmoSave previousLevelsAmmoSave = new();
 

@@ -19,5 +19,15 @@ namespace CustomCampaignTools
             LoadedCampaigns.Add(campaign);
             return campaign;
         }
+
+        public int GetLevelIndex(string levelBarcode)
+        {
+            return Array.IndexOf(mainLevels, levelBarcode);
+        }
+
+        public string GetLevelBarcodeByIndex(int index)
+        {
+            return mainLevels[index];
+        }
     }
 }

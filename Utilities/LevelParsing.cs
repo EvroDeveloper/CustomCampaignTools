@@ -30,6 +30,7 @@ namespace Labworks.Utilities
         /// <param name="palletTitle"></param>
         /// <param name="levelBarcode"></param>
         /// <returns></returns>
+        [Obsolete("Switch to using generalized campaign solution")]
         public static bool IsLabworksCampaign(string palletTitle, string levelBarcode)
         {
             if (palletTitle != "LabWorksBoneworksPort")
