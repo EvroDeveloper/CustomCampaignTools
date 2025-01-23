@@ -41,14 +41,30 @@ namespace Labworks.Utilities
             return true;
         }
 
-        public static int GetLevelIndex(string levelBarcode)
+        public static bool IsCampaignLevel(string palletTitle, string levelBarcode, out Campaign campaign)
         {
-            return Array.IndexOf(_levelBarcodes, levelBarcode);
+            foreach (Campaign c in Campaign.LoadedCampaigns)
+            {
+                if(palletTitle != c.Name) continue;
+                
+                if(c.mainLevels.Contains(levelBarcode)) 
+                {
+                    campaign = c;
+                    return true;
+                }
+            }
+            campaign = null;
+            return false;
         }
 
-        public static string GetLevelBarcodeByIndex(int index)
+        public static int GetLevelIndex(Campaign campaign, string levelBarcode)
         {
-            return _levelBarcodes[index];
+            return Array.IndexOf(campaign.mainLevels, levelBarcode);
+        }
+
+        public static string GetLevelBarcodeByIndex(Campaign campaign, int index)
+        {
+            return campaign.mainLevels[index];
         }
     }
 }

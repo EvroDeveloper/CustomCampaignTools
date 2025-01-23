@@ -29,7 +29,7 @@ namespace Labworks.Patching
             string previousTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = SceneStreamer.Session.Level.Barcode;
 
-            if (LevelParsing.IsLabworksCampaign(previousTitle, barcode))
+            if (LevelParsing.IsCampaignLevel(previousTitle, barcode, out Campaign campaign))
             {
 #if DEBUG
                 MelonLogger.Msg("Current level is Labworks! Saving ammo...");

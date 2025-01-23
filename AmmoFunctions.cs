@@ -56,25 +56,25 @@ namespace Labworks
                 }
         }
 
-        public static LabworksSaving.AmmoSave GetPreviousLevelsAmmoSave(string levelBarcode)
+        public static LabworksSaving.AmmoSave GetPreviousLevelsAmmoSave(Campaign campaign, string levelBarcode)
         {
-            int levelIndex = LevelParsing.GetLevelIndex(levelBarcode);
+            int levelIndex = LevelParsing.GetLevelIndex(campaign, levelBarcode);
 
             LabworksSaving.AmmoSave previousLevelsAmmoSave = new();
 
             for (int i = 0; i < levelIndex; i++)
             {
-                previousLevelsAmmoSave.LightAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).LightAmmo;
-                previousLevelsAmmoSave.MediumAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).MediumAmmo;
-                previousLevelsAmmoSave.HeavyAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(i)).HeavyAmmo;
+                previousLevelsAmmoSave.LightAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(campaign, i)).LightAmmo;
+                previousLevelsAmmoSave.MediumAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(campaign, i)).MediumAmmo;
+                previousLevelsAmmoSave.HeavyAmmo += SaveParsing.GetSavedAmmo(LevelParsing.GetLevelBarcodeByIndex(campaign, i)).HeavyAmmo;
             }
 
             return previousLevelsAmmoSave;
         }
 
-        public static void SaveAmmo(string levelBarcode)
+        public static void SaveAmmo(Campaign campaign, string levelBarcode)
         {
-            LabworksSaving.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+            LabworksSaving.AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(campaign, levelBarcode);
 
             if (!SaveParsing.DoesSavedAmmoExist(levelBarcode))
             {

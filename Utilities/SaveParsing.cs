@@ -28,15 +28,15 @@ namespace Labworks.Utilities
             return true;
         }
 
-        public static bool DoesSavedAmmoExist(string levelBarcode)
+        public static bool DoesSavedAmmoExist(Campaign campaign, string levelBarcode)
         {
-            if (LabworksSaving.LoadedAmmoSaves == null)
+            if (campaign.saveData.LoadedAmmoSaves == null)
                 return false;
 
-            if (LabworksSaving.LoadedAmmoSaves.Count == 0)
+            if (campaign.saveData.LoadedAmmoSaves.Count == 0)
                 return false;
 
-            if (LabworksSaving.LoadedAmmoSaves.Any(x => x.LevelBarcode == levelBarcode))
+            if (campaign.saveData.LoadedAmmoSaves.Any(x => x.LevelBarcode == levelBarcode))
                 return true;
 
             return false;
@@ -44,7 +44,7 @@ namespace Labworks.Utilities
 
         public static LabworksSaving.AmmoSave GetSavedAmmo(string levelBarcode)
         {
-            return LabworksSaving.LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
+            return campaign.saveData.LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
         }
     }
 }
