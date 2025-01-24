@@ -121,7 +121,11 @@ namespace CustomCampaignTools
                 Directory.CreateDirectory(SaveFolder);
 
             if (!File.Exists(SavePath))
+            {
+                // Fill default ammo saves
+                foreach(string barcode in campaign.mainLevels)
                 return;
+            }
 
             string json = File.ReadAllText(SavePath);
 
@@ -165,7 +169,7 @@ namespace CustomCampaignTools
             /// <summary>
             /// Returns true if the save point has a level barcode.
             /// </summary>
-            /// <param name="hasSpawnPoint"></param>
+            /// <param name="out hasSpawnPoint"></param>
             /// <returns></returns>
             public bool IsValid(out bool hasSpawnPoint)
             {

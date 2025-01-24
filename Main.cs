@@ -18,7 +18,7 @@ namespace Labworks
             // Create Bonemenu
             BoneMenuCreator.CreateBoneMenu();
 
-            BoneLib.Hooking.OnLevelInitialized += LevelInitialized;
+            BoneLib.Hooking.OnLevelLoaded += LevelInitialized;
 
             RegisterCampaign("LabWorks", new string[] {
             "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
@@ -47,13 +47,13 @@ namespace Labworks
         internal static void LevelInitialized(LevelInfo info)
         {
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
-            string barcodeTitle = SceneStreamer.Session.Level.Barcode.ID;
+            string barcodeTitle = info.barcode;
 
             #region Save Data
             if (LevelParsing.IsCampaignLevel(palletTitle, barcodeTitle, out Campaign campaign))
             {
 #if DEBUG
-                MelonLogger.Msg("Level is Campaign!");
+                MelonLogger.Msg("Level is in Campaign!");
 #endif
 
                 
