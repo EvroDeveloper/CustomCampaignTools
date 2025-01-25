@@ -6,12 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.BoneMenu;
-using BoneLib.BoneMenu.Elements;
-using Il2CppSystem;
-using MelonLoader;
-using SLZ.Data;
-using SLZ.Marrow.Data;
-using SLZ.Player;
 using UnityEngine;
 
 namespace Labworks.Bonemenu
@@ -20,9 +14,8 @@ namespace Labworks.Bonemenu
     {
         public static void CreateBoneMenu()
         {
-            Page labworksCategory = Page.Root.CreatePage("Labworks", Color.yellow);
+            Page labworksCategory = Page.Root.CreatePage("Campaigns", Color.yellow);
 
-            InventoryMenu.CreateBoneMenu(labworksCategory);
             //BWOptionsMenu.CreateBoneMenu(labworksCategory);
         }
     }

@@ -1,11 +1,11 @@
 ﻿
 using MelonLoader;
-using SLZ.Marrow.SceneStreaming;
 using System;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using SLZ.Marrow.Pool;
+using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.SceneStreaming;
 
 namespace Labworks.Behaviors
 {
@@ -15,6 +15,7 @@ namespace Labworks.Behaviors
         public LabWorksSavePoint(IntPtr ptr) : base(ptr) { }
 
         public List<string> CurrentEnteredObjects = new List<string>();
+        public GameObject ItemBox;
 
         void Start()
         {
@@ -23,23 +24,23 @@ namespace Labworks.Behaviors
 
         public void OnEntityEnter(MarrowEntity entity)
         {
-            if(entity.poolee.SpawnableCrate != null)
+            if(entity._poolee.SpawnableCrate != null)
             {
-                CurrentEnteredObjects.Add(entity.poolee.SpawnableCrate.Barcode.ID);
+                CurrentEnteredObjects.Add(entity._poolee.SpawnableCrate.Barcode.ID);
             }
         }
 
         public void OnEntityExit(MarrowEntity entity)
         {
-            if(entity.poolee.SpawnableCrate != null)
+            if(entity._poolee.SpawnableCrate != null)
             {
-                CurrentEnteredObjects.Remove(entity.poolee.SpawnableCrate.Barcode.ID);
+                CurrentEnteredObjects.Remove(entity._poolee.SpawnableCrate.Barcode.ID);
             }
         }
 
         public void ActivateSave()
         {
-            string barcode = SceneStreamer.Session.Level.Barcode;
+            string barcode = SceneStreamer.Session.Level.Barcode.ID;
 
             SavepointFunctions.SavePlayer(barcode, transform.position, ItemBox.transform.position, CurrentEnteredObjects);
         }

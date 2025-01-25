@@ -1,4 +1,5 @@
-﻿using BoneLib.BoneMenu.Elements;
+﻿using BoneLib.BoneMenu;
+using CustomCampaignTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace Labworks.Bonemenu
 {
     internal class InventoryMenu
     {
-        public static void CreateBoneMenu(Page category)
+        public static void CreateCampaignPage(Page category, Campaign c)
         {
-            var inventoryCategory = category.CreatePage("Inventory", Color.white);
-            inventoryCategory.CreateFunction("Reset Ammo", Color.yellow, () => AmmoFunctions.ClearAmmo());
+            var inventoryCategory = category.CreatePage(c.Name, Color.white);
+            inventoryCategory.CreateFunction("Reset Ammo", Color.yellow, () => c.saveData.ClearAmmoSave());
         }
     }
 }

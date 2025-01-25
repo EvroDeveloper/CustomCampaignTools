@@ -2,13 +2,15 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using SLZ.Bonelab;
-using SLZ.Marrow.Warehouse;
+using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Marrow.Warehouse;
 using Labworks.Bonemenu;
 using Labworks.Utilities;
-using Labworks.Data;
 using MelonLoader;
-using SLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Zones;
+using Il2CppUltEvents;
+using CustomCampaignTools;
 
 namespace Labworks.Behaviors
 {
@@ -17,21 +19,22 @@ namespace Labworks.Behaviors
     {
         public LabWorksContinueButton(IntPtr ptr) : base(ptr) { }
 
-        ButtonsToHubAndReset loader;
-        ZoneLevelLoader levelLoader;
+        ZoneLoadLevel levelLoader;
         UltEventHolder invokeLoad;
 
         void Start()
         {
-            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint, out bool hasSpawnPoint))
+            Campaign campaign = Campaign.GetFromName(gameObject.name);
+
+            if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
 
             transform.GetChild(0).gameObject.SetActive(true);
 
-            levelLoader = GetComponentInChildren<ZoneLevelLoader>();
+            levelLoader = GetComponentInChildren<ZoneLoadLevel>();
             invokeLoad = GetComponentInChildren<UltEventHolder>();
 
-            levelLoader.level = new LevelCrateReference(LabworksSaving.LoadedSavePoint.LevelBarcode);
+            levelLoader.level = new LevelCrateReference(campaign.saveData.LoadedSavePoint.LevelBarcode);
         }
 
         public void OnButtonPressed()

@@ -1,3 +1,9 @@
+using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Warehouse;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace CustomCampaignTools
 {
     public class Campaign
@@ -13,7 +19,7 @@ namespace CustomCampaignTools
         public static Campaign RegisterCampaign(string Name, string[] mainLevels)
         {
             Campaign campaign = new Campaign();
-            campaign.Name = name;
+            campaign.Name = Name;
             campaign.mainLevels = mainLevels;
             campaign.saveData = new CampaignSaveData(campaign);
             LoadedCampaigns.Add(campaign);
@@ -29,5 +35,21 @@ namespace CustomCampaignTools
         {
             return mainLevels[index];
         }
+
+        public static Campaign GetFromName(string name)
+        {
+            return LoadedCampaigns.First(x => x.Name == name);
+        }
+
+        public static Campaign GetFromLevel(string barcode)
+        {
+            return LoadedCampaigns.First(x => x.mainLevels.Contains(barcode));
+        }
+
+        public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);
+
+        public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode.ID);
+
+        public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
     }
 }

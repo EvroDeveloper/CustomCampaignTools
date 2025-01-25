@@ -41,21 +41,23 @@
     <Compile Include="Bonemenu\BWOptionsMenu.cs" />
     <Compile Include="Bonemenu\InventoryMenu.cs" />
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
+    <Compile Include="CustomCampaignTools\Campaign.cs" />
+    <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\InvokeInCampaign.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\UnhideInCampaign.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\VariableManager.cs" />
+    <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="Patching\PullCordDevicePatches.cs" />
-    <Compile Include="Patching\RigManagerPatches.cs" />
     <Compile Include="Patching\ZoneSpawnerPatches.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="Data\ContentLoader.cs" />
-    <Compile Include="Data\LabworksSaving.cs" />
     <Compile Include="Behaviors\LabWorksContinueButton.cs" />
     <Compile Include="Behaviors\LabWorksSavePoint.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Patching\LevelLoadPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SavepointFunctions.cs" />
     <Compile Include="Behaviors\SumOfBest.cs" />
     <Compile Include="Utilities\LevelParsing.cs" />
-    <Compile Include="Utilities\SaveParsing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -65,40 +67,36 @@
       <HintPath>..\..\TideFusion\Core\managed\Accessibility.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\TideFusion\Core\managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\TideFusion\Core\managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BoneLib">
-      <HintPath>..\..\..\Referencing\BoneLib.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\Mods\BoneLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\TideFusion\Core\managed\Il2Cppmscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="Il2CppNewtonsoft.Json">
-      <HintPath>..\..\TideFusion\Core\managed\Il2CppNewtonsoft.Json.dll</HintPath>
+    <Reference Include="Il2CppSLZ.Marrow, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Il2CppSLZ.Marrow.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppUltEvents, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Il2CppUltEvents.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader">
       <HintPath>..\..\TideFusion\Core\managed\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\TideFusion\Core\managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net6\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SLZ.Algorithms">
       <HintPath>..\..\TideFusion\Core\managed\SLZ.Algorithms.dll</HintPath>
     </Reference>
-    <Reference Include="SLZ.Marrow">
-      <HintPath>..\..\TideFusion\Core\managed\SLZ.Marrow.dll</HintPath>
-    </Reference>
-    <Reference Include="SLZ.Marrow.SDK">
-      <HintPath>..\..\TideFusion\Core\managed\SLZ.Marrow.SDK.dll</HintPath>
-    </Reference>
     <Reference Include="SLZ.Serialize">
       <HintPath>..\..\TideFusion\Core\managed\SLZ.Serialize.dll</HintPath>
-    </Reference>
-    <Reference Include="UltEvents">
-      <HintPath>..\..\TideFusion\Core\managed\UltEvents.dll</HintPath>
     </Reference>
     <Reference Include="UnhollowerBaseLib">
       <HintPath>..\..\TideFusion\Core\managed\UnhollowerBaseLib.dll</HintPath>
@@ -133,12 +131,7 @@
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\Android\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Windows\elevator.labworks" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

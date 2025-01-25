@@ -1,34 +1,33 @@
-﻿using BoneLib.Nullables;
-using BoneLib;
-using Labworks.Behaviors;
-using Labworks.Data;
-using Labworks.Utilities;
+﻿using BoneLib;
 using MelonLoader;
-using SLZ.Interaction;
-using SLZ.Marrow.Data;
-using SLZ.Marrow.Pool;
-using SLZ.Marrow.Warehouse;
-using SLZ.Props.Weapons;
+using Il2CppSLZ.Interaction;
+using Il2CppSLZ.Marrow.Data;
+using Il2CppSLZ.Marrow.Pool;
+using Il2CppSLZ.Marrow.Warehouse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Il2CppSLZ.Marrow;
+using CustomCampaignTools;
 
 namespace Labworks
 {
-    internal class SavepointFunctions
+    public static class SavepointFunctions
     {
         public static bool WasLastLoadByContinue = false;
 
         public static void SavePlayer(string levelBarcode, Vector3 position, Vector3 boxCollectorPosition, List<string> boxBarcodes = null)
         {
-            var sideLf = BoneLib.Player.rigManager.inventory.bodySlots[0];
-            var backLf = BoneLib.Player.rigManager.inventory.bodySlots[2];
-            var sideRt = BoneLib.Player.rigManager.inventory.bodySlots[5];
-            var backRt = BoneLib.Player.rigManager.inventory.bodySlots[3];
-            var backCt = BoneLib.Player.rigManager.inventory.bodySlots[4];
+            Campaign campaign = Campaign.GetFromLevel(levelBarcode);
+
+            var sideLf = Player.RigManager.inventory.bodySlots[0];
+            var backLf = Player.RigManager.inventory.bodySlots[2];
+            var sideRt = Player.RigManager.inventory.bodySlots[5];
+            var backRt = Player.RigManager.inventory.bodySlots[3];
+            var backCt = Player.RigManager.inventory.bodySlots[4];
 
             string sideLeftBarcode = GetAmmoBarcodeFromSlot(sideLf);
             string backLeftBarcode = GetAmmoBarcodeFromSlot(backLf);
@@ -36,15 +35,15 @@ namespace Labworks
             string backRightBarcode = GetAmmoBarcodeFromSlot(backRt);
             string backCenterBarcode = GetAmmoBarcodeFromSlot(backCt);
 
-            LabworksSaving.LoadedSavePoint = new LabworksSaving.SavePoint(levelBarcode, position, backCenterBarcode, sideLeftBarcode, sideRightBarcode, backLeftBarcode, backRightBarcode, boxBarcodes, boxCollectorPosition);
+            campaign.saveData.LoadedSavePoint = new CampaignSaveData.SavePoint(levelBarcode, position, backCenterBarcode, sideLeftBarcode, sideRightBarcode, backLeftBarcode, backRightBarcode, boxBarcodes, boxCollectorPosition);
 
-            LabworksSaving.SaveToDisk();
+            campaign.saveData.SaveToDisk();
         }
 
         private static string GetAmmoBarcodeFromSlot(SlotContainer slot)
         {
             if (slot.inventorySlotReceiver._weaponHost != null)
-                return slot.inventorySlotReceiver._slottedWeapon.interactableHost.GetComponentInParent<AssetPoolee>().spawnableCrate.Barcode.ID;
+                return slot.inventorySlotReceiver._slottedWeapon.interactableHost.GetComponentInParent<Poolee>().SpawnableCrate.Barcode.ID;
 
             return string.Empty;
         }
@@ -54,14 +53,17 @@ namespace Labworks
         {
             WasLastLoadByContinue = false;
 
-            if (!SaveParsing.IsSavePointValid(LabworksSaving.LoadedSavePoint, out bool hasSpawnPoint))
+            Campaign campaign = Campaign.GetFromLevel();
+
+            CampaignSaveData.SavePoint savePoint = campaign.saveData.LoadedSavePoint;
+
+
+            if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
 
             if (hasSpawnPoint)
             {
-                LabworksSaving.SavePoint savePoint = LabworksSaving.LoadedSavePoint;
-
-                BoneLib.Player.rigManager.Teleport(new Vector3(savePoint.PositionX, savePoint.PositionY, savePoint.PositionZ));
+                Player.RigManager.Teleport(savePoint.GetPosition());
 
                 foreach(string barcode in savePoint.BoxContainedBarcodes)
                 {
@@ -69,44 +71,36 @@ namespace Labworks
                 }
             }
 
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.LeftSidearmBarcode, 0);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.LeftShoulderSlotBarcode, 2);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightSidearmBarcode, 5);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.RightShoulderSlotBarcode, 3);
-            HolsterItemIfNotEmpty(LabworksSaving.LoadedSavePoint.BackSlotBarcode, 4);
+            var bodySlots = Player.RigManager.inventory.bodySlots;
+
+            bodySlots[0].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.LeftSidearmBarcode);
+            bodySlots[2].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.LeftShoulderSlotBarcode);
+            bodySlots[5].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.RightSidearmBarcode);
+            bodySlots[3].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.RightShoulderSlotBarcode);
+            bodySlots[4].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.BackSlotBarcode);
         }
 
-        public static void HolsterItemIfNotEmpty(string barcode, int arraySlot)
+        public static void HolsterItemIfNotEmpty(this InventorySlotReceiver slot, string barcode, Vector3 spawnPosition = default)
         {
             if (barcode == string.Empty) return;
 
-            var slot = BoneLib.Player.rigManager.inventory.bodySlots[arraySlot].inventorySlotReceiver;
-            var head = Player.playerHead.transform;
-
-            var reference = new SpawnableCrateReference(barcode);
+            spawnPosition = slot.transform.position;
 
             var spawnable = new Spawnable()
             {
-                crateRef = reference
+                crateRef = new SpawnableCrateReference(barcode)
             };
 
             AssetSpawner.Register(spawnable);
-
-            AssetSpawner.Spawn(spawnable, head.position + head.forward, default, new BoxedNullable<Vector3>(null), false, new BoxedNullable<int>(null), (Action<GameObject>)Action);
+            AssetSpawner.Spawn(spawnable, spawnPosition, spawnCallback: (Action<GameObject>)Action);
             return;
 
             void Action(GameObject go)
             {
                 slot.DropWeapon();
                 MelonLogger.Msg("Loaded object in holster with barcode ");
-                slot.InsertInSlot(go.GetComponent<InteractableHost>());
+                slot.InsertInSlot(go.GetComponentInChildren<InteractableHost>());
             }
-        }
-
-        public static void ClearSavePoint()
-        {
-            LabworksSaving.LoadedSavePoint = new LabworksSaving.SavePoint(string.Empty, Vector3.zero, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, null, Vector3.zero);
-            LabworksSaving.SaveToDisk();
         }
 
     }

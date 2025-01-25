@@ -1,11 +1,12 @@
 using UnityEngine;
 using MelonLoader;
-using UltEvents;
+using Il2CppUltEvents;
+using System;
 
 namespace CustomCampaignTools.SDK
 {
     [RegisterTypeInIl2Cpp]
-    [RequireComponent(typeof(UltEventHolder))]
+    //[RequireComponent(typeof(UltEventHolder))]
     public class InvokeInCampaign : MonoBehaviour
     {
         public InvokeInCampaign(IntPtr ptr) : base(ptr) { }

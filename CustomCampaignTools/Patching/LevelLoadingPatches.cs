@@ -1,5 +1,5 @@
-using SLZ.Marrow.SceneStreaming;
-using SLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Warehouse;
 using HarmonyLib;
 using MelonLoader;
 using BoneLib;
@@ -27,7 +27,7 @@ namespace CustomCampaignTools.Patching
         private static void PreLoadSave()
         {
             string previousTitle = SceneStreamer.Session.Level.Pallet.Title;
-            string barcode = SceneStreamer.Session.Level.Barcode;
+            string barcode = SceneStreamer.Session.Level.Barcode.ID;
 
             if (LevelParsing.IsCampaignLevel(previousTitle, barcode, out Campaign campaign))
             {

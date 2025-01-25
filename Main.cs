@@ -1,13 +1,13 @@
 ﻿using MelonLoader;
 using BoneLib;
-using SLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.Warehouse;
 using System;
 using UnityEngine;
-using SLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.SceneStreaming;
 using System.Collections.Generic;
 using Labworks.Utilities;
 using Labworks.Bonemenu;
-using Labworks.Data;
+using CustomCampaignTools;
 
 namespace Labworks
 {
@@ -20,7 +20,7 @@ namespace Labworks
 
             BoneLib.Hooking.OnLevelLoaded += LevelInitialized;
 
-            RegisterCampaign("LabWorks", new string[] {
+            Campaign.RegisterCampaign("LabWorks", new string[] {
             "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
             "volx4.LabWorksBoneworksPort.Level.Boneworks02Museum",
             "volx4.LabWorksBoneworksPort.Level.Boneworks03Streets",
@@ -33,10 +33,7 @@ namespace Labworks
             "volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon",
             "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena",
             "volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom" });
-            // Load Save Data
-            LabworksSaving.LoadFromDisk();
 
-            // Load Content
         }
 
         public override void OnInitializeMelon()

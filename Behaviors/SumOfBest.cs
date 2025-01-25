@@ -1,4 +1,6 @@
-﻿using MelonLoader;
+﻿using CustomCampaignTools;
+using Labworks.Utilities;
+using MelonLoader;
 using System;
 using System.Collections;
 using TMPro;
@@ -12,14 +14,17 @@ namespace Labworks.Behaviors
         public SumOfBest(IntPtr ptr) : base(ptr) { }
 
         private string levelBarcode;
-        private int levelIndex;
 
         // Use this for initialization
         void Start()
         {
             levelBarcode = gameObject.name;
 
-            transform.parent.GetComponent<TextMeshProUGUI>().text = AmmoFunctions.GetAmmoTotalByLevel(levelBarcode).ToString();
+            Campaign campaign = Campaign.GetFromLevel(levelBarcode);
+
+            CampaignSaveData.AmmoSave ammoSave = campaign.saveData.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
+
+            transform.parent.GetComponent<TextMeshProUGUI>().text = ammoSave.GetCombinedTotal().ToString();
         }
     }
 }
