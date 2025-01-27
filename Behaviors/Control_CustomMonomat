@@ -1,19 +1,27 @@
+using System;
 using SLZ.Marrow.Data;
+using SLZ.Marrow;
 using TMPro;
 using UnityEngine;
 
 namespace LabWorks.Bonelab
 {
-	public class Control_MonoMat : Powerable
+	// Todo: Testing, Audio Playing
+	[RegisterTypeInIl2Cpp]
+	public class Control_MonoMat : MonoBehaviour
 	{
-		[SerializeField]
-		private Rigidbody[] _loots;
+		public Control_MonoMat(IntPtr ptr) : base(ptr) {}
 
 		[SerializeField]
-		private Control_PowerLever _doorLever;
+		private CrateSpawner[] _loots;
+
+		private List<Rigidbody> _lootBodies;
 
 		[SerializeField]
-		private Powerable _doorMotor;
+		private HingeController _doorLeverCircuit;
+
+		[SerializeField]
+		private ValueCircuit _doorMotorCircuit;
 
 		[SerializeField]
 		private int _multiplier;
@@ -69,6 +77,21 @@ namespace LabWorks.Bonelab
 		{
             reciever.OnInsert += InsertMagazine;
             _bulletBalanceTextmesh = (_itemPrice * _multiplier);
+			_doorMotorCircuit.Value = 1f;
+
+			foreach(CrateSpawner loot in _loots)
+			{
+				var call = loot.onSpawnEvent.AddPersistentListener(OnLootSpawned);
+			}
+		}
+
+		public void OnLootSpawned(CrateSpawner spawner, GameObject entity)
+		{
+			foreach(Rigidbody rb in entity.GetComponentsInChildren<Rigidbody>())
+			{
+				rb.isKinematic = true;
+				_lootBodies.Add(rb);
+			}
 		}
 
 		public void GiveChange()
@@ -89,24 +112,87 @@ namespace LabWorks.Bonelab
             _lightBullets = 0;
             _mediumBullets = 0;
             _heavyBullets = 0;
+
+			_refundTextmesh.text = "0";
 		}
 
-		private void CleanupLight()
+		public void PurchaseItem()
 		{
-            
+			float ammoToRemove = _itemPrice * _multiplier;
+			
+			if(_lightBullets + _mediumBullets + _heavyBullets < ammoToRemove)
+			{
+				_doorMotorCircuit.Value = 1;
+				return;
+			}
+
+			ammoToRemove = CleanupLight(ammoToRemove);
+			ammoToRemove = CleanupMedium(ammoToRemove);
+			CleanupHeavy(ammoToRemove);
+
+			foreach(Rigidbody loot in _lootBodies)
+			{
+				loot.isKinematic = false;
+			}
+
+			_refundTextmesh.text = (_lightBullets + _mediumBullets + _heavyBullets).ToString();
+
 		}
 
-		private void CleanupMedium()
+		private float CleanupLight(float ammoToRemove)
 		{
+			if(ammoToRemove > _lightBullets)
+			{
+				ammoToRemove -= _lightBullets;
+				_lightBullets = 0;
+			}
+			else
+			{
+				_lightBullets -= ammoToRemove;
+				ammoToRemove = 0;
+			}
+			return ammoToRemove;
 		}
 
-		private void CleanupHeavy()
+		private float CleanupMedium(float ammoToRemove)
 		{
+			if(ammoToRemove > _lightBullets)
+			{
+				ammoToRemove -= _mediumBullets;
+				_mediumBullets = 0;
+			}
+			else
+			{
+				_mediumBullets -= ammoToRemove;
+				ammoToRemove = 0;
+			}
+			return ammoToRemove;
+		}
+
+		private float CleanupHeavy(float ammoToRemove)
+		{
+			if(ammoToRemove > _heavyBullets)
+			{
+				ammoToRemove -= _heavyBullets;
+				_heavyBullets = 0;
+			}
+			else
+			{
+				_heavyBullets -= ammoToRemove;
+				ammoToRemove = 0;
+			}
+			return ammoToRemove;
 		}
 
 		public void InsertMagazine(Magazine magazine)
 		{
-            AddBullets(magazine.magazineState.AmmoCount, 0)
+            AddBullets(magazine.magazineState.AmmoCount, 0);
+
+			if(_lightBullets + _mediumBullets + _heavyBullets >= _itemPrice * _multiplier && !_unlocked && !_opened)
+			{
+				_unlocked = true;
+				_doorMotorCircuit.Value = 0f;
+			}
 		}
 
 		public void AddBullets(int addedBullets, int type)
@@ -124,14 +210,14 @@ namespace LabWorks.Bonelab
                 _heavyBullets += addedBullets;
             }
 
-            _bulletBalanceTextmesh.text = Mathf.Max(_itemPrice * _multiplier - (_lightBullets + _mediumBullets + _heavyBullets), 0f);
-            _refundTextmesh.text = (_lightBullets + _mediumBullets + _heavyBullets);
+            _bulletBalanceTextmesh.text = (Mathf.Max(_itemPrice * _multiplier - (_lightBullets + _mediumBullets + _heavyBullets), 0f)).ToString();
+            _refundTextmesh.text = (_lightBullets + _mediumBullets + _heavyBullets).ToString();
 
 		}
 
 		public Rigidbody[] GetLoots()
 		{
-			return null;
+			return _lootBodies.ToArray();
 		}
 
 		public void SetPrice(int price, int mult)
