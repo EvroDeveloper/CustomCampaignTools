@@ -18,9 +18,11 @@ namespace Labworks
             // Create Bonemenu
             BoneMenuCreator.CreateBoneMenu();
 
+            Campaign.OnInitialize();
+
             BoneLib.Hooking.OnLevelLoaded += LevelInitialized;
 
-            Campaign.RegisterCampaign("LabWorks", new string[] {
+            Campaign.RegisterCampaign("LabWorks", "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu", new string[] {
             "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
             "volx4.LabWorksBoneworksPort.Level.Boneworks02Museum",
             "volx4.LabWorksBoneworksPort.Level.Boneworks03Streets",

@@ -2,6 +2,7 @@ using UnityEngine;
 using MelonLoader;
 using Il2CppUltEvents;
 using System;
+using CustomCampaignTools;
 
 namespace CustomCampaignTools.SDK
 {
@@ -13,7 +14,7 @@ namespace CustomCampaignTools.SDK
 
         void Awake()
         {
-            if(TryGetComponent(out UltEventHolder ult))
+            if(TryGetComponent(out UltEventHolder ult) && Campaign.SessionActive)
             {
                 ult.Invoke();
             }

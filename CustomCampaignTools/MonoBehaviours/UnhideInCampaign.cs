@@ -15,7 +15,7 @@ namespace CustomCampaignTools.SDK
 
         void OnDisable()
         {
-            if(!hasUnhidden)
+            if(!hasUnhidden && Campaign.SessionActive)
             {
                 gameObject.SetActive(true);
                 hasUnhidden = true;

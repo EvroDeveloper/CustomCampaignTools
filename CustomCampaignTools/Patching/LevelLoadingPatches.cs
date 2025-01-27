@@ -29,12 +29,12 @@ namespace CustomCampaignTools.Patching
             string previousTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = SceneStreamer.Session.Level.Barcode.ID;
 
-            if (LevelParsing.IsCampaignLevel(previousTitle, barcode, out Campaign campaign))
+            if (Campaign.SessionActive)
             {
 #if DEBUG
                 MelonLogger.Msg("Current level is a Campaign! Saving ammo to Save Data...");
 #endif
-                campaign.saveData.SaveAmmoForLevel(barcode);
+                Campaign.Session.saveData.SaveAmmoForLevel(barcode);
             }
         }
     }

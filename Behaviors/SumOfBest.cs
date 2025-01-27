@@ -22,7 +22,7 @@ namespace Labworks.Behaviors
 
             Campaign campaign = Campaign.GetFromLevel(levelBarcode);
 
-            CampaignSaveData.AmmoSave ammoSave = campaign.saveData.LoadedAmmoSaves.Find(x => x.LevelBarcode == levelBarcode);
+            CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(levelBarcode);
 
             transform.parent.GetComponent<TextMeshProUGUI>().text = ammoSave.GetCombinedTotal().ToString();
         }

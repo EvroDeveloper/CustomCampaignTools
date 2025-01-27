@@ -15,7 +15,7 @@ namespace CustomCampaignTools.SDK
 
         void Awake()
         {
-            _campaignSaveData = Campaign.GetFromLevel().saveData;
+            _campaignSaveData = Campaign.Session.saveData;
         }
 
         public void SetValue(string key, float value)

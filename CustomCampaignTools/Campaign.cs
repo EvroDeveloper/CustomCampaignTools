@@ -3,6 +3,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoneLib;
 
 namespace CustomCampaignTools
 {
@@ -14,14 +15,23 @@ namespace CustomCampaignTools
         public string[] mainLevels;
         public string[] extraLevels;
 
+        public string[] AllLevels 
+        {
+            get => mainLevels.Concat(extraLevels).Insert(0, MenuLevel).ToArray();
+        }
+
+        public static Campaign Session;
+        public static bool SessionActive { get => Session != null; }
+
         public CampaignSaveData saveData;
 
         public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
-        public static Campaign RegisterCampaign(string Name, string[] mainLevels)
+        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels)
         {
             Campaign campaign = new Campaign();
             campaign.Name = Name;
+            campaign.MenuLevel = initLevel;
             campaign.mainLevels = mainLevels;
             campaign.saveData = new CampaignSaveData(campaign);
             LoadedCampaigns.Add(campaign);
@@ -35,7 +45,7 @@ namespace CustomCampaignTools
 
         public string GetLevelBarcodeByIndex(int index)
         {
-            return mainLevels[index];
+            return AllLevels[index];
         }
 
         public static Campaign GetFromName(string name)
@@ -45,7 +55,7 @@ namespace CustomCampaignTools
 
         public static Campaign GetFromLevel(string barcode)
         {
-            return LoadedCampaigns.First(x => x.mainLevels.Contains(barcode));
+            return LoadedCampaigns.First(x => x.AllLevels.Contains(barcode));
         }
 
         public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);
@@ -53,5 +63,21 @@ namespace CustomCampaignTools
         public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode.ID);
 
         public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
+
+        public static void OnInitialize()
+        {
+            BoneLib.Hooking.OnLevelLoaded += OnLevelLoaded();
+            LoadCampaignsFromMods();
+        }
+
+        public static void LoadCampaignsFromMods()
+        {
+
+        }
+
+        public static void OnLevelLoaded(LevelInfo info)
+        {
+            Session = GetFromLevel(info.barcode);
+        }
     }
 }
