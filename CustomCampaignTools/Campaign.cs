@@ -10,7 +10,9 @@ namespace CustomCampaignTools
     {
         public string Name;
         public string PalletBarcode;
+        public string MenuLevel;
         public string[] mainLevels;
+        public string[] extraLevels;
 
         public CampaignSaveData saveData;
 
