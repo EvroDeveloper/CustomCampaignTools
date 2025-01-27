@@ -1,4 +1,4 @@
-﻿namespace Labworks
+﻿namespace CustomCampaignTools
 {
     internal class BuildInfo
     {

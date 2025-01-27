@@ -4,15 +4,15 @@ using System.Collections;
 using UnityEngine;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
-using Labworks.Bonemenu;
-using Labworks.Utilities;
+using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Utilities;
 using MelonLoader;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Zones;
 using Il2CppUltEvents;
 using CustomCampaignTools;
 
-namespace Labworks.Behaviors
+namespace CustomCampaignTools.Behaviors
 {
     [RegisterTypeInIl2Cpp]
     public class LabWorksContinueButton : MonoBehaviour

@@ -3,7 +3,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using HarmonyLib;
 using MelonLoader;
 using BoneLib;
-using Labworks.Utilities;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools.Patching
 {

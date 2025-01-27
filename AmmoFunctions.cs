@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using Il2CppSLZ.Utilities;
 using Il2CppSLZ.Marrow;
 using UnityEngine;
-using Labworks.Utilities;
+using CustomCampaignTools.Utilities;
 using CustomCampaignTools;
 using Il2CppSLZ.Marrow.SceneStreaming;
 
-namespace Labworks
+namespace CustomCampaignTools
 {
     public static class AmmoFunctions
     {

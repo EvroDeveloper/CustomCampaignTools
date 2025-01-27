@@ -1,15 +1,17 @@
+using BoneLib;
+
 namespace CustomCampaignTools
 {
     public class MainMenuMangler
     {
         public static void OnInitialize()
         {
-            BoneLib.Hooking.OnLevelLoaded += OnLevelLoaded;
+            Hooking.OnLevelLoaded += OnLevelLoaded;
         }
 
         public static void OnLevelLoaded(LevelInfo info)
         {
-            if(info.barcode == BoneMenu.CommonBarcodes.Maps.VoidG114)
+            if(info.barcode == CommonBarcodes.Maps.VoidG114)
             {
                 MangleMainMenu();
             }

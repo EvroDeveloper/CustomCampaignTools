@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Labworks.Bonemenu
+namespace CustomCampaignTools.Bonemenu
 {
     internal class InventoryMenu
     {

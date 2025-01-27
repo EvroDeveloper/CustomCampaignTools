@@ -8,15 +8,13 @@ using BoneLib;
 using BoneLib.BoneMenu;
 using UnityEngine;
 
-namespace Labworks.Bonemenu
+namespace CustomCampaignTools.Bonemenu
 {
     public static class BoneMenuCreator
     {
         public static void CreateBoneMenu()
         {
             Page labworksCategory = Page.Root.CreatePage("Campaigns", Color.yellow);
-
-            //BWOptionsMenu.CreateBoneMenu(labworksCategory);
         }
     }
 }

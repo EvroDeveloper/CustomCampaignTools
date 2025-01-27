@@ -13,7 +13,7 @@ using UnityEngine;
 using Il2CppSLZ.Marrow;
 using CustomCampaignTools;
 
-namespace Labworks
+namespace CustomCampaignTools
 {
     public static class SavepointFunctions
     {

@@ -1,12 +1,12 @@
 ﻿using CustomCampaignTools;
-using Labworks.Utilities;
+using CustomCampaignTools.Utilities;
 using MelonLoader;
 using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
-namespace Labworks.Behaviors
+namespace CustomCampaignTools.Behaviors
 {
     [RegisterTypeInIl2Cpp]
     public class SumOfBest : MonoBehaviour
@@ -21,7 +21,7 @@ namespace Labworks.Behaviors
             levelBarcode = gameObject.name;
 
             Campaign campaign = Campaign.GetFromLevel(levelBarcode);
-
+			
             CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(levelBarcode);
 
             transform.parent.GetComponent<TextMeshProUGUI>().text = ammoSave.GetCombinedTotal().ToString();

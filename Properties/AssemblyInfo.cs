@@ -1,16 +1,16 @@
 ﻿using System.Reflection;
-using Labworks;
+using CustomCampaignTools;
 using MelonLoader;
 
-[assembly: AssemblyTitle(Labworks.BuildInfo.Description)]
-[assembly: AssemblyDescription(Labworks.BuildInfo.Description)]
-[assembly: AssemblyCompany(Labworks.BuildInfo.Company)]
-[assembly: AssemblyProduct(Labworks.BuildInfo.Name)]
-[assembly: AssemblyCopyright("Developed by " + Labworks.BuildInfo.Author)]
-[assembly: AssemblyTrademark(Labworks.BuildInfo.Company)]
-[assembly: AssemblyVersion(Labworks.BuildInfo.Version)]
-[assembly: AssemblyFileVersion(Labworks.BuildInfo.Version)]
-[assembly: MelonInfo(typeof(Labworks.Main), Labworks.BuildInfo.Name, Labworks.BuildInfo.Version, Labworks.BuildInfo.Author, Labworks.BuildInfo.DownloadLink)]
+[assembly: AssemblyTitle(CustomCampaignTools.BuildInfo.Description)]
+[assembly: AssemblyDescription(CustomCampaignTools.BuildInfo.Description)]
+[assembly: AssemblyCompany(CustomCampaignTools.BuildInfo.Company)]
+[assembly: AssemblyProduct(CustomCampaignTools.BuildInfo.Name)]
+[assembly: AssemblyCopyright("Developed by " + CustomCampaignTools.BuildInfo.Author)]
+[assembly: AssemblyTrademark(CustomCampaignTools.BuildInfo.Company)]
+[assembly: AssemblyVersion(CustomCampaignTools.BuildInfo.Version)]
+[assembly: AssemblyFileVersion(CustomCampaignTools.BuildInfo.Version)]
+[assembly: MelonInfo(typeof(CustomCampaignTools.Main), CustomCampaignTools.BuildInfo.Name, CustomCampaignTools.BuildInfo.Version, CustomCampaignTools.BuildInfo.Author, CustomCampaignTools.BuildInfo.DownloadLink)]
 [assembly: MelonColor(System.ConsoleColor.White)]
 
 // Create and Setup a MelonGame Attribute to mark a Melon as Universal or Compatible with specific Games.

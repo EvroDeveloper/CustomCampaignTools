@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using BoneLib;
+using System.IO;
+using UnityEngine;
 
 namespace CustomCampaignTools
 {
@@ -19,7 +21,13 @@ namespace CustomCampaignTools
 
         public string[] AllLevels 
         {
-            get => mainLevels.Concat(extraLevels).Insert(0, MenuLevel).ToArray();
+            get {
+                List<string> list = new List<string>();
+                list.AddRange(mainLevels);
+                list.AddRange(extraLevels);
+                list.Add(MenuLevel);
+                return list.ToArray();
+            }
         }
 
         public static Campaign Session;
@@ -59,7 +67,7 @@ namespace CustomCampaignTools
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
 
-            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels, campaignValueHolder.ExtraLevels, campaignValueHolder.LoadScene)
+            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels.ToArray(), campaignValueHolder.ExtraLevels.ToArray(), campaignValueHolder.LoadScene);
         }
 
         public int GetLevelIndex(string levelBarcode)
@@ -90,7 +98,7 @@ namespace CustomCampaignTools
 
         public static void OnInitialize()
         {
-            BoneLib.Hooking.OnLevelLoaded += OnLevelLoaded();
+            BoneLib.Hooking.OnLevelLoaded += OnLevelLoaded;
             LoadCampaignsFromMods();
         }
 
@@ -101,7 +109,7 @@ namespace CustomCampaignTools
 
             foreach(string mod in modPaths)
             {
-                string[] jsonPaths = Directory.GetFiles(modPaths, "campaign.json");
+                string[] jsonPaths = Directory.GetFiles(mod, "campaign.json");
                 if(jsonPaths.Length == 0) continue;
                 string jsonContent = File.ReadAllText(jsonPaths[0]);
                 RegisterCampaignFromJson(jsonContent);

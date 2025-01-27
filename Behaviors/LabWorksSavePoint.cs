@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.SceneStreaming;
 
-namespace Labworks.Behaviors
+namespace CustomCampaignTools.Behaviors
 {
     [RegisterTypeInIl2Cpp]
     public class LabWorksSavePoint : MonoBehaviour

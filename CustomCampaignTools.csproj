@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0DEB755F-D57A-4285-9D70-C592E340CDB4}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Labworks</RootNamespace>
-    <AssemblyName>Labworks_Addon</AssemblyName>
+    <RootNamespace>CustomCampaignTools</RootNamespace>
+    <AssemblyName>CustomCampaignTools</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -38,19 +38,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AmmoFunctions.cs" />
-    <Compile Include="Bonemenu\BWOptionsMenu.cs" />
     <Compile Include="Bonemenu\InventoryMenu.cs" />
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
     <Compile Include="CustomCampaignTools\Campaign.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
+    <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\InvokeInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\UnhideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\VariableManager.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
-    <Compile Include="Patching\PullCordDevicePatches.cs" />
-    <Compile Include="Patching\ZoneSpawnerPatches.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
-    <Compile Include="Data\ContentLoader.cs" />
     <Compile Include="Behaviors\LabWorksContinueButton.cs" />
     <Compile Include="Behaviors\LabWorksSavePoint.cs" />
     <Compile Include="Main.cs" />
@@ -131,10 +128,11 @@
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Patching\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>COPY "$(TargetPath)" "C:\SteamLibrary\steamapps\common\BONELAB\Mods"</PostBuildEvent>
   </PropertyGroup>
 </Project>

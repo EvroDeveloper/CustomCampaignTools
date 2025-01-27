@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Labworks.Utilities
+namespace CustomCampaignTools.Utilities
 {
     public class LevelParsing
     {
