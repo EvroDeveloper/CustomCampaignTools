@@ -15,7 +15,7 @@ namespace CustomCampaignTools
         public string MenuLevel;
         public string[] mainLevels;
         public string[] extraLevels;
-        public string defaultLoadScreen;
+        public string LoadScene;
 
         public string[] AllLevels 
         {
@@ -33,12 +33,19 @@ namespace CustomCampaignTools
         {
             Campaign campaign = new Campaign();
             campaign.Name = Name;
-            campaign.MenuLevel = initLevel;
+
             campaign.mainLevels = mainLevels;
             campaign.extraLevels = extraLevels;
-            campaign.defaultLoadScreen = loadScene;
             campaign.saveData = new CampaignSaveData(campaign);
+
+            if(initLevel == string.Empty) campaign.MenuLevel = mainLevels[0];
+            else campaign.MenuLevel = initLevel;
+
+            if(loadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
+            else campaign.LoadScene = loadScene;
+
             LoadedCampaigns.Add(campaign);
+
             return campaign;
         }
 

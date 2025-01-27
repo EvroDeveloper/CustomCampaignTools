@@ -18,13 +18,8 @@ namespace CustomCampaignTools
         public static void MangleMainMenu()
         {
             // Clone a menu button and edit it's text and icon
-            // Clone the level select panel but strip it of it's functionality. 
-            // Create a button for every campaign, with it's specified name and linked campaign
-        }
-
-        public static void LoadCampaign(Campaign campaign)
-        {
-            SceneStreamer.Load(new Barcode(campaign.MenuLevel), new Barcode(BoneLib.CommonBarcodes.Maps.LoadDefault));
+            // Clone the level select panel but strip it of it's functionality in place of a CampaignPanelView. 
+            // CampaignPanelView.SetupButtons()
         }
     }
 }

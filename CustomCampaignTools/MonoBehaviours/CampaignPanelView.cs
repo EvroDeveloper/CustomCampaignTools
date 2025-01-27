@@ -17,6 +17,17 @@ namespace CustomCampaignTools
 
         public TextMeshPro pageText;
 
+        public void SetupButtons()
+        {
+            for(int i = 0; i < Buttons.Length; i++)
+            {
+                Button button = Buttons[i].GetComponent<Button>();
+
+                // TODO: Clear button's current stuff
+                button.onClick.AddListener(new Action(() => { Select(i); }));
+            }
+        }
+
         public void NextPage()
         {
             _currentPage = Mathf.Min(_lastPage, _currentPage + 1);
@@ -27,6 +38,14 @@ namespace CustomCampaignTools
         {
             _currentPage = Mathf.Max(0, _currentPage - 1);
             UpdateVisualization();
+        }
+
+        public void Select(int index)
+        {
+            int campaignIndex = (Buttons.Length * _currentPage) + index;
+            Campaign c = Campaign.LoadedCampaigns[campaignIndex];
+
+            SceneStreamer.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
         }
 
         private void UpdateVisualization()
@@ -43,7 +62,7 @@ namespace CustomCampaignTools
             {
                 GameObject currentButton = Buttons[i];
                 int campaignIndex = (Buttons.Length * _currentPage) + i;
-                
+
                 if(campaignIndex < Campaign.LoadedCampaigns.Length)
                 {
                     currentButton.GetComponentInChildren<TextMeshPro>().text = Campaign.LoadedCampaigns[campaignIndex].Name;
