@@ -88,7 +88,16 @@ namespace CustomCampaignTools
 
         public static void LoadCampaignsFromMods()
         {
+            string modsFolder = Path.Combine(Application.persistentDataPath, "Mods");
+            string[] modPaths = Directory.GetDirectories(modsFolder);
 
+            foreach(string mod in modPaths)
+            {
+                string[] jsonPaths = Directory.GetFiles(modPaths, "campaign.json");
+                if(jsonPaths.Length == 0) continue;
+                string jsonContent = File.ReadAllText(jsonPaths[0]);
+                RegisterCampaignFromJson(jsonContent);
+            }
         }
 
         public static void OnLevelLoaded(LevelInfo info)
