@@ -19,22 +19,11 @@ namespace Labworks
             BoneMenuCreator.CreateBoneMenu();
 
             Campaign.OnInitialize();
+            MainMenuMangler.OnInitialize();
 
             BoneLib.Hooking.OnLevelLoaded += LevelInitialized;
 
-            Campaign.RegisterCampaign("LabWorks", "volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu", new string[] {
-            "volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks02Museum",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks03Streets",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks04Runoff",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks05Sewers",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks06Warehouse",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks07CentralStation",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks08Tower",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks11Arena",
-            "volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom" });
+            Campaign.RegisterCampaignFromJson(@"{ 'Name': 'LabWorks', 'InitialLevel': 'volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu', 'MainLevels': ['volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom', 'volx4.LabWorksBoneworksPort.Level.Boneworks02Museum', 'volx4.LabWorksBoneworksPort.Level.Boneworks03Streets', 'volx4.LabWorksBoneworksPort.Level.Boneworks04Runoff', 'volx4.LabWorksBoneworksPort.Level.Boneworks05Sewers', 'volx4.LabWorksBoneworksPort.Level.Boneworks06Warehouse', 'volx4.LabWorksBoneworksPort.Level.Boneworks07CentralStation', 'volx4.LabWorksBoneworksPort.Level.Boneworks08Tower', 'volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower' , 'volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon', 'volx4.LabWorksBoneworksPort.Level.Boneworks11Arena', 'volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom'], 'ExtraLevels': [], 'LoadScene': '' }");
 
         }
 

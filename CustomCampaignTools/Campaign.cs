@@ -14,6 +14,7 @@ namespace CustomCampaignTools
         public string MenuLevel;
         public string[] mainLevels;
         public string[] extraLevels;
+        public string defaultLoadScreen;
 
         public string[] AllLevels 
         {
@@ -27,15 +28,30 @@ namespace CustomCampaignTools
 
         public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
-        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels)
+        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels, string[] extraLevels, string loadScene)
         {
             Campaign campaign = new Campaign();
             campaign.Name = Name;
             campaign.MenuLevel = initLevel;
             campaign.mainLevels = mainLevels;
+            campaign.extraLevels = extraLevels;
+            campaign.defaultLoadScreen = loadScene;
             campaign.saveData = new CampaignSaveData(campaign);
             LoadedCampaigns.Add(campaign);
             return campaign;
+        }
+
+        public static Campaign RegisterCampaignFromJson(string json)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            };
+
+            CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
+
+            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels, campaignValueHolder.ExtraLevels, campaignValueHolder.LoadScene)
         }
 
         public int GetLevelIndex(string levelBarcode)
@@ -79,5 +95,14 @@ namespace CustomCampaignTools
         {
             Session = GetFromLevel(info.barcode);
         }
+    }
+
+    internal class CampaignLoadingData
+    {
+        public string Name { get; set; }
+        public string InitialLevel { get; set; }
+        public List<string> MainLevels { get; set; }
+        public List<string> ExtraLevels { get; set; }
+        public string LoadScene { get; set; }
     }
 }
