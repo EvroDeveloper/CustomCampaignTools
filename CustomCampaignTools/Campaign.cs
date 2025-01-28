@@ -19,6 +19,10 @@ namespace CustomCampaignTools
         public string[] extraLevels;
         public string LoadScene;
 
+        public bool RestrictDevTools;
+        public bool RestrictAvatar;
+        public string CampaignAvatar;
+
         public string[] AllLevels 
         {
             get {
@@ -37,7 +41,7 @@ namespace CustomCampaignTools
 
         public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
-        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels, string[] extraLevels, string loadScene)
+        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels, string[] extraLevels, string loadScene, bool restrictDevTools, bool restrictAvatars, string defaultAvatar)
         {
             Campaign campaign = new Campaign();
             campaign.Name = Name;
@@ -51,6 +55,12 @@ namespace CustomCampaignTools
 
             if(loadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
             else campaign.LoadScene = loadScene;
+
+            campaign.RestrictAvatar = restrictAvatars;
+            campaign.RestrictDevTools = restrictDevTools;
+            
+            if(restrictAvatars)
+                campaign.CampaignAvatar = defaultAvatar;
 
             LoadedCampaigns.Add(campaign);
 
@@ -67,7 +77,7 @@ namespace CustomCampaignTools
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
 
-            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels.ToArray(), campaignValueHolder.ExtraLevels.ToArray(), campaignValueHolder.LoadScene);
+            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels.ToArray(), campaignValueHolder.ExtraLevels.ToArray(), campaignValueHolder.LoadScene, campaignValueHolder.RestrictDevTools, campaignValueHolder.RestrictAvatar, campaignValueHolder.CampaignAvatar);
         }
 
         public int GetLevelIndex(string levelBarcode)
@@ -119,6 +129,28 @@ namespace CustomCampaignTools
         public static void OnLevelLoaded(LevelInfo info)
         {
             Session = GetFromLevel(info.barcode);
+
+            if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
+            {
+                var popUpMenu = UIRig.Instance.popUpMenu;
+                popUpMenu.RemoveDevMenu();
+            }
+
+            if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
+            {
+                PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
+                if(bodyLog != null)
+                {
+                    bodyLog.gameObject.SetActive(false);
+                }
+
+                UIRig.Instance.popUpMenu.RemoveAvatarsMenu();
+
+                if(Session.CampaignAvatar != string.Empty)
+                {
+                    Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
+                }
+            }
         }
     }
 
@@ -129,5 +161,9 @@ namespace CustomCampaignTools
         public List<string> MainLevels { get; set; }
         public List<string> ExtraLevels { get; set; }
         public string LoadScene { get; set; }
+
+        public bool RestrictDevTools { get; set; }
+        public bool RestrictAvatar { get; set; }
+        public string CampaignAvatar { get; set; }
     }
 }

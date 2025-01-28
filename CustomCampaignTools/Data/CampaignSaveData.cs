@@ -17,6 +17,8 @@ namespace CustomCampaignTools
         internal SavePoint LoadedSavePoint;
         internal List<AmmoSave> LoadedAmmoSaves = new List<AmmoSave>();
         internal List<FloatData> LoadedFloatDatas = new List<FloatData>();
+        internal bool DevToolsUnlocked = false;
+        internal bool AvatarUnlocked = false;
 
         public string SaveFolder { get => $"{MelonUtils.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
@@ -120,6 +122,7 @@ namespace CustomCampaignTools
         public void ClearSavePoint()
         {
             LoadedSavePoint = new SavePoint();
+            SaveToDisk();
         }
         #endregion
 
@@ -136,6 +139,7 @@ namespace CustomCampaignTools
             {
                 register.Value = value;
             }
+            SaveToDisk();
         }
         public float GetValue(string key)
         {
@@ -147,6 +151,19 @@ namespace CustomCampaignTools
         }
         #endregion
 
+        #region Cheats Unlocking
+        public void UnlockDevTools()
+        {
+            DevToolsUnlocked = true;
+            SaveToDisk();
+        }
+
+        public void UnlockAvatar()
+        {
+            AvatarUnlocked = true;
+            SaveToDisk();
+        }
+        #endregion
 
         #region Saving and Loading
         /// <summary>
@@ -162,6 +179,8 @@ namespace CustomCampaignTools
                 SavePoint = LoadedSavePoint,
                 AmmoSaves = LoadedAmmoSaves,
                 FloatData = LoadedFloatDatas,
+                DevToolsUnlocked = DevToolsUnlocked,
+                AvatarUnlocked = AvatarUnlocked
             };
 
             var settings = new JsonSerializerSettings
@@ -202,6 +221,8 @@ namespace CustomCampaignTools
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
             LoadedFloatDatas = saveData.FloatData;
+            DevToolsUnlocked = saveData.DevToolsUnlocked;
+            AvatarUnlocked = saveData.AvatarUnlocked;
         }
         #endregion
 
@@ -210,6 +231,8 @@ namespace CustomCampaignTools
             public SavePoint SavePoint { get; set; }
             public List<AmmoSave> AmmoSaves { get; set; }
             public List<FloatData> FloatData { get; set; }
+            public bool DevToolsUnlocked { get; set; }
+            public bool AvatarUnlocked { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<string> boxContainedBarcodes, Vector3 boxContainerPosition)
