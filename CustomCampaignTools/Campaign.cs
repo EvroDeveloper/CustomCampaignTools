@@ -58,7 +58,7 @@ namespace CustomCampaignTools
 
             campaign.RestrictAvatar = restrictAvatars;
             campaign.RestrictDevTools = restrictDevTools;
-            
+
             if(restrictAvatars)
                 campaign.CampaignAvatar = defaultAvatar;
 
@@ -92,12 +92,12 @@ namespace CustomCampaignTools
 
         public static Campaign GetFromName(string name)
         {
-            return LoadedCampaigns.First(x => x.Name == name);
+            return LoadedCampaigns.FirstOrDefault(x => x.Name == name);
         }
 
         public static Campaign GetFromLevel(string barcode)
         {
-            return LoadedCampaigns.First(x => x.AllLevels.Contains(barcode));
+            return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Contains(barcode));
         }
 
         public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);
@@ -105,6 +105,12 @@ namespace CustomCampaignTools
         public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode.ID);
 
         public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
+
+        public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign)
+        {
+            campaign = GetFromLevel(levelBarcode);
+            return campaign != null;
+        }
 
         public static void OnInitialize()
         {
@@ -128,7 +134,7 @@ namespace CustomCampaignTools
 
         public static void OnLevelLoaded(LevelInfo info)
         {
-            Session = GetFromLevel(info.barcode);
+            if(!IsCampaignLevel(info.barcode, out Session)) return;
 
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
