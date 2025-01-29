@@ -205,6 +205,11 @@ namespace CustomCampaignTools
             if (!File.Exists(SavePath))
             {
                 ClearAmmoSave();
+                LoadedSavePoint = new SavePoint();
+                LoadedFloatDatas = new List<FloatData>();
+                DevToolsUnlocked = false;
+                AvatarUnlocked = false;
+                SaveToDisk();
                 return;
             }
 

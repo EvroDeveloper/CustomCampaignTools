@@ -7,9 +7,19 @@ using Newtonsoft.Json;
 using BoneLib;
 using System.IO;
 using UnityEngine;
+using MelonLoader;
+using Il2CppSLZ.Bonelab;
 
 namespace CustomCampaignTools
 {
+    public enum CampaignLevelType
+    {
+        None,
+        Menu,
+        MainLevel,
+        ExtraLevel // Extra levels do not save ammo
+    }
+
     public class Campaign
     {
         public string Name;
@@ -35,6 +45,7 @@ namespace CustomCampaignTools
         }
 
         public static Campaign Session;
+        public static string lastLoadedCampaignLevel;
         public static bool SessionActive { get => Session != null; }
 
         public CampaignSaveData saveData;
@@ -80,14 +91,42 @@ namespace CustomCampaignTools
             return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels.ToArray(), campaignValueHolder.ExtraLevels.ToArray(), campaignValueHolder.LoadScene, campaignValueHolder.RestrictDevTools, campaignValueHolder.RestrictAvatar, campaignValueHolder.CampaignAvatar);
         }
 
-        public int GetLevelIndex(string levelBarcode)
+        public int GetLevelIndex(string levelBarcode, CampaignLevelType levelType = CampaignLevelType.MainLevel)
         {
-            return Array.IndexOf(mainLevels, levelBarcode);
+            return Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode);
         }
 
-        public string GetLevelBarcodeByIndex(int index)
+        public string GetLevelBarcodeByIndex(int index, CampaignLevelType levelType = CampaignLevelType.MainLevel)
         {
-            return AllLevels[index];
+            return GetBarcodeArrayOfLevelType(levelType)[index];
+        }
+
+        private string[] GetBarcodeArrayOfLevelType(CampaignLevelType type)
+        {
+            string[] output = new string[0];
+            switch (type)
+            {
+                case CampaignLevelType.Menu:
+                    output = new string[] { MenuLevel };
+                    break;
+                case CampaignLevelType.MainLevel:
+                    output = mainLevels;
+                    break;
+                case CampaignLevelType.ExtraLevel:
+                    output = extraLevels;
+                    break;
+                default:
+                    output = AllLevels;
+                    break;
+            }
+            return output;
+        }
+
+        public CampaignLevelType TypeOfLevel(string barcode)
+        {
+            if (MenuLevel == barcode) return CampaignLevelType.Menu;
+            else if (mainLevels.Contains(barcode)) return CampaignLevelType.MainLevel;
+            else return CampaignLevelType.ExtraLevel;
         }
 
         public static Campaign GetFromName(string name)
@@ -114,7 +153,7 @@ namespace CustomCampaignTools
 
         public static void OnInitialize()
         {
-            BoneLib.Hooking.OnLevelLoaded += OnLevelLoaded;
+            Hooking.OnLevelLoaded += OnLevelLoaded;
             LoadCampaignsFromMods();
         }
 
@@ -138,6 +177,8 @@ namespace CustomCampaignTools
 
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
+                MelonLogger.Msg("Restricting Dev Tools");
+
                 var popUpMenu = UIRig.Instance.popUpMenu;
                 popUpMenu.RemoveDevMenu();
             }
@@ -157,6 +198,8 @@ namespace CustomCampaignTools
                     Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
                 }
             }
+            if(Session != null)
+                lastLoadedCampaignLevel = info.barcode;
         }
     }
 

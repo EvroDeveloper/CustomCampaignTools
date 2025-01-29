@@ -12,7 +12,7 @@ using Il2CppSLZ.Marrow.Zones;
 using Il2CppUltEvents;
 using CustomCampaignTools;
 
-namespace CustomCampaignTools.Behaviors
+namespace Labworks.Behaviors
 {
     [RegisterTypeInIl2Cpp]
     public class LabWorksContinueButton : MonoBehaviour

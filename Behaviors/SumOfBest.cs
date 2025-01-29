@@ -1,12 +1,12 @@
 ﻿using CustomCampaignTools;
 using CustomCampaignTools.Utilities;
+using Il2CppTMPro;
 using MelonLoader;
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
-namespace CustomCampaignTools.Behaviors
+namespace Labworks.Behaviors
 {
     [RegisterTypeInIl2Cpp]
     public class SumOfBest : MonoBehaviour

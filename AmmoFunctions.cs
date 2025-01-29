@@ -15,7 +15,7 @@ namespace CustomCampaignTools
     {
         public static void ClearAmmo(Campaign campaign)
         {
-            if (LevelParsing.IsCampaignLevel(SceneStreamer.Session.Level.Pallet.Title, SceneStreamer.Session.Level.Barcode.ID, out _))
+            if (LevelParsing.IsCampaignLevel(SceneStreamer.Session.Level.Barcode.ID, out _, out _))
                 AmmoInventory.Instance.ClearAmmo();
 
             campaign.saveData.LoadedAmmoSaves.Clear();
@@ -25,7 +25,40 @@ namespace CustomCampaignTools
 
         public static void LoadAmmoFromLevel(string levelBarcode, bool isLoadCheckpoint)
         {
-            if(!LevelParsing.IsCampaignLevel("", levelBarcode, out Campaign campaign)) return;
+            if(!LevelParsing.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
+
+            if(levelType != CampaignLevelType.MainLevel) return;
+
+            int levelIndex = campaign.GetLevelIndex(levelBarcode, CampaignLevelType.MainLevel);
+
+            try
+            {
+                AmmoInventory.Instance.ClearAmmo();
+            }
+            catch (Exception e)
+            {
+            }
+
+            for (int i = 0; i < levelIndex; i++)
+            {
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).LightAmmo);
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).MediumAmmo);
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).HeavyAmmo);
+            }
+        }
+    }
+
+    [HarmonyLib.HarmonyPatch(typeof(AmmoInventory), nameof(AmmoInventory.Awake))]
+    public static class AmmoInventoryAwake
+    {
+        public static void Postfix()
+        {
+            var levelBarcode = SceneStreamer.Session.Level.Barcode.ID;
+
+            if (!LevelParsing.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
+
+            if (levelType != CampaignLevelType.MainLevel) return;
+
             int levelIndex = campaign.GetLevelIndex(levelBarcode);
 
             AmmoInventory.Instance.ClearAmmo();

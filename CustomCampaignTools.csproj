@@ -43,10 +43,11 @@
     <Compile Include="CustomCampaignTools\Campaign.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignPanelView.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignUnlockManager.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\InvokeInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\UnhideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\VariableManager.cs" />
-    <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="Behaviors\LabWorksContinueButton.cs" />
     <Compile Include="Behaviors\LabWorksSavePoint.cs" />
@@ -83,17 +84,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Il2CppUltEvents.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppUniTask, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="MelonLoader">
       <HintPath>..\..\TideFusion\Core\managed\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net6\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SLZ.Algorithms">
-      <HintPath>..\..\TideFusion\Core\managed\SLZ.Algorithms.dll</HintPath>
-    </Reference>
-    <Reference Include="SLZ.Serialize">
-      <HintPath>..\..\TideFusion\Core\managed\SLZ.Serialize.dll</HintPath>
     </Reference>
     <Reference Include="UnhollowerBaseLib">
       <HintPath>..\..\TideFusion\Core\managed\UnhollowerBaseLib.dll</HintPath>
@@ -101,12 +97,9 @@
     <Reference Include="UnhollowerRuntimeLib">
       <HintPath>..\..\TideFusion\Core\managed\UnhollowerRuntimeLib.dll</HintPath>
     </Reference>
-    <Reference Include="UniTask, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TideFusion\Core\managed\UniTask.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\TideFusion\Core\managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.AssetBundleModule.dll</HintPath>
@@ -114,9 +107,8 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TideFusion\Core\managed\UnityEngine.PhysicsModule.dll</HintPath>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.TextRenderingModule.dll</HintPath>
@@ -130,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patching\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CampaignIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,4 +1,12 @@
+using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppTMPro;
+using JetBrains.Annotations;
+using MelonLoader;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
+using static Il2CppSLZ.Bonelab.Feedback_Audio;
 
 namespace CustomCampaignTools
 {
@@ -8,23 +16,27 @@ namespace CustomCampaignTools
         public CampaignPanelView(IntPtr ptr) : base(ptr) {}
 
         private int _currentPage;
-        private int _lastPage => Mathf.Floor(Campaign.LoadedCampaigns.Length / Buttons.Length);
+        private int _lastPage => Mathf.FloorToInt(Campaign.LoadedCampaigns.Count / Buttons.Length);
 
         public GameObject[] Buttons;
 
         public GameObject backButton;
         public GameObject nextButton;
 
-        public TextMeshPro pageText;
+        public TMP_Text pageText;
 
         public void SetupButtons()
         {
+            
             for(int i = 0; i < Buttons.Length; i++)
             {
                 Button button = Buttons[i].GetComponent<Button>();
 
-                // TODO: Clear button's current stuff
-                button.onClick.AddListener(new Action(() => { Select(i); }));
+                button.onClick.m_PersistentCalls.Clear();
+                button.onClick.m_Calls.ClearPersistent();
+                button.onClick.m_Calls.Clear();
+                int selection = i;
+                button.onClick.AddListener(new Action(() => { Select(selection); }));
             }
         }
 
@@ -42,10 +54,16 @@ namespace CustomCampaignTools
 
         public void Select(int index)
         {
+            MelonLogger.Msg(index);
             int campaignIndex = (Buttons.Length * _currentPage) + index;
             Campaign c = Campaign.LoadedCampaigns[campaignIndex];
 
             SceneStreamer.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
+        }
+
+        public void Activate()
+        {
+            UpdateVisualization();
         }
 
         private void UpdateVisualization()
@@ -56,17 +74,17 @@ namespace CustomCampaignTools
             if(_currentPage >= _lastPage) nextButton.SetActive(false);
             else nextButton.SetActive(true);
 
-            pageText = $"{_currentPage+1}/{_lastPage+1}";
+            pageText.text = $"{_currentPage+1}/{_lastPage+1}";
 
             for(int i = 0; i < Buttons.Length; i++)
             {
                 GameObject currentButton = Buttons[i];
                 int campaignIndex = (Buttons.Length * _currentPage) + i;
 
-                if(campaignIndex < Campaign.LoadedCampaigns.Length)
+                if(campaignIndex < Campaign.LoadedCampaigns.Count)
                 {
-                    currentButton.GetComponentInChildren<TextMeshPro>().text = Campaign.LoadedCampaigns[campaignIndex].Name;
                     currentButton.SetActive(true);
+                    currentButton.GetComponentInChildren<TMP_Text>(true).text = Campaign.LoadedCampaigns[campaignIndex].Name;
                 }
                 else
                 {

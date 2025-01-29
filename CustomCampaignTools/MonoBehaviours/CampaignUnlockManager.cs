@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 using MelonLoader;
-using Il2CppSLZ.Marrow;
 using BoneLib;
+using Il2CppSLZ.Bonelab;
 
 namespace CustomCampaignTools.SDK
 {
@@ -17,13 +17,13 @@ namespace CustomCampaignTools.SDK
 
             if(enableInstantly)
             {
-                UIRig.Instance.popUpMenu.AddDevMenu();
+                UIRig.Instance.popUpMenu.AddDevMenu(null);
             }
         }
 
         public void UnlockAvatars(bool enableInstantly)
         {
-            Campaign.Session.saveData.UnlockAvatars();
+            Campaign.Session.saveData.UnlockAvatar();
 
             if(!enableInstantly) return;
 

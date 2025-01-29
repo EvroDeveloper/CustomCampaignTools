@@ -8,11 +8,15 @@ using System.Collections.Generic;
 using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools;
+using System.Reflection;
 
 namespace CustomCampaignTools
 {
     internal class Main : MelonMod
     {
+
+        public static Sprite CampaignSprite { get; private set; }
+
         public override void OnLateInitializeMelon()
         {
             // Create Bonemenu
@@ -21,28 +25,30 @@ namespace CustomCampaignTools
             Campaign.OnInitialize();
             MainMenuMangler.OnInitialize();
 
-            BoneLib.Hooking.OnLevelLoaded += LevelInitialized;
+            Hooking.OnLevelLoaded += LevelInitialized;
+            Hooking.OnLevelUnloaded += LevelUnloaded;
 
-            Campaign.RegisterCampaignFromJson(@"{ 'Name': 'LabWorks', 'InitialLevel': 'volx4.LabWorksBoneworksPort.Level.BoneworksMainMenu', 'MainLevels': ['volx4.LabWorksBoneworksPort.Level.Boneworks01Breakroom', 'volx4.LabWorksBoneworksPort.Level.Boneworks02Museum', 'volx4.LabWorksBoneworksPort.Level.Boneworks03Streets', 'volx4.LabWorksBoneworksPort.Level.Boneworks04Runoff', 'volx4.LabWorksBoneworksPort.Level.Boneworks05Sewers', 'volx4.LabWorksBoneworksPort.Level.Boneworks06Warehouse', 'volx4.LabWorksBoneworksPort.Level.Boneworks07CentralStation', 'volx4.LabWorksBoneworksPort.Level.Boneworks08Tower', 'volx4.LabWorksBoneworksPort.Level.Boneworks09TimeTower' , 'volx4.LabWorksBoneworksPort.Level.Boneworks10Dungeon', 'volx4.LabWorksBoneworksPort.Level.Boneworks11Arena', 'volx4.LabWorksBoneworksPort.Level.Boneworks12ThroneRoom'], 'ExtraLevels': [], 'LoadScene': '' }");
+            string resourceName = "CustomCampaignTools.Resources.CampaignIcon.png";
+            Assembly assembly = MelonAssembly.Assembly;
+
+            Sprite sprite = MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
 
         }
 
         internal static void LevelInitialized(LevelInfo info)
         {
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
-            string barcodeTitle = info.barcode;
+            string barcode = info.barcode;
 
             #region Save Data
-            if (LevelParsing.IsCampaignLevel(palletTitle, barcodeTitle, out Campaign campaign))
+            if (LevelParsing.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
             {
-#if DEBUG
                 MelonLogger.Msg("Level is in Campaign!");
-#endif
+                if (levelType != CampaignLevelType.MainLevel) return;
+                MelonLogger.Msg("Main Level!");
 
-                
-                int levelIndex = campaign.GetLevelIndex(barcodeTitle);
-                string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1);
-                AmmoFunctions.LoadAmmoFromLevel(barcodeTitle, SavepointFunctions.WasLastLoadByContinue);
+                int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
+                string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1, CampaignLevelType.MainLevel);
 
                 if (SavepointFunctions.WasLastLoadByContinue)
                 {
@@ -50,13 +56,22 @@ namespace CustomCampaignTools
                 }
                 else
                 {
-#if DEBUG
-                    MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcodeTitle);
-#endif
-                    SavepointFunctions.SavePlayer(barcodeTitle, Vector3.zero, Vector3.zero);
+                    MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcode);
+                    SavepointFunctions.SavePlayer(barcode, Vector3.zero, Vector3.zero);
                 }
             }
             #endregion
+        }
+
+        private static void LevelUnloaded()
+        {
+            if (Campaign.SessionActive)
+            {
+#if DEBUG
+                MelonLogger.Msg("Current level is a Campaign! Saving ammo to Save Data...");
+#endif
+                Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
+            }
         }
     }
 }
