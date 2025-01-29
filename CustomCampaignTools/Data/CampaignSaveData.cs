@@ -266,7 +266,7 @@ namespace CustomCampaignTools
             /// <returns></returns>
             public bool IsValid(out bool hasSpawnPoint)
             {
-                if (new Vector3(PositionX, PositionY, PositionZ) == Vector3.zero)
+                if (GetPosition() == Vector3.zero)
                     hasSpawnPoint = false;
                 else
                     hasSpawnPoint = true;
