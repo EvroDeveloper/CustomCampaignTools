@@ -25,6 +25,8 @@ namespace CustomCampaignTools
 
         public TMP_Text pageText;
 
+        private bool _hasSelected = false;
+
         public void SetupButtons()
         {
             
@@ -54,9 +56,13 @@ namespace CustomCampaignTools
 
         public void Select(int index)
         {
+            if(_hasSelected) return;
+
             MelonLogger.Msg(index);
             int campaignIndex = (Buttons.Length * _currentPage) + index;
             Campaign c = Campaign.LoadedCampaigns[campaignIndex];
+
+            _hasSelected = true;
 
             FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
         }
