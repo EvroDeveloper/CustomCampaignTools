@@ -58,7 +58,7 @@ namespace CustomCampaignTools
             int campaignIndex = (Buttons.Length * _currentPage) + index;
             Campaign c = Campaign.LoadedCampaigns[campaignIndex];
 
-            SceneStreamer.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
+            FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
         }
 
         public void Activate()

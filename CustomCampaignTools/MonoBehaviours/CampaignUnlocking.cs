@@ -7,9 +7,9 @@ using Il2CppSLZ.Bonelab;
 namespace CustomCampaignTools.SDK
 {
     [RegisterTypeInIl2Cpp]
-    public class CampaignUnlockManager : MonoBehaviour
+    public class CampaignUnlocking : MonoBehaviour
     {
-        public CampaignUnlockManager(IntPtr ptr) : base(ptr) {}
+        public CampaignUnlocking(IntPtr ptr) : base(ptr) {}
 
         public void UnlockDevTools(bool enableInstantly)
         {
