@@ -16,8 +16,7 @@ namespace CustomCampaignTools.SDK
             if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
             
-            SavepointFunctions.WasLastLoadByContinue = true;
-            FadeLoader.Load(new Barcode(campaign.saveData.LoadedSavePoint.LevelBarcode), new Barcode(campaign.LoadScene));
+            campaign.saveData.LoadedSavePoint.LoadContinue(new Barcode(campaign.LoadScene));
         }
 
         public void EnableIfValidSave(GameObject obj)
