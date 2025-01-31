@@ -180,6 +180,7 @@ namespace CustomCampaignTools
                 MelonLogger.Msg("Restricting Dev Tools");
 
                 var popUpMenu = UIRig.Instance.popUpMenu;
+                popUpMenu.radialPageView.onActivated = new Action(() => {popUpMenu.RemoveDevMenu()});
                 popUpMenu.RemoveDevMenu();
             }
 
@@ -191,15 +192,16 @@ namespace CustomCampaignTools
                     bodyLog.gameObject.SetActive(false);
                 }
 
-                UIRig.Instance.popUpMenu.RemoveAvatarsMenu();
+                var popUpMenu = UIRig.Instance.popUpMenu;
+                popUpMenu.radialPageView.onActivated = new Action(() => {popUpMenu.RemoveAvatarsMenu()});
 
                 if(Session.CampaignAvatar != string.Empty)
                 {
                     Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
                 }
             }
-            if(Session != null)
-                lastLoadedCampaignLevel = info.barcode;
+
+            lastLoadedCampaignLevel = info.barcode;
         }
     }
 

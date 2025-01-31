@@ -43,6 +43,7 @@
     <Compile Include="CustomCampaignTools\Campaign.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
+    <Compile Include="CustomCampaignTools\BodylogEnablePatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignPanelView.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignUnlockManager.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\InvokeInCampaign.cs" />
