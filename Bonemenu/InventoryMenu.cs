@@ -9,12 +9,19 @@ using UnityEngine;
 
 namespace CustomCampaignTools.Bonemenu
 {
-    internal class InventoryMenu
+    internal class CampaignBoneMenu
     {
         public static void CreateCampaignPage(Page category, Campaign c)
         {
             var inventoryCategory = category.CreatePage(c.Name, Color.white);
-            inventoryCategory.CreateFunction("Reset Ammo", Color.yellow, () => c.saveData.ClearAmmoSave());
+
+            inventoryCategory.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
+            if(c.saveData.LoadedSavePoint.IsValid())
+            inventoryCategory.CreateFunction("Continue Campaign", Color.white, () => {
+                SavepointFunctions.WasLastLoadByContinue = true;
+                FadeLoader.Load(new Barcode(c.saveData.LoadedSavePoint.LevelBarcode), new Barcode(c.LoadScene));
+            })
+            inventoryCategory.CreateFunction("Reset Save", Color.red, () => c.saveData.ClearAmmoSave());
         }
     }
 }

@@ -75,6 +75,8 @@ namespace CustomCampaignTools
 
             LoadedCampaigns.Add(campaign);
 
+            CampaignBoneMenu.CreateCampaignPage(BoneMenuCreator.campaignCategory, campaign);
+
             return campaign;
         }
 

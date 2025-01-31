@@ -12,9 +12,11 @@ namespace CustomCampaignTools.Bonemenu
 {
     public static class BoneMenuCreator
     {
+        public static Page campaignCategory;
+        
         public static void CreateBoneMenu()
         {
-            Page labworksCategory = Page.Root.CreatePage("Campaigns", Color.yellow);
+            campaignCategory = Page.Root.CreatePage("Campaigns", Color.yellow);
         }
     }
 }
