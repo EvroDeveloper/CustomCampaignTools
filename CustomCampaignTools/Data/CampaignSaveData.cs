@@ -277,6 +277,14 @@ namespace CustomCampaignTools
                 return true;
             }
 
+            public void LoadContinue(Barcode loadScene)
+            {
+                if(!IsValid()) return;
+                
+                SavepointFunctions.WasLastLoadByContinue = true;
+                FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
+            }
+
             public Vector3 GetPosition()
             {
                 return new Vector3(PositionX, PositionY, PositionZ);

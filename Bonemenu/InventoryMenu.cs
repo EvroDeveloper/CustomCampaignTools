@@ -17,10 +17,7 @@ namespace CustomCampaignTools.Bonemenu
 
             inventoryCategory.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
             if(c.saveData.LoadedSavePoint.IsValid())
-            inventoryCategory.CreateFunction("Continue Campaign", Color.white, () => {
-                SavepointFunctions.WasLastLoadByContinue = true;
-                FadeLoader.Load(new Barcode(c.saveData.LoadedSavePoint.LevelBarcode), new Barcode(c.LoadScene));
-            })
+                inventoryCategory.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(new Barcode(c.LoadScene)));
             inventoryCategory.CreateFunction("Reset Save", Color.red, () => c.saveData.ClearAmmoSave());
         }
     }
