@@ -1,6 +1,6 @@
 using UnityEngine;
 using MelonLoader;
-using Il2CppTextMeshPro;
+using Il2CppTMPro;
 using System;
 
 namespace CustomCampaignTools.SDK

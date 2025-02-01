@@ -27,7 +27,6 @@ namespace CustomCampaignTools
 
         public void SetupButtons()
         {
-            
             for(int i = 0; i < Buttons.Length; i++)
             {
                 Button button = Buttons[i].GetComponent<Button>();
