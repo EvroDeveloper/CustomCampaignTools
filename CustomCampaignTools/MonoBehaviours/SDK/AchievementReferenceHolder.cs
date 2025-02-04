@@ -22,9 +22,13 @@ namespace CustomCampaignTools.SDK
 
         public void ShowAchievement(AchievementData achievement)
         {
+            bool unlocked = Campaign.Session.saveData.UnlockedAchievements.Contains(achievement.Key);
+            
             titleTMP.text = achievement.Title;
-            descriptionTMP.text = achievement.Description;
-            achievement.LoadIcon((t) => { achievement.image = t; });
+            descriptionTMP.text = unlocked ? achievement.Description : !achievement.Hidden ? achievement.Description : "???";
+            
+            achievement.LoadIcon((t) => { achievementIcon.image = t; });
+            achievementIcon.tintColor = unlocked ? Color.white : new Color(0.5, 0.5, 0.5, 1);
         }
     }
 }

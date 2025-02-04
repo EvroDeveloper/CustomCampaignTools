@@ -30,6 +30,11 @@ namespace CustomCampaignTools.SDK
             this.pageText = pageText;
         }
 
+        public void Activate()
+        {
+            UpdateVisualization();
+        }
+
         public void NextPage()
         {
             _currentPage = Mathf.Min(_lastPage, _currentPage + 1);

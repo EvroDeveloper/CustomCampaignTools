@@ -272,6 +272,7 @@ namespace CustomCampaignTools
     public class AchievementData
     {
         public string Key { get; set; }
+        public bool Hidden { get; set; }
         public string IconGUID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
