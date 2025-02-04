@@ -27,7 +27,10 @@ namespace CustomCampaignTools
         {
             if(!CampaignUtilities.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
 
+            if(!campaign.SaveLevelAmmo) return;
+
             if(levelType != CampaignLevelType.MainLevel) return;
+            
 
             int levelIndex = campaign.GetLevelIndex(levelBarcode);
 
@@ -39,11 +42,14 @@ namespace CustomCampaignTools
             {
             }
 
+            string[] mainLevels = campaign.MainLevels;
+
             for (int i = 0; i < levelIndex; i++)
             {
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).LightAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).MediumAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).HeavyAmmo);
+                level = mainLevels[i];
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, campaign.saveData.GetSavedAmmo(level).LightAmmo);
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, campaign.saveData.GetSavedAmmo(level).MediumAmmo);
+                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.GetSavedAmmo(level).HeavyAmmo);
             }
         }
     }

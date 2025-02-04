@@ -46,6 +46,8 @@ namespace CustomCampaignTools
         {
             AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
+            if(!campaign.SaveLevelAmmo) return;
+
             if (!DoesSavedAmmoExist(levelBarcode))
             {
                 LoadedAmmoSaves.Add(new AmmoSave
