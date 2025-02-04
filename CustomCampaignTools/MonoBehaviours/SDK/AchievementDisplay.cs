@@ -16,8 +16,9 @@ namespace CustomCampaignTools.SDK
         private GameObject nextButton;
         private GameObject backButton;
         private TMP_Text pageText;
+        private TMP_Text unlockCount;
 
-        public void SetupReferences(Button nextButton, Button backButton, TMP_Text pageText)
+        public void SetupReferences(Button nextButton, Button backButton, TMP_Text pageText, TMP_Text unlockCount)
         {
             this.achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
 
@@ -28,6 +29,7 @@ namespace CustomCampaignTools.SDK
             backButton.onClick.AddListener(new Action(() => { PrevPage(); }));
 
             this.pageText = pageText;
+            this.unlockCount = unlockCount;
         }
 
         public void Activate()
@@ -54,14 +56,15 @@ namespace CustomCampaignTools.SDK
             if(_currentPage >= _lastPage) nextButton.SetActive(false);
             else nextButton.SetActive(true);
 
-            pageText.text = $"{_currentPage+1}/{_lastPage+1}";
+            if(pageText != null)
+                pageText.text = $"{_currentPage+1}/{_lastPage+1}";
 
             for(int i = 0; i < achievementViews.Length; i++)
             {
                 GameObject currentView = achievementViews[i];
                 int achievementIndex = (achievementViews.Length * _currentPage) + i;
 
-                if(achievementIndex < CampaignUtilities.LoadedCampaigns.Count)
+                if(achievementIndex < Campaign.Session.Achievements.Count)
                 {
                     currentView.SetActive(true);
                     currentView.ShowAchievement(Campaign.Session.Achievements[achievementIndex]);
@@ -71,6 +74,9 @@ namespace CustomCampaignTools.SDK
                     currentView.SetActive(false);
                 }
             }
+
+            if(unlockCount != null)
+                unlockCount.text = $"{Campaign.Session.saveData.UnlockedAchievements.Count}/{Campaign.Session.Achievements.Count} Achievements Unlocked";
         }
     }
 }
