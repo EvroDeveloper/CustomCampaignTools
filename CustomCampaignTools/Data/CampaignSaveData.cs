@@ -31,6 +31,16 @@ namespace CustomCampaignTools
             LoadFromDisk();
         }
 
+        public void ResetSave()
+        {
+            ClearAmmoSave();
+            LoadedSavePoint = new SavePoint();
+            LoadedFloatDatas = new List<FloatData>();
+            DevToolsUnlocked = false;
+            AvatarUnlocked = false;
+            UnlockedAchievements = new List<strin>();
+        }
+
         #region Ammo Methods
         public void SaveAmmoForLevel(string levelBarcode)
         {
@@ -316,6 +326,11 @@ namespace CustomCampaignTools
                     return false;
 
                 return true;
+            }
+
+            public void LoadContinue()
+            {
+                LoadContinue(new Barcode(campaign.LoadScene));
             }
 
             public void LoadContinue(Barcode loadScene)

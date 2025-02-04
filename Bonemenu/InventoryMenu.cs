@@ -14,12 +14,26 @@ namespace CustomCampaignTools.Bonemenu
     {
         public static void CreateCampaignPage(Page category, Campaign c)
         {
-            var inventoryCategory = category.CreatePage(c.Name, Color.white);
+            var campaignPage = category.CreatePage(c.Name, Color.white);
 
-            inventoryCategory.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
+            campaignPage.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
             if(c.saveData.LoadedSavePoint.IsValid(out _))
-                inventoryCategory.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(new Barcode(c.LoadScene)));
-            inventoryCategory.CreateFunction("Reset Save", Color.red, () => c.saveData.ClearAmmoSave());
+                campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue());
+            campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());
+
+            var achievementPage = campaignPage.CreatePage($"{c.name} Achievements", Color.yellow);
+
+            foreach(string key in c.saveData.UnlockedAchievements)
+            {
+                try
+                {
+                    achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                }
+                catch
+                {
+                    MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                }
+            }
         }
     }
 }
