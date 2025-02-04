@@ -122,6 +122,7 @@ namespace CustomCampaignTools
 
         public int GetLevelIndex(string levelBarcode, CampaignLevelType levelType = CampaignLevelType.MainLevel)
         {
+            MelonLogger.Msg($"Index of {levelBarcode} is {Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode)}");
             return Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode);
         }
 

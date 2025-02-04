@@ -25,17 +25,17 @@ namespace CustomCampaignTools
 
         public static void LoadAmmoFromLevel(string levelBarcode, bool isLoadCheckpoint)
         {
-            if(!LevelParsing.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
+            if(!CampaignUtilities.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
 
             if(levelType != CampaignLevelType.MainLevel) return;
 
-            int levelIndex = campaign.GetLevelIndex(levelBarcode, CampaignLevelType.MainLevel);
+            int levelIndex = campaign.GetLevelIndex(levelBarcode);
 
             try
             {
                 AmmoInventory.Instance.ClearAmmo();
             }
-            catch (Exception e)
+            catch
             {
             }
 
@@ -55,7 +55,7 @@ namespace CustomCampaignTools
         {
             var levelBarcode = SceneStreamer.Session.Level.Barcode.ID;
 
-            if (!LevelParsing.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
+            if (!CampaignUtilities.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
 
             if (levelType != CampaignLevelType.MainLevel) return;
 
