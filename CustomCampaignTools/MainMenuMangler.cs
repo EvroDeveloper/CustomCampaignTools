@@ -60,6 +60,8 @@ namespace CustomCampaignTools
             }
 
             CampaignGrid.SetActive(false);
+
+            // Add a CampaignSelectionView to choose to load intomenu or continue n shit
         }
 
         public static Sprite LoadSpriteFromEmbeddedResource(string resourceName, Assembly assembly, Vector2 pivot, float pixelsPerUnit = 100f)

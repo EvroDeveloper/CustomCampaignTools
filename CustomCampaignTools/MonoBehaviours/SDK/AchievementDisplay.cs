@@ -1,5 +1,7 @@
 using UnityEngine;
 using MelonLoader;
+using Il2CppTMPro;
+using UnityEngine.UI;
 using System;
 
 namespace CustomCampaignTools.SDK

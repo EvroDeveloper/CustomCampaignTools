@@ -48,6 +48,7 @@
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\BodylogEnablePatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignPanelView.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignSelectionView.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\AchievementDisplay.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\AchievementReferenceHolder.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\AmmoScoreDisplay.cs" />
