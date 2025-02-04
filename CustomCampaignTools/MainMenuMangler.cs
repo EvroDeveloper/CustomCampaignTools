@@ -12,11 +12,6 @@ namespace CustomCampaignTools
 {
     public class MainMenuMangler
     {
-        public static void OnInitialize()
-        {
-            Hooking.OnLevelLoaded += OnLevelLoaded;
-        }
-
         public static void OnLevelLoaded(LevelInfo info)
         {
             if(info.barcode == CommonBarcodes.Maps.VoidG114)
@@ -27,10 +22,6 @@ namespace CustomCampaignTools
 
         public static void MangleMainMenu()
         {
-
-            // Clone the level select panel but strip it of it's functionality in place of a CampaignPanelView. 
-            // CampaignPanelView.SetupButtons()
-
             var LevelsGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(8).gameObject;
             var CampaignGrid = GameObject.Instantiate(LevelsGrid, LevelsGrid.transform.parent);
             CampaignGrid.transform.localPosition = Vector3.zero;
@@ -44,7 +35,6 @@ namespace CustomCampaignTools
             cPanel.backButton = oldPanelComponent.backButton;
             cPanel.pageText = oldPanelComponent.pageText;
 
-            MelonLogger.Msg("ping ping ping");
             cPanel.SetupButtons();
 
             UnityEngine.Object.Destroy(oldPanelComponent);
@@ -57,8 +47,6 @@ namespace CustomCampaignTools
             var newButton = GameObject.Instantiate(targetButton, targetButton.transform.parent);
 
             newButton.GetComponentInChildren<TMP_Text>(true).text = "CAMPAIGNS";
-
-            MelonLogger.Msg("ping ping ping");
             var onClick = newButton.GetComponentInChildren<Button>(true).onClick;
             onClick.m_PersistentCalls.Clear();
             onClick.m_Calls.ClearPersistent();

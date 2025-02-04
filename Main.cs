@@ -45,8 +45,10 @@ namespace CustomCampaignTools
             string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = info.barcode;
 
+            MainMenuMangler.OnLevelLoaded(info);
+
             #region Save Data
-            if (LevelParsing.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
+            if (CampaignUtilities.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
             {
                 MelonLogger.Msg("Level is in Campaign!");
                 if (levelType != CampaignLevelType.MainLevel) return;

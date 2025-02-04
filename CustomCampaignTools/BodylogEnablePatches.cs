@@ -9,7 +9,7 @@ namespace CustomCampaignTools.Patching
     {
         [HarmonyPatch(nameof(PullCordDevice.OnEnable))]
         [HarmonyPostfix]
-        public static void OnDevToolsAdded(PullCordDevice __instance)
+        public static void OnBodyLogEnabled(PullCordDevice __instance)
         {
             if(!Campaign.SessionActive || !Campaign.Session.RestrictDevTools) return;
 

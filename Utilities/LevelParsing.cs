@@ -9,9 +9,10 @@ namespace CustomCampaignTools.Utilities
 {
     public class LevelParsing
     {
+        [Obsolete("Use CampaignUtilities")]
         public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign, out CampaignLevelType levelType)
         {
-            campaign = Campaign.GetFromLevel(levelBarcode);
+            campaign = CampaignUtilities.GetFromLevel(levelBarcode);
 
             if (campaign != null)
                 levelType = campaign.TypeOfLevel(levelBarcode);

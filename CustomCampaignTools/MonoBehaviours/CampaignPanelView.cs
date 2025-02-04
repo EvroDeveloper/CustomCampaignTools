@@ -84,10 +84,10 @@ namespace CustomCampaignTools
                 GameObject currentButton = Buttons[i];
                 int campaignIndex = (Buttons.Length * _currentPage) + i;
 
-                if(campaignIndex < Campaign.LoadedCampaigns.Count)
+                if(campaignIndex < CampaignUtilities.LoadedCampaigns.Count)
                 {
                     currentButton.SetActive(true);
-                    currentButton.GetComponentInChildren<TMP_Text>(true).text = Campaign.LoadedCampaigns[campaignIndex].Name;
+                    currentButton.GetComponentInChildren<TMP_Text>(true).text = CampaignUtilities.LoadedCampaigns[campaignIndex].Name;
                 }
                 else
                 {

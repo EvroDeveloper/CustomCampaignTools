@@ -51,14 +51,13 @@ namespace CustomCampaignTools
                 return list.ToArray();
             }
         }
+        
+        public CampaignSaveData saveData;
 
         public static Campaign Session;
         public static string lastLoadedCampaignLevel;
         public static bool SessionActive { get => Session != null; }
 
-        public CampaignSaveData saveData;
-
-        public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
         internal static Campaign RegisterCampaign(CampaignLoadingData data)
         {
@@ -95,7 +94,7 @@ namespace CustomCampaignTools
                     }
                 }
 
-                LoadedCampaigns.Add(campaign);
+                CampaignUtilities.LoadedCampaigns.Add(campaign);
 
                 CampaignBoneMenu.CreateCampaignPage(BoneMenuCreator.campaignCategory, campaign);
 
@@ -157,28 +156,6 @@ namespace CustomCampaignTools
             if (MenuLevel == barcode) return CampaignLevelType.Menu;
             else if (mainLevels.Contains(barcode)) return CampaignLevelType.MainLevel;
             else return CampaignLevelType.ExtraLevel;
-        }
-
-        public static Campaign GetFromName(string name)
-        {
-            return LoadedCampaigns.FirstOrDefault(x => x.Name == name);
-        }
-
-        public static Campaign GetFromLevel(string barcode)
-        {
-            return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Contains(barcode));
-        }
-
-        public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);
-
-        public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode.ID);
-
-        public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
-
-        public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign)
-        {
-            campaign = GetFromLevel(levelBarcode);
-            return campaign != null;
         }
 
         public static void OnInitialize()
@@ -245,7 +222,7 @@ namespace CustomCampaignTools
 
         public static void OnLevelLoaded(LevelInfo info)
         {
-            if(!IsCampaignLevel(info.barcode, out Session)) return;
+            if(!CampaignUtilities.IsCampaignLevel(info.barcode, out Session)) return;
 
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {

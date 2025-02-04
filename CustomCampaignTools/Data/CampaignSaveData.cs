@@ -140,8 +140,12 @@ namespace CustomCampaignTools
         }
         private FloatData GetFloatDataEntry(string key)
         {
-            FloatData found = LoadedFloatDatas.First(f => f.Key == key);
-            if (found == null)
+            FloatData found = null;
+            try
+            {
+                found = LoadedFloatDatas.First(f => f.Key == key);
+            }
+            catch
             {
                 found = new FloatData(key);
                 LoadedFloatDatas.Add(found);
