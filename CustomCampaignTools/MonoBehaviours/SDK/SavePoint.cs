@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Il2CppSLZ.Marrow.SceneStreaming;
-using UnhollowerBaseLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace CustomCampaignTools.SDK
 {
@@ -23,7 +23,7 @@ namespace CustomCampaignTools.SDK
             {
                 HashSet<MarrowEntity> boxVolEntities = new HashSet<MarrowEntity>();
 
-                Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, LayerMask.GetMask(new Il2CppStringArray(new string[] { "EntityTracker" })));
+                Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER);
                 foreach (Collider tracker in trackers)
                 {
                     if(tracker.TryGetComponent(out Tracker t))

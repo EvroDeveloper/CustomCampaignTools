@@ -13,26 +13,29 @@ namespace CustomCampaignTools.SDK
 
         CampaignSaveData _campaignSaveData;
 
-        void Awake()
+        void Update()
         {
-            _campaignSaveData = Campaign.Session.saveData;
+            if(_campaignSaveData == null && Campaign.Session != null)
+            {
+                _campaignSaveData = Campaign.Session.saveData;
+            }
         }
 
         public void SetValue(string key, float value)
         {
-            _campaignSaveData.SetValue(key, value);
+            Campaign.Session.saveData.SetValue(key, value);
         }
         public void IncrementValue(string key, float value)
         {
-            _campaignSaveData.SetValue(key, _campaignSaveData.GetValue(key) + value);
+            Campaign.Session.saveData.SetValue(key, Campaign.Session.saveData.GetValue(key) + value);
         }
         public float GetValue(string key)
         {
-            return _campaignSaveData.GetValue(key);
+            return Campaign.Session.saveData.GetValue(key);
         }
         public void InvokeIf(string key, ComparisonType comparison, float compareValue, UltEventHolder ultEvent)
         {
-            float value = _campaignSaveData.GetValue(key);
+            float value = Campaign.Session.saveData.GetValue(key);
             bool evaluation = false;
             switch (comparison)
             {

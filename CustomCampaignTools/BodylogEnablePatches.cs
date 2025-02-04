@@ -8,11 +8,12 @@ namespace CustomCampaignTools.Patching
     public static class BodylogEnablePatches
     {
         [HarmonyPatch(nameof(PullCordDevice.OnEnable))]
+        [HarmonyPostfix]
         public static void OnDevToolsAdded(PullCordDevice __instance)
         {
             if(!Campaign.SessionActive || !Campaign.Session.RestrictDevTools) return;
 
-            __instance.gameObject.SetActive();
+            __instance.gameObject.SetActive(false);
         }
     }
 }

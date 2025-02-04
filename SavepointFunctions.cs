@@ -63,11 +63,11 @@ namespace CustomCampaignTools
 
             if (hasSpawnPoint)
             {
-                Player.RigManager.Teleport(savePoint.GetPosition());
+                Player.RigManager.Teleport(savePoint.GetPosition()); // Definately getting to here, and not erroring afterward
 
                 foreach(string barcode in savePoint.BoxContainedBarcodes)
                 {
-                    AssetSpawner.Spawn(new Spawnable() { crateRef = new SpawnableCrateReference(barcode) }, new Vector3(savePoint.BoxContainedX, savePoint.BoxContainedY, savePoint.BoxContainedZ));
+                    HelperMethods.SpawnCrate(barcode, savePoint.GetPosition());
                 }
             }
 
@@ -82,25 +82,14 @@ namespace CustomCampaignTools
 
         public static void HolsterItemIfNotEmpty(this InventorySlotReceiver slot, string barcode, Vector3 spawnPosition = default)
         {
+            MelonLogger.Msg("Trying holster item " + barcode + " in slot " + slot.gameObject.name);
             if (barcode == string.Empty) return;
 
-            spawnPosition = slot.transform.position;
-
-            var spawnable = new Spawnable()
-            {
-                crateRef = new SpawnableCrateReference(barcode)
-            };
-
-            AssetSpawner.Register(spawnable);
-            AssetSpawner.Spawn(spawnable, spawnPosition, spawnCallback: (Action<GameObject>)Action);
-            return;
-
-            void Action(GameObject go)
-            {
+            HelperMethods.SpawnCrate(barcode, slot.transform.position, spawnAction: (g) => {
                 slot.DropWeapon();
-                MelonLogger.Msg("Loaded object in holster with barcode ");
-                slot.InsertInSlot(go.GetComponentInChildren<InteractableHost>());
-            }
+                MelonLogger.Msg("Loaded object in holster with barcode " + barcode);
+                slot.InsertInSlot(g.GetComponentInChildren<InteractableHost>());
+            });
         }
 
     }

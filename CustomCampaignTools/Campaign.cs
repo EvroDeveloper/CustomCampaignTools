@@ -9,6 +9,13 @@ using System.IO;
 using UnityEngine;
 using MelonLoader;
 using Il2CppSLZ.Bonelab;
+using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.SDK;
+using BoneLib.Notifications;
+using static UnityEngine.UI.StencilMaterial;
+using System.Reflection;
+using Il2CppSLZ.Marrow.VoidLogic;
+using System.Security.Policy;
 
 namespace CustomCampaignTools
 {
@@ -33,13 +40,14 @@ namespace CustomCampaignTools
         public bool RestrictAvatar;
         public string CampaignAvatar;
 
+        public bool SaveLevelWeapons;
+        public bool SaveLevelAmmo;
+        public List<AchievementData> Achievements;
+
         public string[] AllLevels 
         {
             get {
-                List<string> list = new List<string>();
-                list.AddRange(mainLevels);
-                list.AddRange(extraLevels);
-                list.Add(MenuLevel);
+                List<string> list = [.. mainLevels, .. extraLevels, MenuLevel];
                 return list.ToArray();
             }
         }
@@ -52,30 +60,47 @@ namespace CustomCampaignTools
 
         public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
-        public static Campaign RegisterCampaign(string Name, string initLevel, string[] mainLevels, string[] extraLevels, string loadScene, bool restrictDevTools, bool restrictAvatars, string defaultAvatar)
+        internal static Campaign RegisterCampaign(CampaignLoadingData data)
         {
             Campaign campaign = new Campaign();
-            campaign.Name = Name;
+            try
+            {
+                campaign.Name = data.Name;
 
-            campaign.mainLevels = mainLevels;
-            campaign.extraLevels = extraLevels;
-            campaign.saveData = new CampaignSaveData(campaign);
+                campaign.mainLevels = data.MainLevels.ToArray();
+                campaign.extraLevels = data.ExtraLevels.ToArray();
+                campaign.saveData = new CampaignSaveData(campaign);
 
-            if(initLevel == string.Empty) campaign.MenuLevel = mainLevels[0];
-            else campaign.MenuLevel = initLevel;
+                if (data.InitialLevel == string.Empty) campaign.MenuLevel = data.MainLevels[0];
+                else campaign.MenuLevel = data.InitialLevel;
 
-            if(loadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
-            else campaign.LoadScene = loadScene;
+                if (data.LoadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
+                else campaign.LoadScene = data.LoadScene;
 
-            campaign.RestrictAvatar = restrictAvatars;
-            campaign.RestrictDevTools = restrictDevTools;
+                campaign.RestrictAvatar = data.RestrictAvatar;
+                campaign.RestrictDevTools = data.RestrictDevTools;
 
-            if(restrictAvatars)
-                campaign.CampaignAvatar = defaultAvatar;
+                if (data.RestrictAvatar)
+                    campaign.CampaignAvatar = data.CampaignAvatar;
 
-            LoadedCampaigns.Add(campaign);
+                campaign.SaveLevelWeapons = data.SaveLevelWeapons;
+                campaign.SaveLevelAmmo = data.SaveLevelAmmo;
+                campaign.Achievements = data.Achievements;
 
-            CampaignBoneMenu.CreateCampaignPage(BoneMenuCreator.campaignCategory, campaign);
+                foreach (AchievementData ach in campaign.Achievements)
+                {
+                    ach.Init();
+                }
+
+                LoadedCampaigns.Add(campaign);
+
+                CampaignBoneMenu.CreateCampaignPage(BoneMenuCreator.campaignCategory, campaign);
+
+            }
+            catch (Exception ex)
+            {
+                MelonLogger.Error($"Failed to register campaign {data.Name}: {ex.Message}");
+            }
 
             return campaign;
         }
@@ -90,7 +115,7 @@ namespace CustomCampaignTools
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
 
-            return RegisterCampaign(campaignValueHolder.Name, campaignValueHolder.InitialLevel, campaignValueHolder.MainLevels.ToArray(), campaignValueHolder.ExtraLevels.ToArray(), campaignValueHolder.LoadScene, campaignValueHolder.RestrictDevTools, campaignValueHolder.RestrictAvatar, campaignValueHolder.CampaignAvatar);
+            return RegisterCampaign(campaignValueHolder);
         }
 
         public int GetLevelIndex(string levelBarcode, CampaignLevelType levelType = CampaignLevelType.MainLevel)
@@ -109,7 +134,7 @@ namespace CustomCampaignTools
             switch (type)
             {
                 case CampaignLevelType.Menu:
-                    output = new string[] { MenuLevel };
+                    output = [MenuLevel];
                     break;
                 case CampaignLevelType.MainLevel:
                     output = mainLevels;
@@ -156,34 +181,81 @@ namespace CustomCampaignTools
         public static void OnInitialize()
         {
             Hooking.OnLevelLoaded += OnLevelLoaded;
-            LoadCampaignsFromMods();
+            try
+            {
+                LoadCampaignsFromMods();
+            }
+            catch (Exception ex)
+            {
+                MelonLogger.Error("Coudnt load the FUCKING campaigns from the FUCKING MODS FOLDER: " + ex.Message);
+            }
         }
 
         public static void LoadCampaignsFromMods()
         {
             string modsFolder = Path.Combine(Application.persistentDataPath, "Mods");
+
+            foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
+            {
+                if (registeredMelon.Info.Name == "RedirectModsFolder")
+                {
+                    modsFolder = GetRedirectModsFolder(modsFolder);
+                    break;
+                }
+            }
             string[] modPaths = Directory.GetDirectories(modsFolder);
 
-            foreach(string mod in modPaths)
+            foreach (string mod in modPaths)
             {
                 string[] jsonPaths = Directory.GetFiles(mod, "campaign.json");
-                if(jsonPaths.Length == 0) continue;
-                string jsonContent = File.ReadAllText(jsonPaths[0]);
-                RegisterCampaignFromJson(jsonContent);
+
+                if (jsonPaths.Length != 0)
+                {
+                    string jsonContent = File.ReadAllText(jsonPaths[0]);
+                    RegisterCampaignFromJson(jsonContent);
+                    continue;
+                }
+
+                string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
+
+                if (jsonPaths2.Length != 0)
+                {
+                    string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
+                    RegisterCampaignFromJson(jsonContent2);
+                }
+                
             }
+        }
+
+        public static string GetRedirectModsFolder(string normalModsFolder)
+        {
+            Type type = typeof(RedirectModsFolder.Core);
+
+            FieldInfo fieldInfo = type.GetField("pathEntry", BindingFlags.NonPublic | BindingFlags.Static);
+            MelonPreferences_Entry<string> fieldValue = (MelonPreferences_Entry<string>)(fieldInfo?.GetValue(null));
+
+            if (fieldValue.Value != "default" && fieldValue.Value != string.Empty)
+                return fieldValue.Value;
+
+            return normalModsFolder;
         }
 
         public static void OnLevelLoaded(LevelInfo info)
         {
             if(!IsCampaignLevel(info.barcode, out Session)) return;
 
+            foreach(UnhideInCampaign unhider in GameObject.FindObjectsOfType<UnhideInCampaign>(true))
+            {
+                GameObject.Destroy(unhider.GetComponent<HideOnAwake>());
+                unhider.gameObject.SetActive(true);
+            }
+
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
-                MelonLogger.Msg("Restricting Dev Tools");
-
                 var popUpMenu = UIRig.Instance.popUpMenu;
-                popUpMenu.radialPageView.onActivated = new Action(() => {popUpMenu.RemoveDevMenu()});
-                popUpMenu.RemoveDevMenu();
+                popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
+                    popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
+                });
             }
 
             if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
@@ -195,9 +267,9 @@ namespace CustomCampaignTools
                 }
 
                 var popUpMenu = UIRig.Instance.popUpMenu;
-                popUpMenu.radialPageView.onActivated = new Action(() => {popUpMenu.RemoveAvatarsMenu()});
+                popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
 
-                if(Session.CampaignAvatar != string.Empty)
+                if (Session.CampaignAvatar != string.Empty)
                 {
                     Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
                 }
@@ -214,9 +286,35 @@ namespace CustomCampaignTools
         public List<string> MainLevels { get; set; }
         public List<string> ExtraLevels { get; set; }
         public string LoadScene { get; set; }
-
+        public bool ShowInMenu { get; set; }
         public bool RestrictDevTools { get; set; }
         public bool RestrictAvatar { get; set; }
         public string CampaignAvatar { get; set; }
+        public bool SaveLevelWeapons { get; set; }
+        public bool SaveLevelAmmo { get; set; }
+        public List<AchievementData> Achievements { get; set; }
+    }
+
+    public class AchievementData
+    {
+        public string Key { get; set; }
+        public string IconGUID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        private MarrowAssetT<Texture2D> _marrowAsset;
+        private Texture2D _cachedTexture;
+
+        public void Init()
+        {
+            _marrowAsset = new MarrowAssetT<Texture2D>(IconGUID);
+            LoadIcon((t) => { _cachedTexture = t; });
+        }
+
+        public void LoadIcon(Action<Texture2D> callback)
+        {
+            if(_cachedTexture != null) callback.Invoke(_cachedTexture);
+            else _marrowAsset.LoadAsset(callback);
+        }
     }
 }

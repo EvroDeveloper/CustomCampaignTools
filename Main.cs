@@ -50,16 +50,16 @@ namespace CustomCampaignTools
                 int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
                 string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1, CampaignLevelType.MainLevel);
 
-                if (SavepointFunctions.WasLastLoadByContinue)
-                {
-                    SavepointFunctions.LoadPlayerFromSave();
-                }
-                else
-                {
-                    MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcode);
-                    SavepointFunctions.SavePlayer(barcode, Vector3.zero, Vector3.zero);
-                }
+            if (SavepointFunctions.WasLastLoadByContinue)
+            {
+                SavepointFunctions.LoadPlayerFromSave();
             }
+            else
+            {
+                MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcode);
+                SavepointFunctions.SavePlayer(barcode, Vector3.zero, Vector3.zero);
+            }
+        }
             #endregion
         }
 

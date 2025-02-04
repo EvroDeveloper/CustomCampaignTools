@@ -1,12 +1,13 @@
-using BoneLib;
+using BoneLib.Notifications;
 using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using Il2CppSystem;
-using Newtonsoft.Json;
+using UnityEngine.UI;
 
 namespace CustomCampaignTools
 {
@@ -19,6 +20,7 @@ namespace CustomCampaignTools
         internal List<FloatData> LoadedFloatDatas = new List<FloatData>();
         internal bool DevToolsUnlocked = false;
         internal bool AvatarUnlocked = false;
+        internal List<string> UnlockedAchievements = new List<string>();
 
         public string SaveFolder { get => $"{MelonUtils.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
@@ -165,6 +167,41 @@ namespace CustomCampaignTools
         }
         #endregion
 
+        #region Achievements
+        public bool UnlockAchievement(string key)
+        {
+            if (UnlockedAchievements == null) UnlockedAchievements = new List<string>();
+            if (UnlockedAchievements.Contains(key)) return false;
+
+            foreach(AchievementData achievement in campaign.Achievements)
+            {
+                if(achievement.Key != key) continue;
+
+                if(achievement.IconGUID == string.Empty)
+                {
+                    Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
+                }
+                else
+                {
+                    achievement.LoadIcon((tex) => {
+                        Notifier.Send(new Notification() { 
+                            CustomIcon = tex,
+                            Title = $"Achievement Get: {achievement.Name}",
+                            Message = achievement.Description,
+                            Type = NotificationType.CustomIcon,
+                            PopupLength = 5,
+                            ShowTitleOnPopup = true,
+                        });
+                    });
+                }
+                UnlockedAchievements.Add(key);
+                SaveToDisk();
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
         #region Saving and Loading
         /// <summary>
         /// Saves the current loaded save data to file.
@@ -180,7 +217,8 @@ namespace CustomCampaignTools
                 AmmoSaves = LoadedAmmoSaves,
                 FloatData = LoadedFloatDatas,
                 DevToolsUnlocked = DevToolsUnlocked,
-                AvatarUnlocked = AvatarUnlocked
+                AvatarUnlocked = AvatarUnlocked,
+                UnlockedAchievements = UnlockedAchievements,
             };
 
             var settings = new JsonSerializerSettings
@@ -228,6 +266,7 @@ namespace CustomCampaignTools
             LoadedFloatDatas = saveData.FloatData;
             DevToolsUnlocked = saveData.DevToolsUnlocked;
             AvatarUnlocked = saveData.AvatarUnlocked;
+            UnlockedAchievements = saveData.UnlockedAchievements;
         }
         #endregion
 
@@ -238,6 +277,7 @@ namespace CustomCampaignTools
             public List<FloatData> FloatData { get; set; }
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
+            public List<string> UnlockedAchievements { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<string> boxContainedBarcodes, Vector3 boxContainerPosition)
@@ -279,7 +319,7 @@ namespace CustomCampaignTools
 
             public void LoadContinue(Barcode loadScene)
             {
-                if(!IsValid()) return;
+                if(!IsValid(out _)) return;
                 
                 SavepointFunctions.WasLastLoadByContinue = true;
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
