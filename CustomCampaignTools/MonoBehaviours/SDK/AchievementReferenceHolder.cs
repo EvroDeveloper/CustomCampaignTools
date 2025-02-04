@@ -9,6 +9,8 @@ namespace CustomCampaignTools.SDK
     [RegisterTypeInIl2Cpp]
     public class AchievementReferenceHolder : MonoBehaviour
     {
+        public AchievementReferenceHolder(IntPtr ptr) : base(ptr) { }
+        
         public Image achievementIcon;
         public TMP_Text titleTMP;
         public TMP_Text descriptionTMP;
