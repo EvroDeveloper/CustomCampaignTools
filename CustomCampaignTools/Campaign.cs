@@ -87,9 +87,12 @@ namespace CustomCampaignTools
                 campaign.SaveLevelAmmo = data.SaveLevelAmmo;
                 campaign.Achievements = data.Achievements;
 
-                foreach (AchievementData ach in campaign.Achievements)
+                if(campaign.Achievements != null)
                 {
-                    ach.Init();
+                    foreach (AchievementData ach in campaign.Achievements)
+                    {
+                        ach.Init();
+                    }
                 }
 
                 LoadedCampaigns.Add(campaign);
@@ -243,12 +246,6 @@ namespace CustomCampaignTools
         public static void OnLevelLoaded(LevelInfo info)
         {
             if(!IsCampaignLevel(info.barcode, out Session)) return;
-
-            foreach(UnhideInCampaign unhider in GameObject.FindObjectsOfType<UnhideInCampaign>(true))
-            {
-                GameObject.Destroy(unhider.GetComponent<HideOnAwake>());
-                unhider.gameObject.SetActive(true);
-            }
 
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {

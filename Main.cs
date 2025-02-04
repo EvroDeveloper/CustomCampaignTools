@@ -9,6 +9,9 @@ using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools;
 using System.Reflection;
+using Il2CppSLZ.Bonelab;
+using HarmonyLib;
+using CustomCampaignTools.SDK;
 
 namespace CustomCampaignTools
 {
@@ -32,6 +35,8 @@ namespace CustomCampaignTools
             Assembly assembly = MelonAssembly.Assembly;
 
             Sprite sprite = MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
+
+            //Hooking.CreateHook(typeof(HideOnAwake).GetMethod(nameof(HideOnAwake.Awake), AccessTools.all), typeof(UnhideInCampaign).GetMethod(nameof(UnhideInCampaign.OnHideOnAwakeAwoken), AccessTools.all));
 
         }
 

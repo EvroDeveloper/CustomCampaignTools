@@ -11,23 +11,5 @@ namespace CustomCampaignTools.SDK
     public class UnhideInCampaign : MonoBehaviour
     {
         public UnhideInCampaign(IntPtr ptr) : base(ptr) { }
-
-        private bool hasUnhidden = false;
-
-        void Awake()
-        {
-            gameObject.SetActive(true);
-            if(TryGetComponent(out HideOnAwake hide)) Destroy(hide);
-            gameObject.SetActive(true);
-        }
-
-        void OnDisable()
-        {
-            if(!hasUnhidden && Campaign.SessionActive)
-            {
-                gameObject.SetActive(true);
-                hasUnhidden = true;
-            }
-        }
     }
 }

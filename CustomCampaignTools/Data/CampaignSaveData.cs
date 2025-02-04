@@ -131,16 +131,7 @@ namespace CustomCampaignTools
         #region Float Data
         public void SetValue(string key, float value)
         {
-            var register = GetFloatDataEntry(key);
-            if (register == null)
-            {
-                register = new FloatData() { Key = key, Value = value };
-                LoadedFloatDatas.Add(register);
-            }
-            else
-            {
-                register.Value = value;
-            }
+            GetFloatDataEntry(key).Value = value;
             SaveToDisk();
         }
         public float GetValue(string key)
@@ -149,7 +140,13 @@ namespace CustomCampaignTools
         }
         private FloatData GetFloatDataEntry(string key)
         {
-            return LoadedFloatDatas.First(f => f.Key == key);
+            FloatData found = LoadedFloatDatas.First(f => f.Key == key);
+            if (found == null)
+            {
+                found = new FloatData(key);
+                LoadedFloatDatas.Add(found);
+            }
+            return found;
         }
         #endregion
 
@@ -329,6 +326,11 @@ namespace CustomCampaignTools
             {
                 return new Vector3(PositionX, PositionY, PositionZ);
             }
+
+            public Vector3 GetBoxPosition()
+            {
+                return new Vector3(BoxContainedX, BoxContainedY, BoxContainedZ);
+            }
         }
 
         public struct AmmoSave
@@ -348,6 +350,12 @@ namespace CustomCampaignTools
         {
             public string Key;
             public float Value;
+
+            public FloatData(string key)
+            {
+                Key = key;
+                Value = 0f;
+            }
         }
     }
 }

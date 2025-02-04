@@ -23,11 +23,11 @@ namespace CustomCampaignTools
         {
             Campaign campaign = Campaign.GetFromLevel(levelBarcode);
 
-            var sideLf = Player.RigManager.inventory.bodySlots[0];
-            var backLf = Player.RigManager.inventory.bodySlots[2];
-            var sideRt = Player.RigManager.inventory.bodySlots[5];
-            var backRt = Player.RigManager.inventory.bodySlots[3];
-            var backCt = Player.RigManager.inventory.bodySlots[4];
+            var sideLf = Player.RigManager.inventory.bodySlots[0].inventorySlotReceiver;
+            var backLf = Player.RigManager.inventory.bodySlots[2].inventorySlotReceiver;
+            var sideRt = Player.RigManager.inventory.bodySlots[5].inventorySlotReceiver;
+            var backRt = Player.RigManager.inventory.bodySlots[3].inventorySlotReceiver;
+            var backCt = Player.RigManager.inventory.bodySlots[4].inventorySlotReceiver;
 
             string sideLeftBarcode = GetAmmoBarcodeFromSlot(sideLf);
             string backLeftBarcode = GetAmmoBarcodeFromSlot(backLf);
@@ -40,12 +40,16 @@ namespace CustomCampaignTools
             campaign.saveData.SaveToDisk();
         }
 
-        private static string GetAmmoBarcodeFromSlot(SlotContainer slot)
+        private static string GetAmmoBarcodeFromSlot(InventorySlotReceiver slot)
         {
-            if (slot.inventorySlotReceiver._weaponHost != null)
-                return slot.inventorySlotReceiver._slottedWeapon.interactableHost.GetComponentInParent<Poolee>().SpawnableCrate.Barcode.ID;
+            if (slot._weaponHost == null) return string.Empty;
 
-            return string.Empty;
+            var itemPoolee = slot._slottedWeapon.interactableHost.marrowEntity._poolee;
+            if(itemPoolee == null) return string.Empty;
+
+            if (itemPoolee.SpawnableCrate == null) return string.Empty;
+
+            return itemPoolee.SpawnableCrate.Barcode.ID;
         }
 
 
@@ -67,7 +71,8 @@ namespace CustomCampaignTools
 
                 foreach(string barcode in savePoint.BoxContainedBarcodes)
                 {
-                    HelperMethods.SpawnCrate(barcode, savePoint.GetPosition());
+                    MelonLogger.Msg($"Spawning Crate {barcode} at Box Container");
+                    HelperMethods.SpawnCrate(barcode, savePoint.GetBoxPosition(), Quaternion.identity, Vector3.one, spawnAction: ((g) => { MelonLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
                 }
             }
 
@@ -82,14 +87,7 @@ namespace CustomCampaignTools
 
         public static void HolsterItemIfNotEmpty(this InventorySlotReceiver slot, string barcode, Vector3 spawnPosition = default)
         {
-            MelonLogger.Msg("Trying holster item " + barcode + " in slot " + slot.gameObject.name);
-            if (barcode == string.Empty) return;
-
-            HelperMethods.SpawnCrate(barcode, slot.transform.position, spawnAction: (g) => {
-                slot.DropWeapon();
-                MelonLogger.Msg("Loaded object in holster with barcode " + barcode);
-                slot.InsertInSlot(g.GetComponentInChildren<InteractableHost>());
-            });
+            var task = slot.SpawnInSlotAsync(new Barcode(barcode));
         }
 
     }
