@@ -34,7 +34,7 @@ namespace CustomCampaignTools
         public void ResetSave()
         {
             ClearAmmoSave();
-            LoadedSavePoint = new SavePoint();
+            ClearSavePoint();
             LoadedFloatDatas = new List<FloatData>();
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
