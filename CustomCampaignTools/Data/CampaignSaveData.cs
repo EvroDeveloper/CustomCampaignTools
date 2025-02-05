@@ -293,7 +293,7 @@ namespace CustomCampaignTools
             public List<string> UnlockedAchievements { get; set; }
         }
 
-        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<string> boxContainedBarcodes, Vector3 boxContainerPosition)
+        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<BarcodePosRot> boxContainedBarcodes, Vector3 boxContainerPosition)
         {
             public string LevelBarcode = levelBarcode;
             public float PositionX = position.x;
@@ -306,7 +306,7 @@ namespace CustomCampaignTools
             public string LeftShoulderSlotBarcode = leftShoulderBarcode;
             public string RightShoulderSlotBarcode = rightShoulderBarcode;
 
-            public List<string> BoxContainedBarcodes = boxContainedBarcodes;
+            public List<BarcodePosRot> BoxContainedBarcodes = boxContainedBarcodes;
 
             public float BoxContainedX = boxContainerPosition.x;
             public float BoxContainedY = boxContainerPosition.y;
@@ -351,6 +351,44 @@ namespace CustomCampaignTools
             public Vector3 GetBoxPosition()
             {
                 return new Vector3(BoxContainedX, BoxContainedY, BoxContainedZ);
+            }
+        }
+
+        public struct BarcodePosRot
+        {
+            public string barcode;
+
+            public float x;
+            public float y;
+            public float z;
+
+            public float qX;
+            public float qY;
+            public float qZ;
+            public float qW;
+
+            public BarcodePosRot(Barcode barcode, Vector3 position, Quaterion rotation)
+            {
+                this.barcode = barcode.ID;
+
+                x = position.x;
+                y = position.y;
+                z = position.z;
+
+                qX = rotation.x;
+                qY = rotation.y;
+                qZ = rotation.z;
+                qW = rotation.w;
+            }
+
+            public Vector3 GetPosition()
+            {
+                return new Vector3(x, y, z);
+            }
+
+            public Quaterion GetRotation()
+            {
+                return new Quaternion(qX, qY, qZ, qW);
             }
         }
 

@@ -32,12 +32,12 @@ namespace CustomCampaignTools.SDK
                     }
                 }
 
-                List<string> entityBarcodes = new List<string>();
+                List<BarcodePosRot> Entities = new List<BarcodePosRot>();
                 foreach(MarrowEntity entity in boxVolEntities)
                 {
-                    entityBarcodes.Add(entity._poolee.SpawnableCrate.Barcode.ID);
+                    Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation));
                 }
-                SavepointFunctions.SavePlayer(barcode, transform.position, collider.bounds.center, entityBarcodes);
+                SavepointFunctions.SavePlayer(barcode, transform.position, collider.bounds.center, Entities);
             }
             else {
                 SavepointFunctions.SavePlayer(barcode, transform.position, transform.position);

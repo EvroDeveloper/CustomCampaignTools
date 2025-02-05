@@ -19,7 +19,7 @@ namespace CustomCampaignTools
     {
         public static bool WasLastLoadByContinue = false;
 
-        public static void SavePlayer(string levelBarcode, Vector3 position, Vector3 boxCollectorPosition, List<string> boxBarcodes = null)
+        public static void SavePlayer(string levelBarcode, Vector3 position, Vector3 boxCollectorPosition, List<CampaignSaveData.BarcodePosRot> boxBarcodes = null)
         {
             Campaign campaign = CampaignUtilities.GetFromLevel(levelBarcode);
 
