@@ -21,7 +21,7 @@ namespace CustomCampaignTools
 
         public static void SavePlayer(string levelBarcode, Vector3 position, Vector3 boxCollectorPosition, List<string> boxBarcodes = null)
         {
-            Campaign campaign = Campaign.GetFromLevel(levelBarcode);
+            Campaign campaign = CampaignUtilities.GetFromLevel(levelBarcode);
 
             var sideLf = Player.RigManager.inventory.bodySlots[0].inventorySlotReceiver;
             var backLf = Player.RigManager.inventory.bodySlots[2].inventorySlotReceiver;
@@ -57,7 +57,7 @@ namespace CustomCampaignTools
         {
             WasLastLoadByContinue = false;
 
-            Campaign campaign = Campaign.GetFromLevel();
+            Campaign campaign = CampaignUtilities.GetFromLevel();
 
             CampaignSaveData.SavePoint savePoint = campaign.saveData.LoadedSavePoint;
 

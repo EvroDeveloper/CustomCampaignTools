@@ -12,7 +12,7 @@ namespace CustomCampaignTools.SDK
 
         public void Continue()
         {
-            Campaign campaign = Campaign.GetFromLevel();
+            Campaign campaign = CampaignUtilities.GetFromLevel();
 
             if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
@@ -22,7 +22,7 @@ namespace CustomCampaignTools.SDK
 
         public void EnableIfValidSave(GameObject obj)
         {
-            Campaign campaign = Campaign.GetFromLevel();
+            Campaign campaign = CampaignUtilities.GetFromLevel();
 
             if (campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint)) obj.SetActive(true);
         }

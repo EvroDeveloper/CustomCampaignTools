@@ -19,18 +19,18 @@ namespace CustomCampaignTools.SDK
         {
             achievementIcon = img;
             titleTMP = title;
-            description = description;
+            descriptionTMP = description;
         }
 
         public void ShowAchievement(AchievementData achievement)
         {
             bool unlocked = Campaign.Session.saveData.UnlockedAchievements.Contains(achievement.Key);
             
-            titleTMP.text = achievement.Title;
+            titleTMP.text = achievement.Name;
             descriptionTMP.text = unlocked ? achievement.Description : !achievement.Hidden ? achievement.Description : "???";
             
-            achievement.LoadIcon((t) => { achievementIcon.image = t; });
-            achievementIcon.tintColor = unlocked ? Color.white : new Color(0.5, 0.5, 0.5, 1);
+            //achievement.LoadIcon((t) => { achievementIcon.sprite = t; });
+            achievementIcon.color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         }
     }
 }

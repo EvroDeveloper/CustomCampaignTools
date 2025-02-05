@@ -223,7 +223,7 @@ namespace CustomCampaignTools
 
         public static void OnLevelLoaded(LevelInfo info)
         {
-            if(!CampaignUtilities.IsCampaignLevel(info.barcode, out Session)) return;
+            if(!CampaignUtilities.IsCampaignLevel(info.barcode, out Session, out _)) return;
 
             if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {

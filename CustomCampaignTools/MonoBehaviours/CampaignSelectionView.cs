@@ -1,3 +1,9 @@
+using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppTMPro;
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
 namespace CustomCampaignTools
 {
     public class CampaignSelectionView : MonoBehaviour
@@ -24,13 +30,13 @@ namespace CustomCampaignTools
             continueButton.onClick.AddListener(new Action(() => { Continue(); }));
         }
 
-        public void Activate(Campain campaign)
+        public void Activate(Campaign campaign)
         {
             targetCampaign = campaign;
 
             campaignTitle.text = campaign.Name;
             
-            continueButton.gameObject.SetActive(campaign.saveData.LoadedSavePoint.IsValid());
+            continueButton.gameObject.SetActive(campaign.saveData.LoadedSavePoint.IsValid(out _));
 
         }
 
@@ -41,7 +47,7 @@ namespace CustomCampaignTools
 
         public void Continue()
         {
-            targetCampaign.saveData.LoadedSavePoint.LoadContinue();
+            targetCampaign.saveData.LoadedSavePoint.LoadContinue(targetCampaign);
         }
 
     }

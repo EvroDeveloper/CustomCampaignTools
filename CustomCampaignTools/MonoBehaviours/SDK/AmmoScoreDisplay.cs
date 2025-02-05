@@ -12,7 +12,7 @@ namespace CustomCampaignTools.SDK
 
         public void SetTargetBarcode(string barcode) 
         {
-            Campaign campaign = Campaign.GetFromLevel(barcode);
+            Campaign campaign = CampaignUtilities.GetFromLevel(barcode);
             CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(barcode);
             GetComponent<TMP_Text>().text = ammoSave.GetCombinedTotal().ToString();
         }

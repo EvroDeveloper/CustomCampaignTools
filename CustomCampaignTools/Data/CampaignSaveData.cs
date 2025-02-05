@@ -38,7 +38,7 @@ namespace CustomCampaignTools
             LoadedFloatDatas = new List<FloatData>();
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
-            UnlockedAchievements = new List<strin>();
+            UnlockedAchievements = new List<string>();
         }
 
         #region Ammo Methods
@@ -330,7 +330,7 @@ namespace CustomCampaignTools
                 return true;
             }
 
-            public void LoadContinue()
+            public void LoadContinue(Campaign campaign)
             {
                 LoadContinue(new Barcode(campaign.LoadScene));
             }

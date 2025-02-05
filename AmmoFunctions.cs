@@ -42,11 +42,11 @@ namespace CustomCampaignTools
             {
             }
 
-            string[] mainLevels = campaign.MainLevels;
+            string[] mainLevels = campaign.mainLevels;
 
             for (int i = 0; i < levelIndex; i++)
             {
-                level = mainLevels[i];
+                var level = mainLevels[i];
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, campaign.saveData.GetSavedAmmo(level).LightAmmo);
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, campaign.saveData.GetSavedAmmo(level).MediumAmmo);
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.GetSavedAmmo(level).HeavyAmmo);

@@ -26,7 +26,6 @@ namespace CustomCampaignTools
             BoneMenuCreator.CreateBoneMenu();
 
             Campaign.OnInitialize();
-            MainMenuMangler.OnInitialize();
 
             Hooking.OnLevelLoaded += LevelInitialized;
             Hooking.OnLevelUnloaded += LevelUnloaded;

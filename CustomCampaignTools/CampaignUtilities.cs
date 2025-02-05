@@ -1,5 +1,8 @@
+using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Warehouse;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomCampaignTools
 {
@@ -25,7 +28,7 @@ namespace CustomCampaignTools
 
         public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign, out CampaignLevelType levelType)
         {
-            campaign = Campaign.GetFromLevel(levelBarcode);
+            campaign = GetFromLevel(levelBarcode);
 
             if (campaign != null)
                 levelType = campaign.TypeOfLevel(levelBarcode);

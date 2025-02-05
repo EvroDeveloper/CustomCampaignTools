@@ -1,6 +1,7 @@
 ﻿using BoneLib.BoneMenu;
 using CustomCampaignTools;
 using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,10 @@ namespace CustomCampaignTools.Bonemenu
 
             campaignPage.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
             if(c.saveData.LoadedSavePoint.IsValid(out _))
-                campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue());
+                campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
             campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());
 
-            var achievementPage = campaignPage.CreatePage($"{c.name} Achievements", Color.yellow);
+            var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
 
             foreach(string key in c.saveData.UnlockedAchievements)
             {

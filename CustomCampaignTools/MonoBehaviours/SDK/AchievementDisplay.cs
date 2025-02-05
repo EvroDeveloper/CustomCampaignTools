@@ -63,17 +63,17 @@ namespace CustomCampaignTools.SDK
 
             for(int i = 0; i < achievementViews.Length; i++)
             {
-                GameObject currentView = achievementViews[i];
+                var currentView = achievementViews[i];
                 int achievementIndex = (achievementViews.Length * _currentPage) + i;
 
                 if(achievementIndex < Campaign.Session.Achievements.Count)
                 {
-                    currentView.SetActive(true);
+                    currentView.gameObject.SetActive(true);
                     currentView.ShowAchievement(Campaign.Session.Achievements[achievementIndex]);
                 }
                 else
                 {
-                    currentView.SetActive(false);
+                    currentView.gameObject.SetActive(false);
                 }
             }
 
