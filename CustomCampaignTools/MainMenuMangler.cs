@@ -69,16 +69,15 @@ namespace CustomCampaignTools
             byte[] bytes = HelperMethods.GetResourceBytes(assembly, resourceName);
             
             Texture2D texture = new Texture2D(2, 2);
-                if (!texture.LoadImage(bytes))
-                {
-                    Debug.LogError("Failed to load texture from embedded resource.");
-                    return null;
-                }
-
-                // Create a Sprite from the Texture2D
-                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, pixelsPerUnit);
-                return sprite;
+            if (!texture.LoadImage(bytes))
+            {
+                Debug.LogError("Failed to load texture from embedded resource.");
+                return null;
             }
+            
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, pixelsPerUnit);
+            return sprite;
+            
         }
     }
 }
