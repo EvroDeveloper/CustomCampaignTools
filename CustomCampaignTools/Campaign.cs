@@ -304,29 +304,20 @@ namespace CustomCampaignTools
         public string Name { get; set; }
         public string Description { get; set; }
 
-        private MarrowAssetT<Texture2D> _marrowAsset;
         private Texture2D _cachedTexture;
 
         public void Init()
         {
-            _marrowAsset = new MarrowAssetT<Texture2D>(IconGUID);
-            LoadIcon((t) => { _cachedTexture = t; });
+            LoadIcon();
         }
 
-        public void LoadIcon(Action<Texture2D> callback)
+        public void LoadIcon()
         {
-            if(_cachedTexture != null) callback.Invoke(_cachedTexture);
-            else if(IconBytes.Length != 0)
+            if(IconBytes.Length == 0) return;
+            Texture2D texture = new Texture2D(2, 2);
+            if (!texture.LoadImage(IconBytes))
             {
-                _cachedTexture = new Texture2D(2, 2);
-                if (!_cachedTexture.LoadImage(IconBytes))
-                {
-                    Debug.LogError("Failed to load texture from embedded resource.");
-                }
-            }
-            else
-            {
-                _marrowAsset.LoadAsset(callback);
+                Debug.LogError("Failed to load texture from embedded resource.");
             }
         }
     }
