@@ -47,9 +47,7 @@ namespace CustomCampaignTools
             #region Save Data
             if (CampaignUtilities.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
             {
-                MelonLogger.Msg("Level is in Campaign!");
                 if (levelType != CampaignLevelType.MainLevel) return;
-                MelonLogger.Msg("Main Level!");
 
                 int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
                 string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1, CampaignLevelType.MainLevel);
@@ -60,7 +58,6 @@ namespace CustomCampaignTools
             }
             else
             {
-                MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcode);
                 SavepointFunctions.SavePlayer(barcode, Vector3.zero);
             }
         }
