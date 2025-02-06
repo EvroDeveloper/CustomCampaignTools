@@ -23,7 +23,7 @@ namespace CustomCampaignTools.SDK
             {
                 HashSet<MarrowEntity> boxVolEntities = new HashSet<MarrowEntity>();
 
-                Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER);
+                Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER, QueryTriggerInteraction.Collide);
                 foreach (Collider tracker in trackers)
                 {
                     if(tracker.TryGetComponent(out Tracker t))
@@ -32,15 +32,15 @@ namespace CustomCampaignTools.SDK
                     }
                 }
 
-                List<BarcodePosRot> Entities = new List<BarcodePosRot>();
+                List<CampaignSaveData.BarcodePosRot> Entities = new List<CampaignSaveData.BarcodePosRot>();
                 foreach(MarrowEntity entity in boxVolEntities)
                 {
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation));
                 }
-                SavepointFunctions.SavePlayer(barcode, transform.position, collider.bounds.center, Entities);
+                SavepointFunctions.SavePlayer(barcode, transform.position, Entities);
             }
             else {
-                SavepointFunctions.SavePlayer(barcode, transform.position, transform.position);
+                SavepointFunctions.SavePlayer(barcode, transform.position);
             }
         }
     }

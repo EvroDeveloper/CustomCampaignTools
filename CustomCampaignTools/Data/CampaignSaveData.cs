@@ -88,9 +88,9 @@ namespace CustomCampaignTools
 
             for (int i = 0; i < levelIndex; i++)
             {
-                previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).LightAmmo;
-                previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).MediumAmmo;
-                previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).HeavyAmmo;
+                previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.mainLevels[i]).LightAmmo;
+                previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.mainLevels[i]).MediumAmmo;
+                previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.mainLevels[i]).HeavyAmmo;
             }
 
             return previousLevelsAmmoSave;
@@ -190,23 +190,26 @@ namespace CustomCampaignTools
             {
                 if(achievement.Key != key) continue;
 
-                if(achievement.IconGUID == string.Empty)
-                {
-                    Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
-                }
-                else
-                {
-                    achievement.LoadIcon((tex) => {
-                        Notifier.Send(new Notification() { 
-                            CustomIcon = tex,
-                            Title = $"Achievement Get: {achievement.Name}",
-                            Message = achievement.Description,
-                            Type = NotificationType.CustomIcon,
-                            PopupLength = 5,
-                            ShowTitleOnPopup = true,
-                        });
-                    });
-                }
+                Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
+
+
+                //if (achievement.IconGUID == string.Empty)
+                //{
+                //    Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
+                //}
+                //else
+                //{
+                //    achievement.LoadIcon((tex) => {
+                //        Notifier.Send(new Notification() { 
+                //            CustomIcon = tex,
+                //            Title = $"Achievement Get: {achievement.Name}",
+                //            Message = achievement.Description,
+                //            Type = NotificationType.CustomIcon,
+                //            PopupLength = 5,
+                //            ShowTitleOnPopup = true,
+                //        });
+                //    });
+                //}
                 UnlockedAchievements.Add(key);
                 SaveToDisk();
                 return true;
@@ -293,7 +296,7 @@ namespace CustomCampaignTools
             public List<string> UnlockedAchievements { get; set; }
         }
 
-        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<BarcodePosRot> boxContainedBarcodes, Vector3 boxContainerPosition)
+        public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<BarcodePosRot> boxContainedBarcodes)
         {
             public string LevelBarcode = levelBarcode;
             public float PositionX = position.x;
@@ -307,10 +310,6 @@ namespace CustomCampaignTools
             public string RightShoulderSlotBarcode = rightShoulderBarcode;
 
             public List<BarcodePosRot> BoxContainedBarcodes = boxContainedBarcodes;
-
-            public float BoxContainedX = boxContainerPosition.x;
-            public float BoxContainedY = boxContainerPosition.y;
-            public float BoxContainedZ = boxContainerPosition.z;
 
             /// <summary>
             /// Returns true if the save point has a level barcode.
@@ -347,11 +346,6 @@ namespace CustomCampaignTools
             {
                 return new Vector3(PositionX, PositionY, PositionZ);
             }
-
-            public Vector3 GetBoxPosition()
-            {
-                return new Vector3(BoxContainedX, BoxContainedY, BoxContainedZ);
-            }
         }
 
         public struct BarcodePosRot
@@ -367,7 +361,7 @@ namespace CustomCampaignTools
             public float qZ;
             public float qW;
 
-            public BarcodePosRot(Barcode barcode, Vector3 position, Quaterion rotation)
+            public BarcodePosRot(Barcode barcode, Vector3 position, Quaternion rotation)
             {
                 this.barcode = barcode.ID;
 
@@ -386,7 +380,7 @@ namespace CustomCampaignTools
                 return new Vector3(x, y, z);
             }
 
-            public Quaterion GetRotation()
+            public Quaternion GetRotation()
             {
                 return new Quaternion(qX, qY, qZ, qW);
             }

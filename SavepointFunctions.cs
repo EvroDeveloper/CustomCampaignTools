@@ -19,7 +19,7 @@ namespace CustomCampaignTools
     {
         public static bool WasLastLoadByContinue = false;
 
-        public static void SavePlayer(string levelBarcode, Vector3 position, Vector3 boxCollectorPosition, List<CampaignSaveData.BarcodePosRot> boxBarcodes = null)
+        public static void SavePlayer(string levelBarcode, Vector3 position, List<CampaignSaveData.BarcodePosRot> boxBarcodes = null)
         {
             Campaign campaign = CampaignUtilities.GetFromLevel(levelBarcode);
 
@@ -35,7 +35,7 @@ namespace CustomCampaignTools
             string backRightBarcode = GetAmmoBarcodeFromSlot(backRt);
             string backCenterBarcode = GetAmmoBarcodeFromSlot(backCt);
 
-            campaign.saveData.LoadedSavePoint = new CampaignSaveData.SavePoint(levelBarcode, position, backCenterBarcode, sideLeftBarcode, sideRightBarcode, backLeftBarcode, backRightBarcode, boxBarcodes, boxCollectorPosition);
+            campaign.saveData.LoadedSavePoint = new CampaignSaveData.SavePoint(levelBarcode, position, backCenterBarcode, sideLeftBarcode, sideRightBarcode, backLeftBarcode, backRightBarcode, boxBarcodes);
 
             campaign.saveData.SaveToDisk();
         }
@@ -69,10 +69,9 @@ namespace CustomCampaignTools
             {
                 Player.RigManager.Teleport(savePoint.GetPosition()); // Definately getting to here, and not erroring afterward
 
-                foreach(string barcode in savePoint.BoxContainedBarcodes)
+                foreach(CampaignSaveData.BarcodePosRot barcode in savePoint.BoxContainedBarcodes)
                 {
-                    MelonLogger.Msg($"Spawning Crate {barcode} at Box Container");
-                    HelperMethods.SpawnCrate(barcode, savePoint.GetBoxPosition(), Quaternion.identity, Vector3.one, spawnAction: ((g) => { MelonLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
+                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: ((g) => { MelonLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
                 }
             }
 
@@ -87,6 +86,7 @@ namespace CustomCampaignTools
 
         public static void HolsterItemIfNotEmpty(this InventorySlotReceiver slot, string barcode, Vector3 spawnPosition = default)
         {
+            if (barcode == string.Empty) return;
             var task = slot.SpawnInSlotAsync(new Barcode(barcode));
         }
 

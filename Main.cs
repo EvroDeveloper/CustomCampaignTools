@@ -63,7 +63,7 @@ namespace CustomCampaignTools
             else
             {
                 MelonLogger.Msg("Loaded into a map without continue, saving default at scene " + barcode);
-                SavepointFunctions.SavePlayer(barcode, Vector3.zero, Vector3.zero);
+                SavepointFunctions.SavePlayer(barcode, Vector3.zero);
             }
         }
             #endregion

@@ -15,7 +15,7 @@ namespace CustomCampaignTools
     {
         public static void ClearAmmo(Campaign campaign)
         {
-            if (LevelParsing.IsCampaignLevel(SceneStreamer.Session.Level.Barcode.ID, out _, out _))
+            if (CampaignUtilities.IsCampaignLevel(SceneStreamer.Session.Level.Barcode.ID, out _, out _))
                 AmmoInventory.Instance.ClearAmmo();
 
             campaign.saveData.LoadedAmmoSaves.Clear();

@@ -133,7 +133,7 @@ namespace CustomCampaignTools
 
         private string[] GetBarcodeArrayOfLevelType(CampaignLevelType type)
         {
-            string[] output = new string[0];
+            string[] output = [];
             switch (type)
             {
                 case CampaignLevelType.Menu:
@@ -225,7 +225,9 @@ namespace CustomCampaignTools
         {
             if(!CampaignUtilities.IsCampaignLevel(info.barcode, out Session, out _)) return;
 
-            if(Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
+            lastLoadedCampaignLevel = info.barcode;
+
+            if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
                 var popUpMenu = UIRig.Instance.popUpMenu;
                 popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
@@ -249,8 +251,6 @@ namespace CustomCampaignTools
                     Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
                 }
             }
-
-            lastLoadedCampaignLevel = info.barcode;
         }
     }
 
