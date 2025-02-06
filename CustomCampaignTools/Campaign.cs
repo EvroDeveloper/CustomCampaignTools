@@ -300,6 +300,7 @@ namespace CustomCampaignTools
         public string Key { get; set; }
         public bool Hidden { get; set; }
         public string IconGUID { get; set; }
+        public byte[] IconBytes { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -315,7 +316,18 @@ namespace CustomCampaignTools
         public void LoadIcon(Action<Texture2D> callback)
         {
             if(_cachedTexture != null) callback.Invoke(_cachedTexture);
-            else _marrowAsset.LoadAsset(callback);
+            else if(IconBytes.Length != 0)
+            {
+                _cachedTexture = new Texture2D(2, 2);
+                if (!_cachedTexture.LoadImage(IconBytes))
+                {
+                    Debug.LogError("Failed to load texture from embedded resource.");
+                }
+            }
+            else
+            {
+                _marrowAsset.LoadAsset(callback);
+            }
         }
     }
 }
