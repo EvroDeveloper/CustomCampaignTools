@@ -55,6 +55,7 @@
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\CampaignAchievementManager.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\CampaignUnlocking.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\ContinueCampaign.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\Control_MonoMat.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\InvokeInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\SavePoint.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\UnhideInCampaign.cs" />
