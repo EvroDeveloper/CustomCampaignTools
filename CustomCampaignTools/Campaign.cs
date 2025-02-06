@@ -252,6 +252,31 @@ namespace CustomCampaignTools
                 }
             }
         }
+
+        public static void OnUIRigCreated()
+        {
+            var popUpMenu = UIRig.Instance.popUpMenu;
+
+            if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
+            {
+                // popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
+                //     popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
+                // });
+
+                popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
+
+            }
+
+            if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
+            {
+                popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
+
+                if (Session.CampaignAvatar != string.Empty)
+                {
+                    Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
+                }
+            }
+        }
     }
 
     internal class CampaignLoadingData

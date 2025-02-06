@@ -66,22 +66,10 @@ namespace CustomCampaignTools
 
         public static Sprite LoadSpriteFromEmbeddedResource(string resourceName, Assembly assembly, Vector2 pivot, float pixelsPerUnit = 100f)
         {
-            // Get the embedded resource stream
-            using (Stream resourceStream = assembly.GetManifestResourceStream(resourceName))
-            {
-                if (resourceStream == null)
-                {
-                    Debug.LogError($"Resource '{resourceName}' not found in assembly '{assembly.FullName}'.");
-                    return null;
-                }
-
-                // Read the resource into a byte array
-                byte[] resourceData = new byte[resourceStream.Length];
-                resourceStream.Read(resourceData, 0, resourceData.Length);
-
-                // Convert the byte array into a Texture2D
-                Texture2D texture = new Texture2D(2, 2);
-                if (!texture.LoadImage(resourceData))
+            byte[] bytes = HelperMethods.GetResourceBytes(assembly, resourceName);
+            
+            Texture2D texture = new Texture2D(2, 2);
+                if (!texture.LoadImage(bytes))
                 {
                     Debug.LogError("Failed to load texture from embedded resource.");
                     return null;

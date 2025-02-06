@@ -29,14 +29,12 @@ namespace CustomCampaignTools
 
             Hooking.OnLevelLoaded += LevelInitialized;
             Hooking.OnLevelUnloaded += LevelUnloaded;
+            Hooking.OnUIRigCreated += OnUIRigCreated;
 
-            string resourceName = "CustomCampaignTools.Resources.CampaignIcon.png";
+            string resourceName = "CampaignIcon.png";
             Assembly assembly = MelonAssembly.Assembly;
 
-            Sprite sprite = MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
-
-            //Hooking.CreateHook(typeof(HideOnAwake).GetMethod(nameof(HideOnAwake.Awake), AccessTools.all), typeof(UnhideInCampaign).GetMethod(nameof(UnhideInCampaign.OnHideOnAwakeAwoken), AccessTools.all));
-
+            CampaignSprite = MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
         }
 
         internal static void LevelInitialized(LevelInfo info)
@@ -78,6 +76,11 @@ namespace CustomCampaignTools
 #endif
                 Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
             }
+        }
+
+        private static void OnUIRigCreated()
+        {
+            Campaign.OnUIRigCreated();
         }
     }
 }
