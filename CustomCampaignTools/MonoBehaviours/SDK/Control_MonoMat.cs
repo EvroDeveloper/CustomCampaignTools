@@ -20,8 +20,8 @@ namespace CustomCampaignTools.LabWorks
 		private HingeController _doorLeverCircuit;
 		private ValueCircuit _doorMotorCircuit;
 
-		private int _multiplier { get; set; }
-		private int _itemPrice { get; set; }
+		private int _multiplier;
+		private int _itemPrice;
 
         private int _trueItemPrice => _itemPrice * _multiplier;
 
@@ -31,31 +31,51 @@ namespace CustomCampaignTools.LabWorks
 
         private int _totalBullets => _lightBullets + _mediumBullets + _heavyBullets;
 
-		[SerializeField]
 		private bool _opened;
-
-		[SerializeField]
 		private bool _unlocked;
 
-		private TextMeshProUGUI _bulletBalanceTextmesh { get; set; }
-		private TextMeshProUGUI _refundTextmesh { get; set; }
+		private TMP_Text _bulletBalanceTextmesh;
+		private TMP_Text _refundTextmesh;
 
-		private AmmoReciever reciever { get; set; }
+		private AmmoReciever reciever;
 
-		private Spawnable lightRefundSpawnable { get; set; }
-		private Spawnable mediumRefundSpawnable { get; set; }
-		private Spawnable heavyRefundSpawnable { get; set; }
+		private string lightRefundSpawnable;
+		private string mediumRefundSpawnable;
+		private string heavyRefundSpawnable;
 
-		private AudioClip _openedClip { get; set; }
-		private AudioClip _unlockedClip { get; set; }
-		private AudioClip _lockedClip { get; set; }
+		private AudioClip _openedClip;
+		private AudioClip _unlockedClip;
+		private AudioClip _lockedClip;
 
-		public Transform giveChangeTransform;
+		private Transform giveChangeTransform;
 
-		private void Start()
+		private bool _hasFields = false;
+
+		public void StartFields(GameObject lootParent, int itemPrice, int multiplier, TMP_Text _bulletBalanceTextmesh, TMP_Text _refundTextmesh, AmmoReciever reciever, string lightRefundSpawnable, string mediumRefundSpawnable, string heavyRefundSpawnable, AudioClip openedClip, AudioClip unlockedClip, AudioClip lockedClip, Transform giveChangeTransform)
+		{
+			SetLootsFromParent(lootParent);
+			this._itemPrice = itemPrice;
+			this._multiplier = multiplier;
+			this._bulletBalanceTextmesh = _bulletBalanceTextmesh;
+			this._refundTextmesh = _refundTextmesh;
+			this.reciever = reciever;
+			this.lightRefundSpawnable = lightRefundSpawnable;
+			this.mediumRefundSpawnable = mediumRefundSpawnable;
+			this.heavyRefundSpawnable = heavyRefundSpawnable;
+			this._openedClip = openedClip;
+			this._unlockedClip = unlockedClip;
+			this._lockedClip = lockedClip;
+			this.giveChangeTransform = giveChangeTransform;
+
+			_hasFields = true;
+
+			SafeStart();
+		}
+
+		private void SafeStart()
 		{
             reciever.OnInsert += InsertMagazine;
-            _bulletBalanceTextmesh = (_itemPrice * _multiplier);
+            _bulletBalanceTextmesh.text = _trueItemPrice.ToString();
 			_doorMotorCircuit.Value = 1f;
 
 			foreach(CrateSpawner loot in _loots)
@@ -77,15 +97,15 @@ namespace CustomCampaignTools.LabWorks
 		{
             if(_lightBullets > 0)
             {
-                AssetSpawner.SpawnAsync(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
             }
             if(_mediumBullets > 0)
             {
-                AssetSpawner.SpawnAsync(mediumRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
             }
             if(_heavyBullets > 0)
             {
-                AssetSpawner.SpawnAsync(heavyRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
             }
 
             _lightBullets = 0;
@@ -97,14 +117,16 @@ namespace CustomCampaignTools.LabWorks
 
 		public void PurchaseItem()
 		{
-			float ammoToRemove = _itemPrice * _multiplier;
-			
-			if(_lightBullets + _mediumBullets + _heavyBullets < ammoToRemove)
+			// If the inserted bullets is less than the item price
+			// (Unable to buy)
+			if(_totalBullets < _trueItemPrice)
 			{
 				_doorMotorCircuit.Value = 1;
 				return;
 			}
 
+			int ammoToRemove = _trueItemPrice;
+			
 			ammoToRemove = CleanupLight(ammoToRemove);
 			ammoToRemove = CleanupMedium(ammoToRemove);
 			CleanupHeavy(ammoToRemove);
@@ -114,11 +136,11 @@ namespace CustomCampaignTools.LabWorks
 				loot.isKinematic = false;
 			}
 
-			_refundTextmesh.text = (_lightBullets + _mediumBullets + _heavyBullets).ToString();
+			_refundTextmesh.text = _totalBullets.ToString();
 
 		}
 
-		private float CleanupLight(float ammoToRemove)
+		private int CleanupLight(int ammoToRemove)
 		{
 			if(ammoToRemove > _lightBullets)
 			{
@@ -133,7 +155,7 @@ namespace CustomCampaignTools.LabWorks
 			return ammoToRemove;
 		}
 
-		private float CleanupMedium(float ammoToRemove)
+		private int CleanupMedium(int ammoToRemove)
 		{
 			if(ammoToRemove > _lightBullets)
 			{
@@ -148,7 +170,7 @@ namespace CustomCampaignTools.LabWorks
 			return ammoToRemove;
 		}
 
-		private float CleanupHeavy(float ammoToRemove)
+		private int CleanupHeavy(int ammoToRemove)
 		{
 			if(ammoToRemove > _heavyBullets)
 			{
@@ -167,7 +189,7 @@ namespace CustomCampaignTools.LabWorks
 		{
             AddBullets(magazine.magazineState.AmmoCount, 0);
 
-			if(_lightBullets + _mediumBullets + _heavyBullets >= _itemPrice * _multiplier && !_unlocked && !_opened)
+			if(_totalBullets >= _trueItemPrice && !_unlocked && !_opened)
 			{
 				_unlocked = true;
 				_doorMotorCircuit.Value = 0f;
@@ -189,8 +211,8 @@ namespace CustomCampaignTools.LabWorks
                 _heavyBullets += addedBullets;
             }
 
-            _bulletBalanceTextmesh.text = (Mathf.Max(_itemPrice * _multiplier - (_lightBullets + _mediumBullets + _heavyBullets), 0f)).ToString();
-            _refundTextmesh.text = (_lightBullets + _mediumBullets + _heavyBullets).ToString();
+            _bulletBalanceTextmesh.text = (Mathf.Max(_trueItemPrice - _totalBullets, 0f)).ToString();
+            _refundTextmesh.text = _totalBullets.ToString();
 
 		}
 
