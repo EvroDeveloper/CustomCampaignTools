@@ -1,8 +1,14 @@
 using System;
-using SLZ.Marrow.Data;
-using SLZ.Marrow;
-using TMPro;
+using Il2CppSLZ.Marrow.Data;
+using Il2CppSLZ.Marrow;
+using Il2CppTMPro;
 using UnityEngine;
+using MelonLoader;
+using System.Collections.Generic;
+using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.Circuits;
+using Il2CppSLZ.Bonelab;
+using BoneLib;
 
 namespace CustomCampaignTools.LabWorks
 {
@@ -74,13 +80,13 @@ namespace CustomCampaignTools.LabWorks
 
 		private void SafeStart()
 		{
-            reciever.OnInsert += InsertMagazine;
+            reciever.OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g) );
             _bulletBalanceTextmesh.text = _trueItemPrice.ToString();
 			_doorMotorCircuit.Value = 1f;
 
 			foreach(CrateSpawner loot in _loots)
 			{
-				var call = loot.onSpawnEvent.AddPersistentListener(OnLootSpawned);
+				//var call = loot.onSpawnEvent.AddPersistentCall(OnLootSpawned);
 			}
 		}
 
