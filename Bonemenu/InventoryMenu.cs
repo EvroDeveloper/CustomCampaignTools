@@ -1,12 +1,7 @@
 ﻿using BoneLib.BoneMenu;
-using CustomCampaignTools;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CustomCampaignTools.Bonemenu
@@ -22,6 +17,8 @@ namespace CustomCampaignTools.Bonemenu
                 campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
             campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());
 
+#if DEBUG
+
             var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
 
             foreach(string key in c.saveData.UnlockedAchievements)
@@ -35,6 +32,7 @@ namespace CustomCampaignTools.Bonemenu
                     MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
                 }
             }
+#endif
         }
     }
 }

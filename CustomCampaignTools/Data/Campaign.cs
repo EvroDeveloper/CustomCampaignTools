@@ -255,16 +255,11 @@ namespace CustomCampaignTools
 
         public static void OnUIRigCreated()
         {
-            var popUpMenu = UIRig.Instance.popUpMenu;
+            var popUpMenu = Player.UIRig.popUpMenu;
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
-                // popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
-                //     popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
-                // });
-
                 popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
-
             }
 
             if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
@@ -275,49 +270,6 @@ namespace CustomCampaignTools
                 {
                     Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
                 }
-            }
-        }
-    }
-
-    internal class CampaignLoadingData
-    {
-        public string Name { get; set; }
-        public string InitialLevel { get; set; }
-        public List<string> MainLevels { get; set; }
-        public List<string> ExtraLevels { get; set; }
-        public string LoadScene { get; set; }
-        public bool ShowInMenu { get; set; }
-        public bool RestrictDevTools { get; set; }
-        public bool RestrictAvatar { get; set; }
-        public string CampaignAvatar { get; set; }
-        public bool SaveLevelWeapons { get; set; }
-        public bool SaveLevelAmmo { get; set; }
-        public List<AchievementData> Achievements { get; set; }
-    }
-
-    public class AchievementData
-    {
-        public string Key { get; set; }
-        public bool Hidden { get; set; }
-        public string IconGUID { get; set; }
-        public byte[] IconBytes { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        private Texture2D _cachedTexture;
-
-        public void Init()
-        {
-            LoadIcon();
-        }
-
-        public void LoadIcon()
-        {
-            if(IconBytes.Length == 0) return;
-            Texture2D texture = new Texture2D(2, 2);
-            if (!texture.LoadImage(IconBytes))
-            {
-                Debug.LogError("Failed to load texture from embedded resource.");
             }
         }
     }

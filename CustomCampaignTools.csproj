@@ -40,10 +40,10 @@
     <Compile Include="AmmoFunctions.cs" />
     <Compile Include="Bonemenu\InventoryMenu.cs" />
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
-    <Compile Include="CustomCampaignTools\Campaign.cs" />
+    <Compile Include="CustomCampaignTools\Data\Campaign.cs" />
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
-    <Compile Include="CustomCampaignTools\FadeLoader.cs" />
+    <Compile Include="FadeLoader.cs" />
     <Compile Include="CustomCampaignTools\HideOnAwakePatches.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\BodylogEnablePatches.cs" />
@@ -60,6 +60,8 @@
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\SavePoint.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\UnhideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\VariableManager.cs" />
+    <Compile Include="CustomCampaignTools\Data\AchievementData.cs" />
+    <Compile Include="CustomCampaignTools\Data\CampaignLoadingData.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

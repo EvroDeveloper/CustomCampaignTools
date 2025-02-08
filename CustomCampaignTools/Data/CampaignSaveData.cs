@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CustomCampaignTools
 {
@@ -46,7 +45,7 @@ namespace CustomCampaignTools
         {
             AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
-            if(!campaign.SaveLevelAmmo) return;
+            if (!campaign.SaveLevelAmmo) return;
 
             if (!DoesSavedAmmoExist(levelBarcode))
             {
@@ -57,7 +56,7 @@ namespace CustomCampaignTools
                     MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
                     HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                 });
-            } 
+            }
             else
             {
                 AmmoSave previousHighScore = GetSavedAmmo(levelBarcode);
@@ -186,30 +185,33 @@ namespace CustomCampaignTools
             if (UnlockedAchievements == null) UnlockedAchievements = new List<string>();
             if (UnlockedAchievements.Contains(key)) return false;
 
-            foreach(AchievementData achievement in campaign.Achievements)
+            foreach (AchievementData achievement in campaign.Achievements)
             {
-                if(achievement.Key != key) continue;
+                if (achievement.Key != key) continue;
 
-                Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
+                if (achievement.cachedTexture != null)
+                {
+                    Notifier.Send(new Notification()
+                    {
+                        CustomIcon = achievement.cachedTexture,
+                        Title = $"Achievement Get: {achievement.Name}",
+                        Message = achievement.Description,
+                        Type = NotificationType.CustomIcon,
+                        PopupLength = 5,
+                        ShowTitleOnPopup = true,
+                    });
+                }
+                else
+                {
+                    Notifier.Send(new Notification() { 
+                        Title = $"Achievement Get: {achievement.Name}", 
+                        Message = achievement.Description, 
+                        Type = NotificationType.Information, 
+                        PopupLength = 5, 
+                        ShowTitleOnPopup = true 
+                    });
+                }
 
-
-                //if (achievement.IconGUID == string.Empty)
-                //{
-                //    Notifier.Send(new Notification() { Title = $"Achievement Get: {achievement.Name}", Message = achievement.Description, Type = NotificationType.Information, PopupLength = 5, ShowTitleOnPopup = true });
-                //}
-                //else
-                //{
-                //    achievement.LoadIcon((tex) => {
-                //        Notifier.Send(new Notification() { 
-                //            CustomIcon = tex,
-                //            Title = $"Achievement Get: {achievement.Name}",
-                //            Message = achievement.Description,
-                //            Type = NotificationType.CustomIcon,
-                //            PopupLength = 5,
-                //            ShowTitleOnPopup = true,
-                //        });
-                //    });
-                //}
                 UnlockedAchievements.Add(key);
                 SaveToDisk();
                 return true;
@@ -336,8 +338,8 @@ namespace CustomCampaignTools
 
             public void LoadContinue(Barcode loadScene)
             {
-                if(!IsValid(out _)) return;
-                
+                if (!IsValid(out _)) return;
+
                 SavepointFunctions.WasLastLoadByContinue = true;
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }

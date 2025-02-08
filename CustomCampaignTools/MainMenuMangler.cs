@@ -1,6 +1,7 @@
 using BoneLib;
 using Il2CppSLZ.Bonelab;
 using Il2CppTMPro;
+using Il2CppUltEvents;
 using MelonLoader;
 using System;
 using System.IO;
@@ -66,8 +67,22 @@ namespace CustomCampaignTools
 
         public static Sprite LoadSpriteFromEmbeddedResource(string resourceName, Assembly assembly, Vector2 pivot, float pixelsPerUnit = 100f)
         {
-            byte[] bytes = HelperMethods.GetResourceBytes(assembly, resourceName);
-            
+            byte[] bytes = [];
+
+            foreach (string resource in assembly.GetManifestResourceNames())
+            {
+                if (resource.Contains(resourceName))
+                {
+                    using (Stream resFilestream = assembly.GetManifestResourceStream(resource))
+                    {
+                        if (resFilestream == null) return null;
+                        byte[] byteArr = new byte[resFilestream.Length];
+                        resFilestream.Read(byteArr, 0, byteArr.Length);
+                        bytes = byteArr;
+                    }
+                }
+            }
+
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(bytes))
             {

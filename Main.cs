@@ -1,17 +1,9 @@
-﻿using MelonLoader;
-using BoneLib;
-using Il2CppSLZ.Marrow.Warehouse;
-using System;
-using UnityEngine;
-using Il2CppSLZ.Marrow.SceneStreaming;
-using System.Collections.Generic;
-using CustomCampaignTools.Utilities;
+﻿using BoneLib;
 using CustomCampaignTools.Bonemenu;
-using CustomCampaignTools;
+using Il2CppSLZ.Marrow.SceneStreaming;
+using MelonLoader;
 using System.Reflection;
-using Il2CppSLZ.Bonelab;
-using HarmonyLib;
-using CustomCampaignTools.SDK;
+using UnityEngine;
 
 namespace CustomCampaignTools
 {
