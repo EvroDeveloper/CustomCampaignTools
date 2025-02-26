@@ -46,7 +46,7 @@
     <Compile Include="FadeLoader.cs" />
     <Compile Include="CustomCampaignTools\HideOnAwakePatches.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
-    <Compile Include="CustomCampaignTools\BodylogEnablePatches.cs" />
+    <Compile Include="CustomCampaignTools\AvatarRestrictionPatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignPanelView.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\CampaignSelectionView.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\AchievementDisplay.cs" />
