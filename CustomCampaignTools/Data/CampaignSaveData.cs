@@ -218,6 +218,14 @@ namespace CustomCampaignTools
             }
             return false;
         }
+
+        public void LockAchievement(string key)
+        {
+            if(UnlockedAchievements.Contains(key))
+            {
+                UnlockedAchievements.Remove(key);
+            }
+        }
         #endregion
 
         #region Saving and Loading
