@@ -18,5 +18,13 @@ namespace CustomCampaignTools.SDK
             }
             return false;
         }
+
+        public void RelockAchievement(string Key)
+        {
+            if(Campaign.SessionActive)
+            {
+                Campaign.Session.saveData.LockAchievement(Key);
+            }
+        }
     }
 }
