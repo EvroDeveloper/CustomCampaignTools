@@ -13,6 +13,7 @@ namespace CustomCampaignTools
 {
     public class MainMenuMangler
     {
+        public static Sprite CampaignSprite;
         public static void OnLevelLoaded(LevelInfo info)
         {
             if(info.barcode == CommonBarcodes.Maps.VoidG114)
@@ -55,9 +56,9 @@ namespace CustomCampaignTools
             onClick.AddListener(new Action(() => { MainGrid.SetActive(false); CampaignGrid.SetActive(true); cPanel.Activate(); }));
             var uiImage = newButton.GetComponentInChildren<Button>(true).targetGraphic.GetComponent<Image>();
 
-            if (Main.CampaignSprite != null && uiImage != null)
+            if (CampaignSprite != null && uiImage != null)
             {
-                uiImage.sprite = Main.CampaignSprite;
+                uiImage.sprite = CampaignSprite;
             }
 
             CampaignGrid.SetActive(false);
@@ -65,7 +66,7 @@ namespace CustomCampaignTools
             // Add a CampaignSelectionView to choose to load intomenu or continue n shit
         }
 
-        public static Sprite LoadSpriteFromEmbeddedResource(string resourceName, Assembly assembly, Vector2 pivot, float pixelsPerUnit = 100f)
+        public static void LoadSpriteFromEmbeddedResource(string resourceName, Assembly assembly, Vector2 pivot, float pixelsPerUnit = 100f)
         {
             byte[] bytes = [];
 
@@ -75,7 +76,7 @@ namespace CustomCampaignTools
                 {
                     using (Stream resFilestream = assembly.GetManifestResourceStream(resource))
                     {
-                        if (resFilestream == null) return null;
+                        if (resFilestream == null) return;
                         byte[] byteArr = new byte[resFilestream.Length];
                         resFilestream.Read(byteArr, 0, byteArr.Length);
                         bytes = byteArr;
@@ -86,13 +87,13 @@ namespace CustomCampaignTools
             Texture2D texture = new Texture2D(2, 2);
             if (!texture.LoadImage(bytes))
             {
-                Debug.LogError("Failed to load texture from embedded resource.");
-                return null;
+                MelonLogger.Error("Failed to load texture from embedded resource.");
+                return;
             }
+            texture.hideFlags = HideFlags.DontUnloadUnusedAsset;
             
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, pixelsPerUnit);
-            return sprite;
-            
+            CampaignSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), pivot, pixelsPerUnit);
+            CampaignSprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
         }
     }
 }

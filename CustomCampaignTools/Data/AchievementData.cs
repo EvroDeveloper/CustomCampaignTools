@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using MelonLoader;
+using System.IO;
 
 namespace CustomCampaignTools
 {
@@ -21,16 +22,21 @@ namespace CustomCampaignTools
 
         public void LoadIcon()
         {
-            if(IconBytes.Length == 0) return;
-            Texture2D texture = new Texture2D(2, 2);
-            if (!texture.LoadImage(IconBytes))
+            if (IconBytes.Length == 0) return;
+
+            cachedTexture = new Texture2D(2, 2);
+
+            if (!cachedTexture.LoadImage(IconBytes, false))
             {
                 MelonLogger.Error("Failed to load texture from embedded resource.");
             }
             else
             {
-                cachedTexture = texture;
+                cachedTexture = cachedTexture.ProperResize(336, 336);
+                cachedTexture.hideFlags = HideFlags.DontUnloadUnusedAsset;
             }
+
+
         }
     }
 }

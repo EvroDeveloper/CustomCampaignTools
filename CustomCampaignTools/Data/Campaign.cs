@@ -1,21 +1,16 @@
+using BoneLib;
+using BoneLib.Notifications;
+using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using BoneLib;
 using System.IO;
-using UnityEngine;
-using MelonLoader;
-using Il2CppSLZ.Bonelab;
-using CustomCampaignTools.Bonemenu;
-using CustomCampaignTools.SDK;
-using BoneLib.Notifications;
-using static UnityEngine.UI.StencilMaterial;
+using System.Linq;
 using System.Reflection;
-using Il2CppSLZ.Marrow.VoidLogic;
-using System.Security.Policy;
+using UnityEngine;
 
 namespace CustomCampaignTools
 {
@@ -227,35 +222,43 @@ namespace CustomCampaignTools
 
             lastLoadedCampaignLevel = info.barcode;
 
-            if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
-            {
-                var popUpMenu = UIRig.Instance.popUpMenu;
-                popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
-                    popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
-                });
-            }
+            //if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
+            //{
+            //    var popUpMenu = UIRig.Instance.popUpMenu;
+            //    popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
+            //        popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
+            //    });
+            //}
 
-            if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
-            {
-                PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
-                if(bodyLog != null)
-                {
-                    bodyLog.gameObject.SetActive(false);
-                }
+            //if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
+            //{
+            //    PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
+            //    if(bodyLog != null)
+            //    {
+            //        bodyLog.gameObject.SetActive(false);
+            //    }
 
-                var popUpMenu = UIRig.Instance.popUpMenu;
-                popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
+            //    var popUpMenu = UIRig.Instance.popUpMenu;
+            //    popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
 
-                if (Session.CampaignAvatar != string.Empty)
-                {
-                    Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
-                }
-            }
+            //    if (Session.CampaignAvatar != string.Empty)
+            //    {
+            //        Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
+            //    }
+            //}
         }
 
         public static void OnUIRigCreated()
         {
             var popUpMenu = Player.UIRig.popUpMenu;
+
+            if (popUpMenu.radialPageView.buttons[5].m_Data == null)
+            {
+                MelonLogger.Error("Button 5 Data is NULL!!!");
+            }
+
+
+            if (!CampaignUtilities.IsCampaignLevel(SceneStreamer.Session.Level.Barcode.ID, out Session, out _)) return;
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {

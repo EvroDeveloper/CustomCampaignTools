@@ -9,9 +9,6 @@ namespace CustomCampaignTools
 {
     internal class Main : MelonMod
     {
-
-        public static Sprite CampaignSprite { get; private set; }
-
         public override void OnLateInitializeMelon()
         {
             // Create Bonemenu
@@ -26,7 +23,7 @@ namespace CustomCampaignTools
             string resourceName = "CampaignIcon.png";
             Assembly assembly = MelonAssembly.Assembly;
 
-            CampaignSprite = MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
+            MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
         }
 
         internal static void LevelInitialized(LevelInfo info)
