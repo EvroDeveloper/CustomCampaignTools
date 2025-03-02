@@ -13,7 +13,7 @@ namespace CustomCampaignTools
         public CampaignPanelView(IntPtr ptr) : base(ptr) {}
 
         private int _currentPage;
-        private int _lastPage => Mathf.FloorToInt(CampaignUtilities.LoadedCampaigns.Count / Buttons.Length);
+        private int _lastPage => Mathf.FloorToInt(CampaignUtilities.CampaignsToShowInMenu.Count / Buttons.Length);
 
         public GameObject[] Buttons;
 
@@ -56,7 +56,7 @@ namespace CustomCampaignTools
 
             MelonLogger.Msg(index);
             int campaignIndex = (Buttons.Length * _currentPage) + index;
-            Campaign c = CampaignUtilities.LoadedCampaigns[campaignIndex];
+            Campaign c = CampaignUtilities.CampaignsToShowInMenu[campaignIndex];
 
             _hasSelected = true;
 
@@ -83,10 +83,10 @@ namespace CustomCampaignTools
                 GameObject currentButton = Buttons[i];
                 int campaignIndex = (Buttons.Length * _currentPage) + i;
 
-                if(campaignIndex < CampaignUtilities.LoadedCampaigns.Count)
+                if(campaignIndex < CampaignUtilities.CampaignsToShowInMenu.Count)
                 {
                     currentButton.SetActive(true);
-                    currentButton.GetComponentInChildren<TMP_Text>(true).text = CampaignUtilities.LoadedCampaigns[campaignIndex].Name;
+                    currentButton.GetComponentInChildren<TMP_Text>(true).text = CampaignUtilities.CampaignsToShowInMenu[campaignIndex].Name;
                 }
                 else
                 {

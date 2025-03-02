@@ -24,7 +24,7 @@ namespace CustomCampaignTools.SDK
         {
             Campaign campaign = CampaignUtilities.GetFromLevel();
 
-            if (campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint)) obj.SetActive(true);
+            if (campaign.saveData.LoadedSavePoint.IsValid(out _)) obj.SetActive(true);
         }
     }
 }

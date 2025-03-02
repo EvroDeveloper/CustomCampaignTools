@@ -31,9 +31,12 @@ namespace CustomCampaignTools
         public string[] extraLevels;
         public string LoadScene;
 
+        public bool ShowInMenu;
+
         public bool RestrictDevTools;
-        public bool RestrictAvatar;
-        public string CampaignAvatar;
+        public AvatarRestrictionType AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
+        public string DefaultCampaignAvatar;
+        public string[] WhitelistedAvatars;
 
         public bool SaveLevelWeapons;
         public bool SaveLevelAmmo;
@@ -71,11 +74,14 @@ namespace CustomCampaignTools
                 if (data.LoadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
                 else campaign.LoadScene = data.LoadScene;
 
-                campaign.RestrictAvatar = data.RestrictAvatar;
-                campaign.RestrictDevTools = data.RestrictDevTools;
+                campaign.ShowInMenu = data.ShowInMenu;
 
-                if (data.RestrictAvatar)
-                    campaign.CampaignAvatar = data.CampaignAvatar;
+                //campaign.AvatarRestrictionType = data.AvatarRestrictionType;
+                campaign.AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
+                campaign.WhitelistedAvatars = data.WhitelistedAvatars;
+
+                campaign.RestrictDevTools = data.RestrictDevTools;
+                campaign.DefaultCampaignAvatar = data.CampaignAvatar;
 
                 campaign.SaveLevelWeapons = data.SaveLevelWeapons;
                 campaign.SaveLevelAmmo = data.SaveLevelAmmo;
@@ -265,15 +271,15 @@ namespace CustomCampaignTools
                 popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
             }
 
-            if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
-            {
-                popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
+            //if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
+            //{
+            //    popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
 
-                if (Session.CampaignAvatar != string.Empty)
-                {
-                    Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
-                }
-            }
+            //    if (Session.DefaultCampaignAvatar != string.Empty)
+            //    {
+            //        Player.RigManager.SwapAvatarCrate(new Barcode(Session.DefaultCampaignAvatar));
+            //    }
+            //}
         }
     }
 }

@@ -1,10 +1,12 @@
-using HarmonyLib;
-using UnityEngine;
-using Il2CppSLZ.Bonelab;
-using Il2CppSLZ.UI;
 using BoneLib.Notifications;
+using HarmonyLib;
+using Il2CppCysharp.Threading.Tasks;
+using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.UI;
+using MelonLoader;
+using System.Linq;
 
 namespace CustomCampaignTools.Patching
 {
@@ -15,44 +17,79 @@ namespace CustomCampaignTools.Patching
         [HarmonyPostfix]
         public static void OnBodyLogEnabled(PullCordDevice __instance)
         {
-            if(!Campaign.SessionActive || !Campaign.Session.RestrictAvatar || Campaign.Session.saveData.AvatarUnlocked) return;
+            MelonLogger.Msg($"BodylogEnable Session: {(Campaign.SessionActive ? "Active" : "Inactive")}, Avatar: {(Campaign.Session.saveData.AvatarUnlocked ? "Unlocked" : "Locked")}");
 
-            __instance.gameObject.SetActive(false);
+            if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
+
+            MelonLogger.Msg($"BodylogEnable Type Includes Bodylog: {(Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog) ? "True" : "False")}");
+
+            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog))
+            {
+                __instance.gameObject.SetActive(false);
+            }
         }
     }
 
     [HarmonyPatch(typeof(AvatarsPanelView))]
     public static class AvatarPanelEnable
     {
-        [HarmonyPatch(nameof(AvatarsPanelView.OnEnable))]
+        [HarmonyPatch(nameof(AvatarsPanelView.Activate))]
         [HarmonyPostfix]
         public static void OnPanelEnabled(AvatarsPanelView __instance)
         {
-            if(!Campaign.SessionActive || !Campaign.Session.RestrictAvatar || Campaign.Session.saveData.AvatarUnlocked) return;
+            if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            __instance.Deactivate();
-            __instance.popUpMenu.Deactivate();
-
-            Notifier.Send(new Notification()
+            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
             {
-                Title = Campaign.Session.Name,
-                Message = "Avatar switching is locked on a first playthrough",
-                Type = NotificationType.Error,
-                ShowTitleOnPopup = true,
-            });
+                __instance.Deactivate();
+                __instance.popUpMenu.Deactivate();
+
+                Notifier.Send(new Notification()
+                {
+                    Title = Campaign.Session.Name,
+                    Message = "Avatar switching is locked on a first playthrough",
+                    Type = NotificationType.Error,
+                    ShowTitleOnPopup = true,
+                });
+            }
         }
     }
 
-    [HarmonyPatch(typeof(RigManager._SwapAvatarCrate_d__66))]
+    [HarmonyPatch(typeof(RigManager))]
     public static class ForceAvatarSwitch
     {
-        [HarmonyPatch(nameof(RigManager._SwapAvatarCrate_d__66.MoveNext))]
+        [HarmonyPatch(nameof(RigManager.SwapAvatarCrate))]
         [HarmonyPrefix]
-        public static void OnAvatarSwapped(RigManager._SwapAvatarCrate_d__66 __instance)
+        public static void OnAvatarSwapped(RigManager __instance, ref Barcode barcode, ref UniTask<bool> __result)
         {
-            if (!Campaign.SessionActive || !Campaign.Session.RestrictAvatar || Campaign.Session.saveData.AvatarUnlocked) return;
+            if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            __instance.barcode = new Barcode(Campaign.Session.CampaignAvatar);
+            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
+            {
+                if (!Campaign.Session.WhitelistedAvatars.Contains(barcode.ID))
+                {
+                    Notifier.Send(new Notification()
+                    {
+                        Title = Campaign.Session.Name,
+                        Message = "This avatar is not allowed at this time",
+                        Type = NotificationType.Error,
+                        ShowTitleOnPopup = true,
+                    });
+
+                    if (Campaign.Session.WhitelistedAvatars.Contains(__instance.AvatarCrate.Barcode.ID))
+                    {
+                        barcode = __instance.AvatarCrate.Barcode;
+                    }
+                    else
+                    {
+                        barcode = new Barcode(Campaign.Session.WhitelistedAvatars[0]);
+                    }
+                }
+            }
+            else if ((Campaign.Session.AvatarRestrictionType & AvatarRestrictionType.RestrictAvatar) != AvatarRestrictionType.None)
+            {
+                barcode = new Barcode(Campaign.Session.DefaultCampaignAvatar);
+            }
         }
     }
 }

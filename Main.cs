@@ -28,7 +28,6 @@ namespace CustomCampaignTools
 
         internal static void LevelInitialized(LevelInfo info)
         {
-            string palletTitle = SceneStreamer.Session.Level.Pallet.Title;
             string barcode = info.barcode;
 
             MainMenuMangler.OnLevelLoaded(info);
@@ -41,15 +40,15 @@ namespace CustomCampaignTools
                 int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
                 string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1, CampaignLevelType.MainLevel);
 
-            if (SavepointFunctions.WasLastLoadByContinue)
-            {
-                SavepointFunctions.LoadPlayerFromSave();
+                if (SavepointFunctions.WasLastLoadByContinue)
+                {
+                    SavepointFunctions.LoadPlayerFromSave();
+                }
+                else
+                {
+                    SavepointFunctions.SavePlayer(barcode, Vector3.zero);
+                }
             }
-            else
-            {
-                SavepointFunctions.SavePlayer(barcode, Vector3.zero);
-            }
-        }
             #endregion
         }
 

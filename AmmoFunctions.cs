@@ -1,12 +1,4 @@
-﻿using BoneLib;
-using MelonLoader;
-using System;
-using System.Collections.Generic;
-using Il2CppSLZ.Utilities;
-using Il2CppSLZ.Marrow;
-using UnityEngine;
-using CustomCampaignTools.Utilities;
-using CustomCampaignTools;
+﻿using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 
 namespace CustomCampaignTools

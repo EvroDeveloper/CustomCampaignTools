@@ -10,6 +10,19 @@ namespace CustomCampaignTools
     {
         public static List<Campaign> LoadedCampaigns = new List<Campaign>();
 
+        public static List<Campaign> CampaignsToShowInMenu
+        {
+            get
+            {
+                if (_menuCampaigns == null)
+                {
+                    _menuCampaigns = LoadedCampaigns.Where(c => c.ShowInMenu).ToList();
+                }
+                return _menuCampaigns;
+            }
+        }
+        private static List<Campaign> _menuCampaigns;
+
         public static Campaign GetFromName(string name)
         {
             return LoadedCampaigns.FirstOrDefault(x => x.Name == name);

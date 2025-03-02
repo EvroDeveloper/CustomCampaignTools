@@ -333,7 +333,7 @@ namespace CustomCampaignTools
                 else
                     hasSpawnPoint = true;
 
-                if (LevelBarcode == string.Empty)
+                if (LevelBarcode == null || LevelBarcode == string.Empty)
                     return false;
 
                 return true;

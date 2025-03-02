@@ -35,6 +35,8 @@ namespace CustomCampaignTools
             string backRightBarcode = GetAmmoBarcodeFromSlot(backRt);
             string backCenterBarcode = GetAmmoBarcodeFromSlot(backCt);
 
+            if (boxBarcodes == null) boxBarcodes = new List<CampaignSaveData.BarcodePosRot>();
+
             campaign.saveData.LoadedSavePoint = new CampaignSaveData.SavePoint(levelBarcode, position, backCenterBarcode, sideLeftBarcode, sideRightBarcode, backLeftBarcode, backRightBarcode, boxBarcodes);
 
             campaign.saveData.SaveToDisk();
@@ -67,7 +69,7 @@ namespace CustomCampaignTools
 
             if (hasSpawnPoint)
             {
-                Player.RigManager.Teleport(savePoint.GetPosition()); // Definately getting to here, and not erroring afterward
+                Player.RigManager.Teleport(savePoint.GetPosition());
 
                 foreach(CampaignSaveData.BarcodePosRot barcode in savePoint.BoxContainedBarcodes)
                 {
