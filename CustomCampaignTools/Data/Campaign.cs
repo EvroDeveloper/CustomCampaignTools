@@ -2,6 +2,7 @@ using BoneLib;
 using BoneLib.Notifications;
 using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using Newtonsoft.Json;
@@ -35,7 +36,18 @@ namespace CustomCampaignTools
 
         public bool RestrictDevTools;
         public AvatarRestrictionType AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
-        public string DefaultCampaignAvatar;
+        public string CampaignAvatar
+        {
+            get
+            {
+                if (MarrowGame.assetWarehouse.HasCrate(new Barcode(defaultCampaignAvatar)))
+                    return defaultCampaignAvatar;
+                else
+                    return fallbackAvatar;
+            }
+        }
+        private string defaultCampaignAvatar;
+        private string fallbackAvatar;
         public string[] WhitelistedAvatars;
 
         public bool SaveLevelWeapons;
@@ -76,12 +88,14 @@ namespace CustomCampaignTools
 
                 campaign.ShowInMenu = data.ShowInMenu;
 
-                //campaign.AvatarRestrictionType = data.AvatarRestrictionType;
-                campaign.AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
-                campaign.WhitelistedAvatars = data.WhitelistedAvatars;
+                campaign.AvatarRestrictionType = data.AvatarRestrictionType;
+                //campaign.AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
+                campaign.WhitelistedAvatars = data.WhitelistedAvatars.ToArray();
 
                 campaign.RestrictDevTools = data.RestrictDevTools;
-                campaign.DefaultCampaignAvatar = data.CampaignAvatar;
+
+                campaign.defaultCampaignAvatar = data.CampaignAvatar;
+                campaign.fallbackAvatar = data.BaseGameFallbackAvatar;
 
                 campaign.SaveLevelWeapons = data.SaveLevelWeapons;
                 campaign.SaveLevelAmmo = data.SaveLevelAmmo;

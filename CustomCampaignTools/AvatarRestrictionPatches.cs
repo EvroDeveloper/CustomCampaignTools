@@ -88,7 +88,7 @@ namespace CustomCampaignTools.Patching
             }
             else if ((Campaign.Session.AvatarRestrictionType & AvatarRestrictionType.RestrictAvatar) != AvatarRestrictionType.None)
             {
-                barcode = new Barcode(Campaign.Session.DefaultCampaignAvatar);
+                barcode = new Barcode(Campaign.Session.CampaignAvatar);
             }
         }
     }

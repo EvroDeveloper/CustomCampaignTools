@@ -38,7 +38,6 @@ namespace CustomCampaignTools
                 if (levelType != CampaignLevelType.MainLevel) return;
 
                 int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
-                string previousLevelBarcode = campaign.GetLevelBarcodeByIndex(levelIndex - 1, CampaignLevelType.MainLevel);
 
                 if (SavepointFunctions.WasLastLoadByContinue)
                 {

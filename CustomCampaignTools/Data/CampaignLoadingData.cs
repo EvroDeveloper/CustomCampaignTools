@@ -12,13 +12,13 @@ namespace CustomCampaignTools
         public string LoadScene { get; set; }
         public bool ShowInMenu { get; set; }
         public bool RestrictDevTools { get; set; }
-        public bool RestrictAvatar { get; set; }
+        public AvatarRestrictionType AvatarRestrictionType { get; set; }
         public string CampaignAvatar { get; set; }
-        public string[] WhitelistedAvatars { get; set; }
+        public string BaseGameFallbackAvatar { get; set; }
+        public List<string> WhitelistedAvatars { get; set; }
         public bool SaveLevelWeapons { get; set; }
         public bool SaveLevelAmmo { get; set; }
         public List<AchievementData> Achievements { get; set; }
-        public AvatarRestrictionType AvatarRestrictionType { get; set; }
 
     }
 
