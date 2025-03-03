@@ -19,26 +19,7 @@ namespace CustomCampaignTools.Patching
             {
                 __instance._levelCrates.Clear();
 
-                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(Campaign.Session.MenuLevel, out Crate menuCrate))
-                {
-                    __instance._levelCrates.Add(menuCrate);
-                }
-
-                foreach(string mainLevel in Campaign.Session.mainLevels)
-                {
-                    if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(mainLevel, out Crate mainLevelCrate))
-                    {
-                        __instance._levelCrates.Add(mainLevelCrate);
-                    }
-                }
-
-                foreach(string extraLevel in Campaign.Session.extraLevels)
-                {
-                    if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(extraLevel, out Crate extraLevelCrate))
-                    {
-                        __instance._levelCrates.Add(extraLevelCrate);
-                    }
-                }
+                __instance._levelCrate.AddRange(Campaign.Session.GetUnlockedLevels());
             }
         }
     }

@@ -59,8 +59,8 @@ namespace CustomCampaignTools
             Campaign c = CampaignUtilities.CampaignsToShowInMenu[campaignIndex];
 
             _hasSelected = true;
-
-            FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene));
+            
+            c.Enter();
         }
 
         public void Activate()

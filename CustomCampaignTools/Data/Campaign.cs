@@ -59,6 +59,8 @@ namespace CustomCampaignTools
         public bool SaveLevelWeapons;
         public bool SaveLevelAmmo;
         public List<AchievementData> Achievements;
+        public bool LockInCampaign;
+        public bool LockLevelsUntilEntered;
 
         public string[] AllLevels 
         {
@@ -147,6 +149,22 @@ namespace CustomCampaignTools
             return RegisterCampaign(campaignValueHolder);
         }
 
+        public void Enter()
+        {
+            if(LockInCampaign)
+            {
+                _sessionLocked = true;
+            }
+            Campaign.Session = this;
+            FadeLoader.Load(new Barcode(MenuLevel), new Barcode(LoadScene));
+        }
+
+        public void Exit()
+        {
+            _sessionLocked = false;
+            FadeLoader.Load(new Barcode(CommonBarcodes.Maps.VoidG114), new Barcode(CommonBarcodes.Maps.LoadDefault));
+        }
+
         public int GetLevelIndex(string levelBarcode, CampaignLevelType levelType = CampaignLevelType.MainLevel)
         {
             return Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode);
@@ -183,6 +201,38 @@ namespace CustomCampaignTools
             if (MenuLevel == barcode) return CampaignLevelType.Menu;
             else if (mainLevels.Contains(barcode)) return CampaignLevelType.MainLevel;
             else return CampaignLevelType.ExtraLevel;
+        }
+
+        public LevelCrate[] GetUnlockedLevels()
+        {
+            List<LevelCrate> levels = new List<LevelCrate>();
+
+            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(MenuLevel, out Crate menuCrate))
+            {
+                levels.Add(menuCrate);
+            }
+
+            foreach(string mainLevel in mainLevels)
+            {
+                if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
+
+                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(mainLevel, out Crate mainLevelCrate))
+                {
+                    levels.Add(mainLevelCrate);
+                }
+            }
+
+            foreach(string extraLevel in extraLevels)
+            {
+                if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
+                
+                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(extraLevel, out Crate extraLevelCrate))
+                {
+                    levels.Add(extraLevelCrate);
+                }
+            }
+
+            return levels.ToArray();
         }
 
         public static void OnInitialize()

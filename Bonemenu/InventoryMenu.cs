@@ -12,7 +12,7 @@ namespace CustomCampaignTools.Bonemenu
         {
             var campaignPage = category.CreatePage(c.Name, Color.white);
 
-            campaignPage.CreateFunction("Enter Campaign", Color.white, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
+            campaignPage.CreateFunction("Enter Campaign", Color.white, () => c.Enter());
             if(c.saveData.LoadedSavePoint.IsValid(out _))
                 campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
             campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());

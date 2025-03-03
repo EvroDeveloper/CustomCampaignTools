@@ -20,6 +20,7 @@ namespace CustomCampaignTools
         internal bool DevToolsUnlocked = false;
         internal bool AvatarUnlocked = false;
         internal List<string> UnlockedAchievements = new List<string>();
+        internal List<string> UnlockedLevels = new List<string>();
 
         public string SaveFolder { get => $"{MelonUtils.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
@@ -38,6 +39,7 @@ namespace CustomCampaignTools
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
             UnlockedAchievements = new List<string>();
+            UnlockedLevels = new List<string>();
         }
 
         #region Ammo Methods
@@ -226,6 +228,18 @@ namespace CustomCampaignTools
                 UnlockedAchievements.Remove(key);
             }
         }
+        #endregion
+
+        #region Levels
+
+        public void UnlockLevel(string barcode)
+        {
+            if(!UnlockedLevels.Contains(barcode))
+            {
+                UnlockedLevels.Add(barcode);
+            }
+        }
+        
         #endregion
 
         #region Saving and Loading
