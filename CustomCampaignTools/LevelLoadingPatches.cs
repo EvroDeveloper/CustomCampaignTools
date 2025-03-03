@@ -25,7 +25,6 @@ namespace CustomCampaignTools.Patching
                 {
                     // Session is locked, and campaign matches session. Allow level change, ensure load scene blah;
                     campaign.saveData.UnlockLevel(levelBarcode.ID);
-
                 }
                 else
                 {
