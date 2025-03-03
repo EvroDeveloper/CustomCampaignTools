@@ -18,8 +18,11 @@ namespace CustomCampaignTools.Patching
             if(Campaign.SessionLocked)
             {
                 __instance._levelCrates.Clear();
-
                 __instance._levelCrate.AddRange(Campaign.Session.GetUnlockedLevels());
+            }
+            else
+            {
+                __instance._levelCrate.InsertRange(0, Campaign.Session.GetUnlockedLevels());
             }
         }
     }
@@ -45,13 +48,9 @@ namespace CustomCampaignTools.Patching
 
                 CampaignToContainerOpen.Add(c, container);
 
-                // Need to get Level Name from Barcode... todo later
-
-                container.AddEntry(c.MenuLevel, () => FadeLoader.Load(new Barcode(c.MenuLevel), new Barcode(c.LoadScene)));
-
-                foreach(string Level in c.mainLevels)
+                foreach(LevelCrate crate in c.GetUnlockedLevels())
                 {
-                    container.AddEntry(Level, () => FadeLoader.Load(new Barcode(Level), new Barcode(c.LoadScene)));
+                    container.AddEntry(crate.title, () => FadeLoader.Load(crate.Barcode), new Barcode(c.LoadScene));
                 }
             }
         }
@@ -60,7 +59,7 @@ namespace CustomCampaignTools.Patching
         [HarmonyPostfix]
         public static void MenuInitContainerOverride(LevelPanelOverride __instance)
         {
-            if(Campaign.SessionActive)
+            if(Campaign.SessionActive && CampaignToContainerOpen.Keys.Contains(Campaign.Session))
             {
                 __instance.OpenContainer(CampaignToContainerOpen[Campaign.Session]);
             }
