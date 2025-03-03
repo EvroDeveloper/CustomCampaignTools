@@ -44,6 +44,7 @@
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
     <Compile Include="CustomCampaignTools\LevelLoadingPatches.cs" />
+    <Compile Include="CustomCampaignTools\LevelPanelViewPatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\HideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\TriggerableNotification.cs" />
     <Compile Include="FadeLoader.cs" />
