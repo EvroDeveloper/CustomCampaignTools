@@ -1,16 +1,48 @@
 using System;
 using HarmonyLib;
+using SLZ.Bonelab
 using BrowsingPlus.OverrideImplements;
 
 
 namespace CustomCampaignTools.Patching
 {
     #region SLZ Level Panel
+
     [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
+        [HarmonyPatch(nameof(LevelsPanelView.Activate))] // Dunno what method to patch, hopefully refreshing _levelCrates on activate makes it show the right ones
+        [HarmonyPrefix]
+        public static void ActivatePrefix(LevelsPanelView __instance)
+        {
+            if(Campaign.SessionLocked)
+            {
+                __instance._levelCrates.Clear();
 
+                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(Campaign.Session.MenuLevel, out Crate menuCrate))
+                {
+                    __instance._levelCrates.Add(menuCrate);
+                }
+
+                foreach(string mainLevel in Campaign.Session.mainLevels)
+                {
+                    if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(mainLevel, out Crate mainLevelCrate))
+                    {
+                        __instance._levelCrates.Add(mainLevelCrate);
+                    }
+                }
+
+                foreach(string extraLevel in Campaign.Session.extraLevels)
+                {
+                    if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(extraLevel, out Crate extraLevelCrate))
+                    {
+                        __instance._levelCrates.Add(extraLevelCrate);
+                    }
+                }
+            }
+        }
     }
+
     #endregion
 
     #region Swipez Extended Panel
