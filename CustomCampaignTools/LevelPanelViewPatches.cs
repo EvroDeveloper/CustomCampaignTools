@@ -15,14 +15,31 @@ namespace CustomCampaignTools.Patching
         [HarmonyPrefix]
         public static void ActivatePrefix(LevelsPanelView __instance)
         {
-            if(Campaign.SessionLocked)
+            if(Campaign.SessionActive)
             {
-                __instance._levelCrates.Clear();
-                __instance._levelCrate.AddRange(Campaign.Session.GetUnlockedLevels());
+                if(Campaign.SessionLocked)
+                {
+                    __instance._levelCrates.Clear();
+                    __instance._levelCrates.AddRange(Campaign.Session.GetUnlockedLevels());
+                }
+                else
+                {
+                    __instance._levelCrates.InsertRange(0, Campaign.Session.GetUnlockedLevels());
+                }
             }
             else
             {
-                __instance._levelCrate.InsertRange(0, Campaign.Session.GetUnlockedLevels());
+                // Sort Campaigns to be right after SLZ levels, and put them in the right order. Need to move this over to the previous function as well, just putting session campaign first.
+                List<LevelCrate> SLZCrates = __instance._levelCrates.Where(crate => crate.barcode.ID.StartsWith("SLZ"));
+                List<LevelCrate> NonCampaignCrates = __instance._levelCrates.Where(crate => !crate.barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.barcode.ID, out _, out _));
+
+                List<LevelCrate> CampaignCrates = new List<LevelCrate>;
+                foreach(Campaign c in CampaignUtilities.LoadedCampaigns)
+                {
+                    CampaignCrates.AddRange(c.saveData.GetUnlockedLevels());
+                }
+
+                __instance._levelCrates = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
             }
         }
     }
