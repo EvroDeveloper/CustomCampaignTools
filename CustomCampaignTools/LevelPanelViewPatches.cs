@@ -51,7 +51,7 @@ namespace CustomCampaignTools.Patching
     [HarmonyPatch(typeof(LevelPanelOverride))]
     public static class SwipezPanelPatches
     {
-        private Dictionary<Campaign, PanelContainer> CampaignToContainerOpen = new Dictionary<Campaign, PanelContainer>();
+        private Dictionary<Campaign, PanelContainer> campaignToContainerOpen = new Dictionary<Campaign, PanelContainer>();
 
         [HarmonyPatch(nameof(LevelPanelOverride.PopulateMenus))]
         [HarmonyPostfix]
@@ -63,7 +63,7 @@ namespace CustomCampaignTools.Patching
             {
                 PanelContainer container = campaignContainer.MakeContainer(c.Name);
 
-                CampaignToContainerOpen.Add(c, container);
+                campaignToContainerOpen.Add(c, container);
 
                 foreach(LevelCrate crate in c.GetUnlockedLevels())
                 {
@@ -76,9 +76,9 @@ namespace CustomCampaignTools.Patching
         [HarmonyPostfix]
         public static void MenuInitContainerOverride(LevelPanelOverride __instance)
         {
-            if(Campaign.SessionActive && CampaignToContainerOpen.Keys.Contains(Campaign.Session))
+            if(Campaign.SessionActive && campaignToContainerOpen.Keys.Contains(Campaign.Session))
             {
-                __instance.OpenContainer(CampaignToContainerOpen[Campaign.Session]);
+                __instance.OpenContainer(campaignToContainerOpen[Campaign.Session]);
             }
         }
     }

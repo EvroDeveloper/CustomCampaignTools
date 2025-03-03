@@ -23,7 +23,7 @@ namespace CustomCampaignTools.Patching
             {
                 if(campaign != null && Campaign.Session == campaign)
                 {
-                    // Session is locked, and campaign matches session. Allow level change, ensure load scene blah;
+                    // Session is locked, and campaign matches session. Make sure the level is unlocked and continue
                     campaign.saveData.UnlockLevel(levelBarcode.ID);
                 }
                 else
@@ -35,6 +35,7 @@ namespace CustomCampaignTools.Patching
 
             if(campaign != null)
             {
+                // If the level its loading into is a campaign level, force load scene to be Campaign Load scene
                 if (loadLevelBarcode.ID != campaign.LoadScene)
                 {
                     loadLevelBarcode = new Barcode(campaign.LoadScene);
