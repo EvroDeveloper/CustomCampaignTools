@@ -40,25 +40,25 @@ namespace CustomCampaignTools
         {
             get
             {
-                if(_cacheAvatar == string.Empty || _cacheAvatar == null)
+                if(_cachedAvatar == string.Empty || _cachedAvatar == null)
                 {
                     if (MarrowGame.assetWarehouse.HasCrate(new Barcode(defaultCampaignAvatar)))
-                        _cacheAvatar = defaultCampaignAvatar;
+                        _cachedAvatar = defaultCampaignAvatar;
                     else
-                        _cacheAvatar = fallbackAvatar;
+                        _cachedAvatar = fallbackAvatar;
                 }
-                return _cacheAvatar;
+                return _cachedAvatar;
             }
         }
         private string defaultCampaignAvatar;
         private string fallbackAvatar;
-        private string _cacheAvatar;
+        private string _cachedAvatar;
 
         public string[] WhitelistedAvatars;
 
         public bool SaveLevelWeapons;
         public bool SaveLevelAmmo;
-        public List<AchievementData> Achievements;
+        public List<AchievementData> Achievements = new List<AchievementData>();
         public bool LockInCampaign;
         public bool LockLevelsUntilEntered;
 
@@ -121,10 +121,6 @@ namespace CustomCampaignTools
                     {
                         ach.Init();
                     }
-                }
-                else
-                {
-                    campaign.Achievements = new List<Achievements>();
                 }
 
                 CampaignUtilities.LoadedCampaigns.Add(campaign);
