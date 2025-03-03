@@ -35,7 +35,7 @@ namespace CustomCampaignTools.SDK
                 List<CampaignSaveData.BarcodePosRot> Entities = new List<CampaignSaveData.BarcodePosRot>();
                 foreach(MarrowEntity entity in boxVolEntities)
                 {
-                    Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation));
+                    Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
                 SavepointFunctions.SavePlayer(barcode, transform.position, Entities);
             }

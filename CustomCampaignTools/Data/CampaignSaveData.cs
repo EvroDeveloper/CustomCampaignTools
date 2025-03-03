@@ -388,7 +388,11 @@ namespace CustomCampaignTools
             public float qZ;
             public float qW;
 
-            public BarcodePosRot(Barcode barcode, Vector3 position, Quaternion rotation)
+            public float sX;
+            public float sY;
+            public float sZ;
+
+            public BarcodePosRot(Barcode barcode, Vector3 position, Quaternion rotation, Vector3 scale)
             {
                 this.barcode = barcode.ID;
 
@@ -400,6 +404,10 @@ namespace CustomCampaignTools
                 qY = rotation.y;
                 qZ = rotation.z;
                 qW = rotation.w;
+
+                sX = scale.x;
+                sY = scale.y;
+                sZ = scale.z;
             }
 
             public Vector3 GetPosition()
@@ -410,6 +418,11 @@ namespace CustomCampaignTools
             public Quaternion GetRotation()
             {
                 return new Quaternion(qX, qY, qZ, qW);
+            }
+
+            public Vector3 GetScale()
+            {
+                return new Vector3(sX, sY, sZ);
             }
         }
 
