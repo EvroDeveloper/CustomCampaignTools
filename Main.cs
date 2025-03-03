@@ -64,6 +64,7 @@ namespace CustomCampaignTools
 
         private static void OnUIRigCreated()
         {
+            PlayerMenuMangler.Initialize();
             Campaign.OnUIRigCreated();
         }
     }

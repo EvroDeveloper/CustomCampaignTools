@@ -10,6 +10,7 @@ namespace CustomCampaignTools
         public List<string> MainLevels { get; set; }
         public List<string> ExtraLevels { get; set; }
         public string LoadScene { get; set; }
+        public bool UnlockableLevels { get; set; }
         public bool ShowInMenu { get; set; }
         public bool RestrictDevTools { get; set; }
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
@@ -19,6 +20,7 @@ namespace CustomCampaignTools
         public bool SaveLevelWeapons { get; set; }
         public bool SaveLevelAmmo { get; set; }
         public List<AchievementData> Achievements { get; set; }
+        public bool LockInCampaign { get; set; }
 
     }
 

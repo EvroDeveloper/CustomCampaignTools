@@ -34,27 +34,18 @@ namespace CustomCampaignTools
             optionsPanel = panelView.pages[panelView.defaultPage];
             _optionsGrid = optionsPanel.transform.Find("grid_Options");
 
+            // need to ensure i'm copying a correct one
             _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(5).gameObject, _optionsGrid);
             _optionButton.SetActive(true);
 
-            var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true)
+            var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true);
             tmp.text = "Exit Campaign";
 
             _optionButton.transform.SetSiblingIndex(_optionsGrid.childCount - 1);
 
-            System.Action optionButtonAction = () =>
-            {
-                Campaign.Session.Exit();
-            };
-
             _optionButtonComponent = _optionButton.GetComponent<Button>();
-
             _optionButtonComponent.onClick.RemoveAllListeners();
-            _optionButtonComponent.onClick.AddListener(optionButtonAction);
-
-
+            _optionButtonComponent.onClick.AddListener(new System.Action(() => Campaign.Session.Exit()));
         }
-
-
     }
 }

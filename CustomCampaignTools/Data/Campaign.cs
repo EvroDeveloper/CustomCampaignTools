@@ -99,6 +99,8 @@ namespace CustomCampaignTools
 
                 campaign.ShowInMenu = data.ShowInMenu;
 
+                campaign.LockLevelsUntilEntered = data.UnlockableLevels;
+
                 campaign.AvatarRestrictionType = data.AvatarRestrictionType;
                 campaign.WhitelistedAvatars = data.WhitelistedAvatars.ToArray();
 
@@ -110,6 +112,8 @@ namespace CustomCampaignTools
                 campaign.SaveLevelWeapons = data.SaveLevelWeapons;
                 campaign.SaveLevelAmmo = data.SaveLevelAmmo;
                 campaign.Achievements = data.Achievements;
+
+                campaign.LockInCampaign = data.LockInCampaign;
 
                 if(campaign.Achievements != null)
                 {
