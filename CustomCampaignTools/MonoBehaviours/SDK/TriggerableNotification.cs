@@ -13,11 +13,12 @@ namespace CustomCampaignTools.SDK
 
         public void SendNotification(string Title, string Message, Texture2D CustomIcon, NotifType Type, float Length)
         {
+            Texture2D resizedTexture = CustomIcon.ProperResize(336, 336);
             Notifier.Send(new Notification()
             {
                 Title = Title,
                 Message = Message,
-                CustomIcon = CustomIcon,
+                CustomIcon = resizedTexture,
                 Type = (NotificationType)Type,
                 PopupLength = Length,
                 ShowTitleOnPopup = Title != string.Empty,
