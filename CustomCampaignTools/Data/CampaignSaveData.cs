@@ -259,6 +259,7 @@ namespace CustomCampaignTools
                 DevToolsUnlocked = DevToolsUnlocked,
                 AvatarUnlocked = AvatarUnlocked,
                 UnlockedAchievements = UnlockedAchievements,
+                UnlockedLevels = UnlockedLevels,
             };
 
             var settings = new JsonSerializerSettings
@@ -307,6 +308,7 @@ namespace CustomCampaignTools
             DevToolsUnlocked = saveData.DevToolsUnlocked;
             AvatarUnlocked = saveData.AvatarUnlocked;
             UnlockedAchievements = saveData.UnlockedAchievements;
+            UnlockedLevels = saveData.UnlockedLevels;
         }
         #endregion
 
@@ -318,6 +320,7 @@ namespace CustomCampaignTools
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
             public List<string> UnlockedAchievements { get; set; }
+            public List<string> UnlockedLevels { get; set; }
         }
 
         public struct SavePoint(string levelBarcode, Vector3 position, string backSlotBarcode, string leftSidearmBarcode, string rightSidearmBarcode, string leftShoulderBarcode, string rightShoulderBarcode, List<BarcodePosRot> boxContainedBarcodes)

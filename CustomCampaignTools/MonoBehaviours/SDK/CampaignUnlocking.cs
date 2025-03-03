@@ -34,7 +34,11 @@ namespace CustomCampaignTools.SDK
             }
 
             UIRig.Instance.popUpMenu.AddAvatarsMenu();
-            
+        }
+
+        public void UnlockLevel(string barcode)
+        {
+            Campaign.Session.saveData.UnlockLevel(barcode);
         }
     }
 }
