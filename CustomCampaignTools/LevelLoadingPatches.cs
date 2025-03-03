@@ -14,7 +14,7 @@ namespace CustomCampaignTools.Patching
     {
         [HarmonyPatch(nameof(SceneStreamer.Load), [typeof(Barcode), typeof(Barcode)])]
         [HarmonyPrefix]
-        public static void LoadPrefixPatch(Barcode levelBarcode, Barcode loadLevelBarcode)
+        public static void LoadPrefixPatch(Barcode levelBarcode, ref Barcode loadLevelBarcode)
         {
             var campaign = CampaignUtilities.GetFromLevel(levelBarcode);
 

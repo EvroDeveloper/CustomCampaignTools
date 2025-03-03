@@ -40,14 +40,20 @@ namespace CustomCampaignTools
         {
             get
             {
-                if (MarrowGame.assetWarehouse.HasCrate(new Barcode(defaultCampaignAvatar)))
-                    return defaultCampaignAvatar;
-                else
-                    return fallbackAvatar;
+                if(_cacheAvatar == string.Empty || _cacheAvatar == null)
+                {
+                    if (MarrowGame.assetWarehouse.HasCrate(new Barcode(defaultCampaignAvatar)))
+                        _cacheAvatar = defaultCampaignAvatar;
+                    else
+                        _cacheAvatar = fallbackAvatar;
+                }
+                return _cacheAvatar;
             }
         }
         private string defaultCampaignAvatar;
         private string fallbackAvatar;
+        private string _cacheAvatar;
+
         public string[] WhitelistedAvatars;
 
         public bool SaveLevelWeapons;
@@ -67,6 +73,9 @@ namespace CustomCampaignTools
         public static Campaign Session;
         public static string lastLoadedCampaignLevel;
         public static bool SessionActive { get => Session != null; }
+        public static bool SessionLocked { get => SessionActive && _sessionLocked; }
+
+        private static bool _sessionLocked;
 
 
         internal static Campaign RegisterCampaign(CampaignLoadingData data)
@@ -89,7 +98,6 @@ namespace CustomCampaignTools
                 campaign.ShowInMenu = data.ShowInMenu;
 
                 campaign.AvatarRestrictionType = data.AvatarRestrictionType;
-                //campaign.AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
                 campaign.WhitelistedAvatars = data.WhitelistedAvatars.ToArray();
 
                 campaign.RestrictDevTools = data.RestrictDevTools;
@@ -107,6 +115,10 @@ namespace CustomCampaignTools
                     {
                         ach.Init();
                     }
+                }
+                else
+                {
+                    campaign.Achievements = new List<Achievements>();
                 }
 
                 CampaignUtilities.LoadedCampaigns.Add(campaign);
@@ -137,7 +149,6 @@ namespace CustomCampaignTools
 
         public int GetLevelIndex(string levelBarcode, CampaignLevelType levelType = CampaignLevelType.MainLevel)
         {
-            MelonLogger.Msg($"Index of {levelBarcode} is {Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode)}");
             return Array.IndexOf(GetBarcodeArrayOfLevelType(levelType), levelBarcode);
         }
 
@@ -183,7 +194,7 @@ namespace CustomCampaignTools
             }
             catch (Exception ex)
             {
-                MelonLogger.Error("Coudnt load the FUCKING campaigns from the FUCKING MODS FOLDER: " + ex.Message);
+                MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
             }
         }
 
@@ -278,22 +289,12 @@ namespace CustomCampaignTools
             }
 
 
-            if (!CampaignUtilities.IsCampaignLevel(SceneStreamer.Session.Level.Barcode.ID, out Session, out _)) return;
+            if (!Campaign.SessionActive()) return;
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
-                popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
+                popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"Dev Tools are not allowed until campaign is complete." }); });
             }
-
-            //if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
-            //{
-            //    popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
-
-            //    if (Session.DefaultCampaignAvatar != string.Empty)
-            //    {
-            //        Player.RigManager.SwapAvatarCrate(new Barcode(Session.DefaultCampaignAvatar));
-            //    }
-            //}
         }
     }
 }

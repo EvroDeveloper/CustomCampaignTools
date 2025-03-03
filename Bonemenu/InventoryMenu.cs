@@ -17,21 +17,28 @@ namespace CustomCampaignTools.Bonemenu
                 campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
             campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());
 
-#if DEBUG
-
-            var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
-
-            foreach(string key in c.saveData.UnlockedAchievements)
+            if(c.Achievements != null)
             {
-                try
+                var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);  
+
+                foreach(string key in c.saveData.UnlockedAchievements)
                 {
-                    achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
-                }
-                catch
-                {
-                    MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                    try
+                    {
+                        achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                    }
+                    catch
+                    {
+                        MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                    }
                 }
             }
+
+#if DEBUG
+            var DebugPage = campaignPage.CreatePage("Debug", Color.red);
+
+            DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
+            DebugPage.CreateFunction("Unlock Avatar", Color.White, () => c.saveData.UnlockAvatar());
 #endif
         }
     }
