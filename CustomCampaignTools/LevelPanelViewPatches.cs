@@ -1,6 +1,6 @@
 using System;
 using HarmonyLib;
-using SLZ.Bonelab
+using SLZ.Bonelab;
 using BrowsingPlus.OverrideImplements;
 
 
