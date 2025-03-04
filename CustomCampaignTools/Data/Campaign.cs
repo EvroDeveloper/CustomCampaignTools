@@ -31,6 +31,19 @@ namespace CustomCampaignTools
         public string[] mainLevels;
         public string[] extraLevels;
         public string LoadScene;
+        private string _loadSceneMusicBarcode;
+        public AudioClip LoadSceneMusic
+        {
+            get
+            {
+                if(_loadMusicDatacard == null)
+                {
+                    MarrowGame.assetWarehouse.TryGetCrate<MonoDisc>(new Barcode(LoadSceneMusicBarcode), out _loadMusicDatacard);
+                }
+                return _loadMusicDatacard.AudioClip.Asset;
+            }
+        }
+        private MonoDisc _loadMusicDatacard;
 
         public bool ShowInMenu;
 

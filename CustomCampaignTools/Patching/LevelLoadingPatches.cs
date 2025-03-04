@@ -46,4 +46,19 @@ namespace CustomCampaignTools.Patching
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(Audio2dManager))]
+    public static class LoadMusicPatches
+    {
+        [HarmonyPatch(nameof(Audio2dManager.CueMusicInternal))]
+        [HarmonyPrefix]
+        public static void CueMusicPatch(Audio2dManager __instance, ref AudioClip musicClip)
+        {
+            MelonLogger.Msg("Cued music called: " + musicClip.name);
+            if(musicClip.name == "LoadingMusicOrSomething" && Campaign.SessionActive && Campaign.Session.LoadSceneMusic != null)
+            {
+                musicClip = Campaign.Session.LoadSceneMusic; // blah this method sucks but its the best i can do lmao
+            }
+        }
+    }
 }
