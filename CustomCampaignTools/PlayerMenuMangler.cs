@@ -1,14 +1,16 @@
 using System;
-using SLZ.Bonelab;
+using BoneLib;
+using Il2CppSLZ.Bonelab;
+using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace CustomCampaignTools
 {
-    public static class PlayerMenuMangler()
+    public static class PlayerMenuMangler
     {
         // Much of code taken from Bonemenu, sorry!
-        PreferencesPanelView panelView;
+        static PreferencesPanelView panelView;
         public static GameObject optionsPanel;
 
         public static Transform OptionsGrid
@@ -24,6 +26,7 @@ namespace CustomCampaignTools
         private static Transform _optionsGrid;
 
         private static GameObject _optionButton;
+        private static Button _optionButtonComponent;
 
 
         public static void Initialize()
@@ -45,7 +48,7 @@ namespace CustomCampaignTools
 
             _optionButtonComponent = _optionButton.GetComponent<Button>();
             _optionButtonComponent.onClick.RemoveAllListeners();
-            _optionButtonComponent.onClick.AddListener(new System.Action(() => Campaign.Session.Exit()));
+            _optionButtonComponent.onClick.AddListener(new Action(Campaign.Session.Exit));
         }
     }
 }

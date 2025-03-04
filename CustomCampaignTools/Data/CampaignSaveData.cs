@@ -307,8 +307,8 @@ namespace CustomCampaignTools
             LoadedFloatDatas = saveData.FloatData;
             DevToolsUnlocked = saveData.DevToolsUnlocked;
             AvatarUnlocked = saveData.AvatarUnlocked;
-            UnlockedAchievements = saveData.UnlockedAchievements;
-            UnlockedLevels = saveData.UnlockedLevels;
+            UnlockedAchievements = saveData.UnlockedAchievements ?? new List<string>();
+            UnlockedLevels = saveData.UnlockedLevels ?? new List<string>();
         }
         #endregion
 

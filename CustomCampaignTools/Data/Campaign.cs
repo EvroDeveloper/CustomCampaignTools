@@ -205,34 +205,36 @@ namespace CustomCampaignTools
 
         public LevelCrate[] GetUnlockedLevels()
         {
-            List<LevelCrate> levels = new List<LevelCrate>();
+            List<LevelCrate> levels = [];
 
-            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(MenuLevel, out Crate menuCrate))
+            MelonLogger.Msg("Checkpoint 1");
+            if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(MenuLevel), out LevelCrate menuCrate))
             {
+                MelonLogger.Msg("Checkpoint 1.5");
                 levels.Add(menuCrate);
             }
-
-            foreach(string mainLevel in mainLevels)
+            MelonLogger.Msg("Checkpoint 2");
+            foreach (string mainLevel in mainLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
 
-                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(mainLevel, out Crate mainLevelCrate))
+                if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(mainLevel), out LevelCrate mainLevelCrate) && !mainLevelCrate.Redacted)
                 {
                     levels.Add(mainLevelCrate);
                 }
             }
-
-            foreach(string extraLevel in extraLevels)
+            MelonLogger.Msg("Checkpoint 3");
+            foreach (string extraLevel in extraLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
                 
-                if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(extraLevel, out Crate extraLevelCrate))
+                if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(extraLevel), out LevelCrate extraLevelCrate) && !extraLevelCrate.Redacted)
                 {
                     levels.Add(extraLevelCrate);
                 }
             }
-
-            return levels.ToArray();
+            MelonLogger.Msg("Checkpoint 4");
+            return [.. levels];
         }
 
         public static void OnInitialize()
@@ -339,7 +341,7 @@ namespace CustomCampaignTools
             }
 
 
-            if (!Campaign.SessionActive()) return;
+            if (!SessionActive) return;
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {

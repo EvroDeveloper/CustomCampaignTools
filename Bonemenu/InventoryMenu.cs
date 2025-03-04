@@ -38,7 +38,7 @@ namespace CustomCampaignTools.Bonemenu
             var DebugPage = campaignPage.CreatePage("Debug", Color.red);
 
             DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
-            DebugPage.CreateFunction("Unlock Avatar", Color.White, () => c.saveData.UnlockAvatar());
+            DebugPage.CreateFunction("Unlock Avatar", Color.white, () => c.saveData.UnlockAvatar());
 #endif
         }
     }
