@@ -38,7 +38,7 @@ namespace CustomCampaignTools
             _optionsGrid = optionsPanel.transform.Find("grid_Options");
 
             // need to ensure i'm copying a correct one
-            _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(5).gameObject, _optionsGrid);
+            _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(4).gameObject, _optionsGrid);
             _optionButton.SetActive(true);
 
             var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true);
@@ -49,6 +49,12 @@ namespace CustomCampaignTools
             _optionButtonComponent = _optionButton.GetComponent<Button>();
             _optionButtonComponent.onClick.RemoveAllListeners();
             _optionButtonComponent.onClick.AddListener(new Action(Campaign.Session.Exit));
+
+            // Fix name later
+            var menuButton = _optionsGrid.Find("Button_Menu");
+            var menuButtonComp = menuButton.Find("ConfirmButton").GetComponent<Button>();
+            menuButtonComp.onClick.RemoveAllListeners();
+            menuButtonComp.onClick.AddListener(new Action(FadeLoader.Load(new Barcode(Campaign.Session.MenuLevel), new Barcode(Campaign.Session.LoadScene))));
         }
     }
 }
