@@ -47,7 +47,7 @@ namespace CustomCampaignTools.Patching
                 Notifier.Send(new Notification()
                 {
                     Title = Campaign.Session.Name,
-                    Message = "Avatar switching is locked on a first playthrough",
+                    Message = "Avatar switching is currently locked",
                     Type = NotificationType.Error,
                     ShowTitleOnPopup = true,
                 });
