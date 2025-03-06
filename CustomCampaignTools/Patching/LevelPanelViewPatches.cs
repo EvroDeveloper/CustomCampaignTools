@@ -15,14 +15,14 @@ namespace CustomCampaignTools.Patching
 {
     #region SLZ Level Panel
 
-    [HarmonyPatch(typeof(LevelsPanelView._PopulateMenuAsync_d__25))]
+    [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
-        [HarmonyPatch(nameof(LevelsPanelView._PopulateMenuAsync_d__25.MoveNext))] // Dunno what method to patch, hopefully refreshing _levelCrates on activate makes it show the right ones
+        [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))] // Dunno what method to patch, hopefully refreshing _levelCrates on activate makes it show the right ones
         [HarmonyPostfix]
-        public static void ActivatePrefix(LevelsPanelView._PopulateMenuAsync_d__25 __instance)
+        public static void PopulatePostfix(LevelsPanelView __instance, ref UniTaskVoid __result)
         {
-            ForceLevelList(__instance.__4__this);
+            __result.GetAwaiter().OnCompleted(() => ForceLevelList(__instance));//Might Work thanklakatrazzzzz
         }
 
         public static void ForceLevelList(LevelsPanelView __instance)
