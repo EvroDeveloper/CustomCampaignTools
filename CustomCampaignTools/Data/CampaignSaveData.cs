@@ -142,18 +142,6 @@ namespace CustomCampaignTools
 
         public static void SavePlayer(string levelBarcode, Vector3 position, List<BarcodePosRot> boxBarcodes = null)
         {
-            // var sideLf = Player.RigManager.inventory.bodySlots[0].inventorySlotReceiver;
-            // var backLf = Player.RigManager.inventory.bodySlots[2].inventorySlotReceiver;
-            // var sideRt = Player.RigManager.inventory.bodySlots[5].inventorySlotReceiver;
-            // var backRt = Player.RigManager.inventory.bodySlots[3].inventorySlotReceiver;
-            // var backCt = Player.RigManager.inventory.bodySlots[4].inventorySlotReceiver;
-
-            // string sideLeftBarcode = SavepointFunctions.GetAmmoBarcodeFromSlot(sideLf);
-            // string backLeftBarcode = SavepointFunctions.GetAmmoBarcodeFromSlot(backLf);
-            // string sideRightBarcode = SavepointFunctions.GetAmmoBarcodeFromSlot(sideRt);
-            // string backRightBarcode = SavepointFunctions.GetAmmoBarcodeFromSlot(backRt);
-            // string backCenterBarcode = SavepointFunctions.GetAmmoBarcodeFromSlot(backCt);
-
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
             boxBarcodes ??= new List<BarcodePosRot>();
@@ -346,22 +334,29 @@ namespace CustomCampaignTools
             public List<string> UnlockedLevels { get; set; }
         }
 
-        public struct SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, List<BarcodePosRot> boxContainedBarcodes)
+        public struct SavePoint
         {
-            public string LevelBarcode = levelBarcode;
-            public float PositionX = position.x;
-            public float PositionY = position.y;
-            public float PositionZ = position.z;
+            public string LevelBarcode;
+            public float PositionX;
+            public float PositionY;
+            public float PositionZ;
 
-            public InventoryData InventoryData = inventoryData;
+            public InventoryData InventoryData;
+            public AmmoSave MidLevelAmmoSave;
+            public List<BarcodePosRot> BoxContainedBarcodes;
 
-            // public string BackSlotBarcode = backSlotBarcode;
-            // public string LeftSidearmBarcode = leftSidearmBarcode;
-            // public string RightSidearmBarcode = rightSidearmBarcode;
-            // public string LeftShoulderSlotBarcode = leftShoulderBarcode;
-            // public string RightShoulderSlotBarcode = rightShoulderBarcode;
+            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes)
+            {
+                LevelBarcode = levelBarcode;
+                PositionX = position.x;
+                PositionY = position.y;
+                PositionZ = position.z;
 
-            public List<BarcodePosRot> BoxContainedBarcodes = boxContainedBarcodes;
+                InventoryData = inventoryData;
+                MidLevelAmmoSave = ammoSave;
+
+                BoxContainedBarcodes = boxContainedBarcodes;
+            }
 
             /// <summary>
             /// Returns true if the save point has a level barcode.

@@ -63,7 +63,6 @@ namespace CustomCampaignTools
 
             CampaignSaveData.SavePoint savePoint = campaign.saveData.LoadedSavePoint;
 
-
             if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
 
@@ -77,13 +76,7 @@ namespace CustomCampaignTools
                 }
             }
 
-            var bodySlots = Player.RigManager.inventory.bodySlots;
-
-            bodySlots[0].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.LeftSidearmBarcode);
-            bodySlots[2].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.LeftShoulderSlotBarcode);
-            bodySlots[5].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.RightSidearmBarcode);
-            bodySlots[3].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.RightShoulderSlotBarcode);
-            bodySlots[4].inventorySlotReceiver.HolsterItemIfNotEmpty(campaign.saveData.LoadedSavePoint.BackSlotBarcode);
+            savePoint.InventoryData.ApplyToRigmanager(Player.RigManager);
         }
 
         public static void HolsterItemIfNotEmpty(this InventorySlotReceiver slot, string barcode, Vector3 spawnPosition = default)
