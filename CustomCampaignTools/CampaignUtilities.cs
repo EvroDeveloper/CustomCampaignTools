@@ -39,6 +39,12 @@ namespace CustomCampaignTools
 
         public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
 
+        public static bool IsCampaignLevel(string levelBarcode)
+        {
+            campaign = GetFromLevel(levelBarcode);
+            return campaign != null;
+        }
+
         public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign, out CampaignLevelType levelType)
         {
             campaign = GetFromLevel(levelBarcode);

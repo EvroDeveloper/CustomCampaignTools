@@ -18,11 +18,11 @@ namespace CustomCampaignTools.Patching
     [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
-        [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))] // Dunno what method to patch, hopefully refreshing _levelCrates on activate makes it show the right ones
+        [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))]
         [HarmonyPostfix]
         public static void PopulatePostfix(LevelsPanelView __instance, ref UniTaskVoid __result)
         {
-            __result.GetAwaiter().OnCompleted(() => ForceLevelList(__instance));//Might Work thanklakatrazzzzz
+            __result.GetAwaiter().OnCompleted(() => ForceLevelList(__instance)); //Might Work thanks lakatrazzzzz
         }
 
         public static void ForceLevelList(LevelsPanelView __instance)
@@ -46,7 +46,7 @@ namespace CustomCampaignTools.Patching
                 List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
 
                 List<LevelCrate> SLZCrates = instanceCrates.Where(crate => crate.Barcode.ID.StartsWith("SLZ")).ToList();
-                List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID, out _, out _)).ToList();
+                List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID)).ToList();
 
                 List<LevelCrate> CampaignCrates = new List<LevelCrate>();
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
@@ -77,7 +77,9 @@ namespace CustomCampaignTools.Patching
         [HarmonyPostfix]
         public static void MenuPopulationOverride(LevelPanelOverride __instance)
         {
-            PanelContainer campaignContainer = __instance.mainContainer.MakeContainer("Campaigns");
+            PanelContainer campaignContainer = __instance.GetOrMakeCampaignContainer("Campaigns");
+            campaignContainer.Clear();
+            campaignToContainerOpen.Clear();
 
             foreach(Campaign c in CampaignUtilities.CampaignsToShowInMenu)
             {
@@ -92,13 +94,33 @@ namespace CustomCampaignTools.Patching
             }
         }
 
-        //[HarmonyPatch(nameof(LevelPanelOverride.OnInitialized))]
-        //[HarmonyPostfix]
+        private static Dictionary<LevelPanelOverride, PanelContainer> mainToCampaignContainer = new Dictionary<LevelPanelOverride, PanelContainer>();
+
+        public static void GetOrMakeCampaignContainer(this LevelPanelOverride container, string name)
+        {
+            if(!mainToCampaignContainer.ContainsKey(container))
+            {
+                mainToCampaignContainer.Add(container, container.mainContainer.MakeContainer(name));
+            }
+            return mainToCampaignContainer[container];
+        }
+
+        [HarmonyPatch(nameof(LevelPanelOverride.OnInitialized))]
+        [HarmonyPostfix]
         public static void MenuInitContainerOverride(LevelPanelOverride __instance)
         {
             if(Campaign.SessionActive && campaignToContainerOpen.Keys.Contains(Campaign.Session))
             {
                 __instance.OpenContainer(campaignToContainerOpen[Campaign.Session]);
+            }
+
+            if(Campaign.SessionLocked)
+            {
+                campaignToContainerOpen[Campaign.Session].parent = null;
+            }
+            else
+            {
+                campaignToContainerOpen[Campaign.Session].parent = __instance.mainContainer;
             }
         }
     }
