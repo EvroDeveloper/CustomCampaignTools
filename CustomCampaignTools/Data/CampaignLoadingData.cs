@@ -10,6 +10,7 @@ namespace CustomCampaignTools
         public List<string> MainLevels { get; set; }
         public List<string> ExtraLevels { get; set; }
         public string LoadScene { get; set; }
+        public string LoadSceneMusic { get; set; }
         public bool UnlockableLevels { get; set; }
         public bool ShowInMenu { get; set; }
         public bool RestrictDevTools { get; set; }

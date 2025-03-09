@@ -20,9 +20,9 @@ namespace CustomCampaignTools.Patching
     {
         [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))]
         [HarmonyPostfix]
-        public static void PopulatePostfix(LevelsPanelView __instance, ref UniTaskVoid __result)
+        public static void PopulatePostfix(LevelsPanelView __instance, UniTaskVoid __result)
         {
-            __result.GetAwaiter().OnCompleted(() => ForceLevelList(__instance)); //Might Work thanks lakatrazzzzz
+            __result.GetAwaiter().OnCompleted(new Action(() => ForceLevelList(__instance))); //Might Work thanks lakatrazzzzz
         }
 
         public static void ForceLevelList(LevelsPanelView __instance)
@@ -35,7 +35,6 @@ namespace CustomCampaignTools.Patching
             else
             {
                 // Sort Campaigns to be right after SLZ levels, and put them in the right order. Need to move this over to the previous function as well, just putting session campaign first.
-
                 Campaign prioritizedCampaign = null;
                 if (Campaign.SessionActive)
                 {
@@ -68,13 +67,21 @@ namespace CustomCampaignTools.Patching
 
     #region Swipez Extended Panel
 
-    [HarmonyPatch(typeof(LevelPanelOverride))]
+    //[HarmonyPatch(typeof(LevelPanelOverride))]
     public static class SwipezPanelPatches
     {
         private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = new Dictionary<Campaign, PanelContainer>();
 
-        [HarmonyPatch(nameof(LevelPanelOverride.PopulateMenus))]
-        [HarmonyPostfix]
+        public static void ManualPatch()
+        {
+            var harmony = new HarmonyLib.Harmony("swipez.panel.populate");
+
+            harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.PopulateMenus)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuPopulationOverride"));
+            harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.OnInitialized)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuInitContainerOverride"));
+        }
+
+        //[HarmonyPatch(nameof(LevelPanelOverride.PopulateMenus))]
+        //[HarmonyPostfix]
         public static void MenuPopulationOverride(LevelPanelOverride __instance)
         {
             PanelContainer campaignContainer = __instance.GetOrMakeCampaignContainer("Campaigns");
@@ -96,7 +103,7 @@ namespace CustomCampaignTools.Patching
 
         private static Dictionary<LevelPanelOverride, PanelContainer> mainToCampaignContainer = new Dictionary<LevelPanelOverride, PanelContainer>();
 
-        public static void GetOrMakeCampaignContainer(this LevelPanelOverride container, string name)
+        public static PanelContainer GetOrMakeCampaignContainer(this LevelPanelOverride container, string name)
         {
             if(!mainToCampaignContainer.ContainsKey(container))
             {
@@ -105,8 +112,8 @@ namespace CustomCampaignTools.Patching
             return mainToCampaignContainer[container];
         }
 
-        [HarmonyPatch(nameof(LevelPanelOverride.OnInitialized))]
-        [HarmonyPostfix]
+        //[HarmonyPatch(nameof(LevelPanelOverride.OnInitialized))]
+        //[HarmonyPostfix]
         public static void MenuInitContainerOverride(LevelPanelOverride __instance)
         {
             if(Campaign.SessionActive && campaignToContainerOpen.Keys.Contains(Campaign.Session))

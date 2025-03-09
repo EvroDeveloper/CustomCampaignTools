@@ -1,5 +1,6 @@
 ﻿using BoneLib;
 using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Patching;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using MelonLoader;
 using System.Reflection;
@@ -24,6 +25,14 @@ namespace CustomCampaignTools
             Assembly assembly = MelonAssembly.Assembly;
 
             MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
+
+            foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
+            {
+                if (registeredMelon.Info.Name.Contains("BrowsingPlus"))
+                {
+                    SwipezPanelPatches.ManualPatch();
+                }
+            }
         }
 
         internal static void LevelInitialized(LevelInfo info)
@@ -45,7 +54,7 @@ namespace CustomCampaignTools
                 }
                 else
                 {
-                    SavepointFunctions.SavePlayer(barcode, Vector3.zero);
+                    campaign.saveData.SavePlayer(barcode, Vector3.zero);
                 }
             }
             #endregion

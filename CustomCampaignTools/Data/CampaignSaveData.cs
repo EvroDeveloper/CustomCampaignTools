@@ -1,3 +1,4 @@
+using BoneLib;
 using BoneLib.Notifications;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -140,13 +141,28 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public static void SavePlayer(string levelBarcode, Vector3 position, List<BarcodePosRot> boxBarcodes = null)
+        public void SavePlayer(string levelBarcode, Vector3 position, List<BarcodePosRot> boxBarcodes = null)
         {
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
             boxBarcodes ??= new List<BarcodePosRot>();
 
-            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, boxBarcodes);
+            AmmoSave ammoSave = new AmmoSave();
+
+            if (campaign.SaveLevelAmmo)
+            {
+                AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+
+                ammoSave = new AmmoSave
+                {
+                    LevelBarcode = levelBarcode,
+                    LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
+                    MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
+                    HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
+                };
+            }
+
+            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes);
 
             SaveToDisk();
         }
@@ -386,6 +402,7 @@ namespace CustomCampaignTools
                 if (!IsValid(out _)) return;
 
                 SavepointFunctions.WasLastLoadByContinue = true;
+                SavepointFunctions.LoadByContine_AmmoPatchHint = true;
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }
 

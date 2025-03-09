@@ -41,8 +41,7 @@ namespace CustomCampaignTools
 
         public static bool IsCampaignLevel(string levelBarcode)
         {
-            campaign = GetFromLevel(levelBarcode);
-            return campaign != null;
+            return GetFromLevel(levelBarcode) != null;
         }
 
         public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign, out CampaignLevelType levelType)

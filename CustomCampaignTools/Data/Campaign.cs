@@ -31,19 +31,15 @@ namespace CustomCampaignTools
         public string[] mainLevels;
         public string[] extraLevels;
         public string LoadScene;
-        private string _loadSceneMusicBarcode;
         public AudioClip LoadSceneMusic
         {
             get
             {
-                if(_loadMusicDatacard == null)
-                {
-                    MarrowGame.assetWarehouse.TryGetCrate<MonoDisc>(new Barcode(LoadSceneMusicBarcode), out _loadMusicDatacard);
-                }
-                return _loadMusicDatacard.AudioClip.Asset;
+                return _loadSceneMusic;
             }
         }
         private MonoDisc _loadMusicDatacard;
+        private AudioClip _loadSceneMusic;
 
         public bool ShowInMenu;
 
@@ -104,11 +100,21 @@ namespace CustomCampaignTools
                 campaign.extraLevels = data.ExtraLevels.ToArray();
                 campaign.saveData = new CampaignSaveData(campaign);
 
-                if (data.InitialLevel == string.Empty) campaign.MenuLevel = data.MainLevels[0];
+                if (data.InitialLevel == "null.empty.barcode") campaign.MenuLevel = data.MainLevels[0];
                 else campaign.MenuLevel = data.InitialLevel;
 
-                if (data.LoadScene == string.Empty) campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
+                if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
                 else campaign.LoadScene = data.LoadScene;
+
+                if(data.LoadSceneMusic != null && data.LoadSceneMusic != "null.empty.barcode")
+                {
+                    MarrowGame.assetWarehouse.TryGetDataCard(new Barcode(data.LoadSceneMusic), out campaign._loadMusicDatacard);
+                    campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+                    {
+                        campaign._loadSceneMusic = a;
+                        campaign._loadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    }));
+                }
 
                 campaign.ShowInMenu = data.ShowInMenu;
 
@@ -253,14 +259,17 @@ namespace CustomCampaignTools
         public static void OnInitialize()
         {
             Hooking.OnLevelLoaded += OnLevelLoaded;
-            try
+            AssetWarehouse._onReady += new Action(() =>
             {
-                LoadCampaignsFromMods();
-            }
-            catch (Exception ex)
-            {
-                MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
-            }
+                try
+                {
+                    LoadCampaignsFromMods();
+                }
+                catch (Exception ex)
+                {
+                    MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
+                }
+            });
         }
 
         public static void LoadCampaignsFromMods()
@@ -346,19 +355,14 @@ namespace CustomCampaignTools
 
         public static void OnUIRigCreated()
         {
-            var popUpMenu = Player.UIRig.popUpMenu;
-
-            if (popUpMenu.radialPageView.buttons[5].m_Data == null)
-            {
-                MelonLogger.Error("Button 5 Data is NULL!!!");
-            }
-
-
             if (!SessionActive) return;
+
+            var popUpMenu = Player.UIRig.popUpMenu;
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
-                popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"Dev Tools are not allowed until campaign is complete." }); });
+                popUpMenu.crate_SpawnGun = new GenericCrateReference(new Barcode("null.empty.barcode"));
+                popUpMenu.crate_Nimbus = new GenericCrateReference(new Barcode("null.empty.barcode"));
             }
         }
     }

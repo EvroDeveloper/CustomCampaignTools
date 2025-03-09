@@ -1,6 +1,7 @@
 using System;
 using BoneLib;
 using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,14 +48,18 @@ namespace CustomCampaignTools
             _optionButton.transform.SetSiblingIndex(_optionsGrid.childCount - 1);
 
             _optionButtonComponent = _optionButton.GetComponent<Button>();
-            _optionButtonComponent.onClick.RemoveAllListeners();
+            _optionButtonComponent.onClick.m_PersistentCalls.Clear();
+            _optionButtonComponent.onClick.m_Calls.ClearPersistent();
+            _optionButtonComponent.onClick.m_Calls.Clear();
             _optionButtonComponent.onClick.AddListener(new Action(Campaign.Session.Exit));
 
             // Fix name later
-            var menuButton = _optionsGrid.Find("Button_Menu");
-            var menuButtonComp = menuButton.Find("ConfirmButton").GetComponent<Button>();
-            menuButtonComp.onClick.RemoveAllListeners();
-            menuButtonComp.onClick.AddListener(new Action(FadeLoader.Load(new Barcode(Campaign.Session.MenuLevel), new Barcode(Campaign.Session.LoadScene))));
+            var menuButton = _optionsGrid.Find("button_MainMenu");
+            var menuButtonComp = menuButton.Find("panel_MAINMENU").GetComponentInChildren<Button>(true);
+            menuButtonComp.onClick.m_PersistentCalls.Clear();
+            menuButtonComp.onClick.m_Calls.ClearPersistent();
+            menuButtonComp.onClick.m_Calls.Clear();
+            menuButtonComp.onClick.AddListener(new Action(() => FadeLoader.Load(new Barcode(Campaign.Session.MenuLevel), new Barcode(Campaign.Session.LoadScene))));
         }
     }
 }

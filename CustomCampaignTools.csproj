@@ -43,6 +43,7 @@
     <Compile Include="CustomCampaignTools\Data\Campaign.cs" />
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
+    <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelPanelViewPatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\HideInCampaign.cs" />
@@ -87,7 +88,7 @@
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\Mods\BoneLib.dll</HintPath>
     </Reference>
     <Reference Include="BrowsingPlus">
-      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\Mods\BrowsingPlus.dll</HintPath>
+      <HintPath>H:\Downloads\notnotnotswipez-BrowsingPlus-1.0.0\Mods\BrowsingPlus.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime, Version=1.4.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -145,6 +146,9 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>..\..\TideFusion\Core\managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

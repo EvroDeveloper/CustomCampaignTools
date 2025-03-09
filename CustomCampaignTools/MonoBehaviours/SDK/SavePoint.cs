@@ -37,10 +37,10 @@ namespace CustomCampaignTools.SDK
                 {
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
-                SavepointFunctions.SavePlayer(barcode, transform.position, Entities);
+                Campaign.Session.saveData.SavePlayer(barcode, transform.position, Entities);
             }
             else {
-                SavepointFunctions.SavePlayer(barcode, transform.position);
+                Campaign.Session.saveData.SavePlayer(barcode, transform.position);
             }
         }
     }
