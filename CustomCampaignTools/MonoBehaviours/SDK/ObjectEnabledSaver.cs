@@ -18,7 +18,7 @@ namespace CustomCampaignTools.SDK
 
         public void RestoreActiveState()
         {
-            gameObject.SetActive(Campain.Session.saveData.LoadedSavePoint.GetStateFromName(gameObject.name));
+            gameObject.SetActive(Campain.Session.saveData.LoadedSavePoint.GetEnabledStateFromName(gameObject.name, gameObject.activeSelf));
         }
     }
 }

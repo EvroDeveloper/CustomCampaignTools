@@ -432,6 +432,14 @@ namespace CustomCampaignTools
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }
 
+            public bool GetEnabledStateFromName(string name, bool defaultEnabled)
+            {
+                if(ObjectEnabledSaves.Keys.Contains(name))
+                    return ObjectEnabledSaves[name];
+                else
+                    return defaultEnabled;
+            }
+
             public Vector3 GetPosition()
             {
                 return new Vector3(PositionX, PositionY, PositionZ);
