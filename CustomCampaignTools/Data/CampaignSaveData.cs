@@ -421,7 +421,6 @@ namespace CustomCampaignTools
                 if (!IsValid(out _)) return;
 
                 SavepointFunctions.WasLastLoadByContinue = true;
-                SavepointFunctions.LoadByContine_AmmoPatchHint = true;
 
                 if(DespawnedSpawners.Count != 0)
                     SavepointFunctions.LoadByContinue_SaveDespawnHint = true;

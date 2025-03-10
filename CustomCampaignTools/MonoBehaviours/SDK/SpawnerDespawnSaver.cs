@@ -18,14 +18,9 @@ namespace CustomCampaignTools.SDK
 
         public void Awake()
         {
-            if(SavepointFunctions.LoadByContinue_SaveDespawnHint)
+            if(SavepointFunctions.CurrentLevelLoadedByContinue)
             {
-                // Horrendous ahh implementation but it should work :pray:
-                SavepointFunctions.LoadByContinue_SaveDespawnHint = false;
-                foreach(SpawnerDespawnSaver s in FindObjectsOfType<SpawnerDespawnSaver>())
-                {
-                    s.LoadedFromSave = true;
-                }
+                LoadedFromSave = true;
             }
         }
 

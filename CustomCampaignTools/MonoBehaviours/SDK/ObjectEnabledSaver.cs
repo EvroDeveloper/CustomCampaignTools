@@ -5,14 +5,9 @@ namespace CustomCampaignTools.SDK
     {
         public void Awake()
         {
-            if(SavepointFunctions.LoadByContinue_ObjectEnabledHint)
+            if(SavepointFunctions.CurrentLevelLoadedByContinue)
             {
-                // Horrendous ahh implementation but it should work :pray:
-                SavepointFunctions.LoadByContinue_ObjectEnabledHint = false;
-                foreach(ObjectEnabledSaver s in FindObjectsOfType<ObjectEnabledSaver>())
-                {
-                    s.RestoreActiveState();
-                }
+                RestoreActiveState();
             }
         }
 

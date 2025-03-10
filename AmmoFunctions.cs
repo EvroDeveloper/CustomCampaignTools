@@ -68,10 +68,9 @@ namespace CustomCampaignTools
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).HeavyAmmo);
             }
 
-            if(SavepointFunctions.LoadByContine_AmmoPatchHint)
+            if(SavepointFunctions.CurrentLevelLoadedByContinue)
             {
                 // Save Points can have a mid-level ammo score, loading into a level only gives previous ammo high scores so I have to add extra from the save point
-                SavepointFunctions.LoadByContine_AmmoPatchHint = false;
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, campaign.saveData.LoadedSavePoint.MidLevelAmmoSave.LightAmmo);
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, campaign.saveData.LoadedSavePoint.MidLevelAmmoSave.MediumAmmo);
                 AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, campaign.saveData.LoadedSavePoint.MidLevelAmmoSave.HeavyAmmo);

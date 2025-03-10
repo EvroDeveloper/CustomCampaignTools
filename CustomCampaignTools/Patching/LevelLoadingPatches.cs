@@ -24,6 +24,9 @@ namespace CustomCampaignTools.Patching
         {
             var campaign = CampaignUtilities.GetFromLevel(level);
 
+            SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
+            SavepointFunctions.WasLastLoadByContinue = false;
+
             // If logic here is kinda weird but this should work.
             if(Campaign.SessionLocked)
             {

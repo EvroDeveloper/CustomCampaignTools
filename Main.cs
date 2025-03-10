@@ -46,7 +46,7 @@ namespace CustomCampaignTools
             {
                 if (levelType != CampaignLevelType.MainLevel) return;
 
-                if (SavepointFunctions.WasLastLoadByContinue)
+                if (SavepointFunctions.CurrentLevelLoadedByContinue)
                 {
                     SavepointFunctions.LoadPlayerFromSave();
                 }
