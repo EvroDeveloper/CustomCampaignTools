@@ -8,16 +8,13 @@ namespace CustomCampaignTools
 {
     public static class CampaignUtilities
     {
-        public static List<Campaign> LoadedCampaigns = new List<Campaign>();
+        public static List<Campaign> LoadedCampaigns = [];
 
         public static List<Campaign> CampaignsToShowInMenu
         {
             get
             {
-                if (_menuCampaigns == null)
-                {
-                    _menuCampaigns = LoadedCampaigns.Where(c => c.ShowInMenu).ToList();
-                }
+                _menuCampaigns ??= LoadedCampaigns.Where(c => c.ShowInMenu).ToList();
                 return _menuCampaigns;
             }
         }

@@ -9,21 +9,42 @@ using System.Collections.Generic;
 using System.Linq;
 using BrowsingPlus.PanelUI;
 using Il2CppCysharp.Threading.Tasks;
+using MelonLoader;
 
 
 namespace CustomCampaignTools.Patching
 {
     #region SLZ Level Panel
 
+    //public class ElStupidLevelCrateList : Il2CppSystem.Collections.Generic.List<LevelCrate>
+    //{
+    //    public override void Add(LevelCrate item)
+    //    {
+    //        base.Add(item);
+
+    //        MelonLogger.Msg("El Stupid was ADDED");
+    //    }
+    //}
+
     [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
         [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         public static void PopulatePostfix(LevelsPanelView __instance, UniTaskVoid __result)
         {
             __result.GetAwaiter().OnCompleted(new Action(() => ForceLevelList(__instance))); //Might Work thanks lakatrazzzzz
+            //__instance._levelCrates = new ElStupidLevelCrateList();
         }
+
+        //[HarmonyPatch("set__levelCrates")]
+        //[HarmonyPrefix]
+        //public static bool LevelCratesSetterPrefix(ref Il2CppSystem.Collections.Generic.List<LevelCrate> __0)
+        //{
+        //    MelonLogger.Msg("Level Crates were SET!");
+        //    __0 = new ElStupidLevelCrateList();
+        //    return true;
+        //}
 
         public static void ForceLevelList(LevelsPanelView __instance)
         {
@@ -47,7 +68,7 @@ namespace CustomCampaignTools.Patching
                 List<LevelCrate> SLZCrates = instanceCrates.Where(crate => crate.Barcode.ID.StartsWith("SLZ")).ToList();
                 List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID)).ToList();
 
-                List<LevelCrate> CampaignCrates = new List<LevelCrate>();
+                List<LevelCrate> CampaignCrates = [];
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
                 {
                     if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
@@ -70,7 +91,7 @@ namespace CustomCampaignTools.Patching
     //[HarmonyPatch(typeof(LevelPanelOverride))]
     public static class SwipezPanelPatches
     {
-        private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = new Dictionary<Campaign, PanelContainer>();
+        private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = [];
 
         public static void ManualPatch()
         {
@@ -101,7 +122,7 @@ namespace CustomCampaignTools.Patching
             }
         }
 
-        private static Dictionary<LevelPanelOverride, PanelContainer> mainToCampaignContainer = new Dictionary<LevelPanelOverride, PanelContainer>();
+        private static Dictionary<LevelPanelOverride, PanelContainer> mainToCampaignContainer = [];
 
         public static PanelContainer GetOrMakeCampaignContainer(this LevelPanelOverride container, string name)
         {
@@ -112,11 +133,11 @@ namespace CustomCampaignTools.Patching
             return mainToCampaignContainer[container];
         }
 
-        //[HarmonyPatch(nameof(LevelPanelOverride.OnInitialized))]
-        //[HarmonyPostfix]
         public static void MenuInitContainerOverride(LevelPanelOverride __instance)
         {
-            if(Campaign.SessionActive && campaignToContainerOpen.Keys.Contains(Campaign.Session))
+            if (!Campaign.SessionActive) return;
+
+            if(campaignToContainerOpen.Keys.Contains(Campaign.Session))
             {
                 __instance.OpenContainer(campaignToContainerOpen[Campaign.Session]);
             }

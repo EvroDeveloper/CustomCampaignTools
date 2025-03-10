@@ -67,15 +67,14 @@ namespace CustomCampaignTools
 
         public bool SaveLevelWeapons;
         public bool SaveLevelAmmo;
-        public List<AchievementData> Achievements = new List<AchievementData>();
+        public List<AchievementData> Achievements = [];
         public bool LockInCampaign;
         public bool LockLevelsUntilEntered;
 
         public string[] AllLevels 
         {
             get {
-                List<string> list = [.. mainLevels, .. extraLevels, MenuLevel];
-                return list.ToArray();
+                return [.. mainLevels, .. extraLevels, MenuLevel];
             }
         }
         
@@ -91,13 +90,13 @@ namespace CustomCampaignTools
 
         internal static Campaign RegisterCampaign(CampaignLoadingData data)
         {
-            Campaign campaign = new Campaign();
+            Campaign campaign = new();
             try
             {
                 campaign.Name = data.Name;
 
-                campaign.mainLevels = data.MainLevels.ToArray();
-                campaign.extraLevels = data.ExtraLevels.ToArray();
+                campaign.mainLevels = [.. data.MainLevels];
+                campaign.extraLevels = [.. data.ExtraLevels];
                 campaign.saveData = new CampaignSaveData(campaign);
 
                 if (data.InitialLevel == "null.empty.barcode") campaign.MenuLevel = data.MainLevels[0];
@@ -121,7 +120,7 @@ namespace CustomCampaignTools
                 campaign.LockLevelsUntilEntered = data.UnlockableLevels;
 
                 campaign.AvatarRestrictionType = data.AvatarRestrictionType;
-                campaign.WhitelistedAvatars = data.WhitelistedAvatars.ToArray();
+                campaign.WhitelistedAvatars = [.. data.WhitelistedAvatars];
 
                 campaign.RestrictDevTools = data.RestrictDevTools;
 
@@ -196,7 +195,7 @@ namespace CustomCampaignTools
 
         private string[] GetBarcodeArrayOfLevelType(CampaignLevelType type)
         {
-            string[] output = [];
+            string[] output;
             switch (type)
             {
                 case CampaignLevelType.Menu:
@@ -226,13 +225,10 @@ namespace CustomCampaignTools
         {
             List<LevelCrate> levels = [];
 
-            MelonLogger.Msg("Checkpoint 1");
             if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(MenuLevel), out LevelCrate menuCrate))
             {
-                MelonLogger.Msg("Checkpoint 1.5");
                 levels.Add(menuCrate);
             }
-            MelonLogger.Msg("Checkpoint 2");
             foreach (string mainLevel in mainLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
@@ -242,7 +238,6 @@ namespace CustomCampaignTools
                     levels.Add(mainLevelCrate);
                 }
             }
-            MelonLogger.Msg("Checkpoint 3");
             foreach (string extraLevel in extraLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
@@ -252,7 +247,6 @@ namespace CustomCampaignTools
                     levels.Add(extraLevelCrate);
                 }
             }
-            MelonLogger.Msg("Checkpoint 4");
             return [.. levels];
         }
 
@@ -288,15 +282,6 @@ namespace CustomCampaignTools
 
             foreach (string mod in modPaths)
             {
-                string[] jsonPaths = Directory.GetFiles(mod, "campaign.json");
-
-                if (jsonPaths.Length != 0)
-                {
-                    string jsonContent = File.ReadAllText(jsonPaths[0]);
-                    RegisterCampaignFromJson(jsonContent);
-                    continue;
-                }
-
                 string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
 
                 if (jsonPaths2.Length != 0)
@@ -326,31 +311,6 @@ namespace CustomCampaignTools
             if(!CampaignUtilities.IsCampaignLevel(info.barcode, out Session, out _)) return;
 
             lastLoadedCampaignLevel = info.barcode;
-
-            //if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
-            //{
-            //    var popUpMenu = UIRig.Instance.popUpMenu;
-            //    popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) => {
-            //        popUpMenu.radialPageView.buttons[5].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow dev tools until campaign is complete." }); });
-            //    });
-            //}
-
-            //if(Session.RestrictAvatar && !Session.saveData.AvatarUnlocked)
-            //{
-            //    PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
-            //    if(bodyLog != null)
-            //    {
-            //        bodyLog.gameObject.SetActive(false);
-            //    }
-
-            //    var popUpMenu = UIRig.Instance.popUpMenu;
-            //    popUpMenu.radialPageView.buttons[7].m_Data.m_Callback = (Il2CppSystem.Action)(() => { Notifier.Send(new Notification { Title = Session.Name, Message = $"{Session.Name} does not allow custom avatars until campaign is complete." }); });
-
-            //    if (Session.CampaignAvatar != string.Empty)
-            //    {
-            //        Player.RigManager.SwapAvatarCrate(new Barcode(Session.CampaignAvatar));
-            //    }
-            //}
         }
 
         public static void OnUIRigCreated()

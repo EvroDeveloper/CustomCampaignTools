@@ -9,7 +9,7 @@ namespace CustomCampaignTools
 {
     public class InventoryData
     {
-        public List<InventoryItem> InventoryItems = new List<InventoryItem>();
+        public List<InventoryItem> InventoryItems = [];
 
         public void ApplyToRigmanager(RigManager rm)
         {
@@ -68,7 +68,9 @@ namespace CustomCampaignTools
         public void SpawnInSlot(InventorySlotReceiver slot)
         {
             if(Barcode != null && Barcode != string.Empty && slot != null)
-                slot.SpawnInSlotAsync(new Barcode(Barcode));
+            {
+                var task = slot.SpawnInSlotAsync(new Barcode(Barcode));
+            }
         }
 
         public static InventoryItem GetFromBodyslot(SlotContainer slot)

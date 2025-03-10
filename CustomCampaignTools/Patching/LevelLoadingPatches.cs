@@ -74,5 +74,15 @@ namespace CustomCampaignTools.Patching
                 musicClip = Campaign.Session.LoadSceneMusic; // blah this method sucks but its the best i can do lmao
             }
         }
+
+        [HarmonyPatch(nameof(Audio2dManager.StopSpecificMusic))]
+        [HarmonyPrefix]
+        public static void StopMusicPatch(Audio2dManager __instance, ref AudioClip specificClip)
+        {
+            if (specificClip.name == "music_LoadingSplash" && Campaign.SessionActive && Campaign.Session.LoadSceneMusic != null)
+            {
+                specificClip = Campaign.Session.LoadSceneMusic; // blah this method sucks but its the best i can do lmao
+            }
+        }
     }
 }

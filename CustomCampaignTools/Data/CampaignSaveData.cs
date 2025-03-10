@@ -149,7 +149,7 @@ namespace CustomCampaignTools
 
             AmmoSave ammoSave = new AmmoSave();
 
-            if (campaign.SaveLevelAmmo)
+            if (campaign.SaveLevelAmmo && position != Vector3.zero)
             {
                 AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 

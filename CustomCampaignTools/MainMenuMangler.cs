@@ -74,17 +74,15 @@ namespace CustomCampaignTools
             {
                 if (resource.Contains(resourceName))
                 {
-                    using (Stream resFilestream = assembly.GetManifestResourceStream(resource))
-                    {
-                        if (resFilestream == null) return;
-                        byte[] byteArr = new byte[resFilestream.Length];
-                        resFilestream.Read(byteArr, 0, byteArr.Length);
-                        bytes = byteArr;
-                    }
+                    using Stream resFilestream = assembly.GetManifestResourceStream(resource);
+                    if (resFilestream == null) return;
+                    byte[] byteArr = new byte[resFilestream.Length];
+                    resFilestream.Read(byteArr, 0, byteArr.Length);
+                    bytes = byteArr;
                 }
             }
 
-            Texture2D texture = new Texture2D(2, 2);
+            Texture2D texture = new(2, 2);
             if (!texture.LoadImage(bytes))
             {
                 MelonLogger.Error("Failed to load texture from embedded resource.");

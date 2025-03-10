@@ -46,8 +46,6 @@ namespace CustomCampaignTools
             {
                 if (levelType != CampaignLevelType.MainLevel) return;
 
-                int levelIndex = campaign.GetLevelIndex(barcode, CampaignLevelType.MainLevel);
-
                 if (SavepointFunctions.WasLastLoadByContinue)
                 {
                     SavepointFunctions.LoadPlayerFromSave();
@@ -63,10 +61,7 @@ namespace CustomCampaignTools
         private static void LevelUnloaded()
         {
             if (Campaign.SessionActive)
-            {
-#if DEBUG
-                MelonLogger.Msg("Current level is a Campaign! Saving ammo to Save Data...");
-#endif
+            { 
                 Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
             }
         }
