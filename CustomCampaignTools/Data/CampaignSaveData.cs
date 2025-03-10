@@ -161,8 +161,17 @@ namespace CustomCampaignTools
                     HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                 };
             }
+            
+            List<string> savedDespawns = [];
+            foreach(SpawnerDespawnSaver stateSaver in FindObjectsOfType<SpawnerDespawnSaver>())
+            {
+                if(stateSaver.DontSpawnAgain(out string id))
+                {
+                    savedDespawns.Add(id);
+                }
+            }
 
-            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes);
+            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns);
 
             SaveToDisk();
         }
@@ -360,8 +369,9 @@ namespace CustomCampaignTools
             public InventoryData InventoryData;
             public AmmoSave MidLevelAmmoSave;
             public List<BarcodePosRot> BoxContainedBarcodes;
+            public List<string> DespawnedSpawners;
 
-            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes)
+            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns)
             {
                 LevelBarcode = levelBarcode;
                 PositionX = position.x;
@@ -372,6 +382,7 @@ namespace CustomCampaignTools
                 MidLevelAmmoSave = ammoSave;
 
                 BoxContainedBarcodes = boxContainedBarcodes;
+                DespawnedSpawners = savedDespawns;
             }
 
             /// <summary>
@@ -403,6 +414,10 @@ namespace CustomCampaignTools
 
                 SavepointFunctions.WasLastLoadByContinue = true;
                 SavepointFunctions.LoadByContine_AmmoPatchHint = true;
+
+                if(DespawnedSpawners.Count != 0)
+                    SavepointFunctions.LoadByContinue_SaveDespawnHint = true;
+                    
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }
 
