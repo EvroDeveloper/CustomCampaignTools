@@ -9,6 +9,8 @@ namespace CustomCampaignTools
     {
         public static bool WasLastLoadByContinue = false;
         public static bool LoadByContine_AmmoPatchHint = false; // Used for letting the AmmoInventory patcher know when we should give SavePoint ammo
+        public static bool LoadByContinue_ObjectEnabledHint = false;
+        public static bool LoadByContinue_SaveDespawnHint = false;
 
         public static void LoadPlayerFromSave()
         {

@@ -171,7 +171,13 @@ namespace CustomCampaignTools
                 }
             }
 
-            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns);
+            Dictionary<string bool> savedEnableds = [];
+            foreach(ObjectEnabledSaver saver in FindObjectsOfType<ObjectEnabledSaver>())
+            {
+                savedEnableds.Add(saver.gameObject.name, saver.gameObject.activeSelf);
+            }
+
+            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
             SaveToDisk();
         }
@@ -370,8 +376,9 @@ namespace CustomCampaignTools
             public AmmoSave MidLevelAmmoSave;
             public List<BarcodePosRot> BoxContainedBarcodes;
             public List<string> DespawnedSpawners;
+            public Dictionary<string, bool> ObjectEnabledSaves;
 
-            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns)
+            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns, Dictionary<string, bool> savedEnableds)
             {
                 LevelBarcode = levelBarcode;
                 PositionX = position.x;
@@ -383,6 +390,7 @@ namespace CustomCampaignTools
 
                 BoxContainedBarcodes = boxContainedBarcodes;
                 DespawnedSpawners = savedDespawns;
+                ObjectEnabledSaves = savedEnableds;
             }
 
             /// <summary>
@@ -417,6 +425,9 @@ namespace CustomCampaignTools
 
                 if(DespawnedSpawners.Count != 0)
                     SavepointFunctions.LoadByContinue_SaveDespawnHint = true;
+
+                if(ObjectEnabledSaves.Keys.Count != 0)
+                    SavepointFunctions.LoadByContinue_ObjectEnabledHint = true;
                     
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }
