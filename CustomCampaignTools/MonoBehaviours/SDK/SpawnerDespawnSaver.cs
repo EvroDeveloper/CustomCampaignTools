@@ -26,8 +26,20 @@ namespace CustomCampaignTools.SDK
 
         public void Setup(CrateSpawner c, GameObject g)
         {
-            // if loaded from save, and save data.collectedAmmos contains this CrateID
-            // DESTROY IT :fire emoji:
+            _objectToSave = g;
+            if(g.TryGetComponent(out Poolee p))
+            {
+                MelonLogger.Msg($"Found Poolee {g.name}, hooking action into Delegates");
+                p.OnDespawnDelegate += new Action<GameObject>((g) => { MelonLogger.Msg($"Poolee {g.name} was Despawned"); saveDontSpawn = true; } );
+                p.OnRecycleDelegate += new Action<GameObject>((g) => { MelonLogger.Msg($"Poolee {g.name} was Recycled"); saveDontSpawn = true; } );
+            }
+
+            // From here down WORKS
+            var brain = g.GetComponentInChildren<AIBrain>()
+            if(brain)
+            {
+                brain.onDeathDelegate += new Action<GameObject>((g) => saveDontSpawn = true);
+            }
             if(LoadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DontSpawnAgain.Contains(GetCrateID()))
             {
                 if(g.TryGetComponent(out Poolee p))
@@ -35,30 +47,6 @@ namespace CustomCampaignTools.SDK
                     p.Despawn();
                 }
             }
-            else
-            {
-                _objectToSave = g;
-                if(g.TryGetComponent(out Poolee p))
-                {
-                    p.OnDespawnDelegate += OnDespawned;
-                }
-
-                var brain = g.GetComponentInChildren<AIBrain>()
-                if(brain)
-                {
-                    brain.OnDeathDelegate += OnDeathPerchance;
-                }
-            }
-        }
-
-        public void OnDespawned(GameObject g)
-        {
-            saveDontSpawn = true;
-        }
-
-        public void OnDeathPerchance(AIBrain b)
-        {
-            saveDontSpawn = true;
         }
 
         public bool DontSpawnAgain(out string id)
