@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using Il2CppSLZ.Bonelab.SaveData;
+using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
 
 namespace CustomCampaignTools
 {
