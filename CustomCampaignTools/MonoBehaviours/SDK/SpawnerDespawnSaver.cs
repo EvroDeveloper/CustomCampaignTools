@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.AI;
+using Il2CppSLZ.Marrow.Pool;
 
 namespace CustomCampaignTools.SDK
 {
@@ -30,21 +32,21 @@ namespace CustomCampaignTools.SDK
             if(g.TryGetComponent(out Poolee p))
             {
                 MelonLogger.Msg($"Found Poolee {g.name}, hooking action into Delegates");
-                p.OnDespawnDelegate += new Action<GameObject>((g) => { MelonLogger.Msg($"Poolee {g.name} was Despawned"); saveDontSpawn = true; } );
-                p.OnRecycleDelegate += new Action<GameObject>((g) => { MelonLogger.Msg($"Poolee {g.name} was Recycled"); saveDontSpawn = true; } );
+                var despawnHook = g.AddComponent<TsPmoDespawnHook>();
+                despawnHook.OnDespawnDelegate += new Action<GameObject>((g) => { saveDontSpawn = true; });
             }
 
             // From here down WORKS
-            var brain = g.GetComponentInChildren<AIBrain>()
+            var brain = g.GetComponentInChildren<AIBrain>();
             if(brain)
             {
-                brain.onDeathDelegate += new Action<GameObject>((g) => saveDontSpawn = true);
+                brain.onDeathDelegate += new Action<AIBrain>((g) => saveDontSpawn = true);
             }
-            if(LoadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DontSpawnAgain.Contains(GetCrateID()))
+            if(LoadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DespawnedSpawners.Contains(GetCrateID()))
             {
-                if(g.TryGetComponent(out Poolee p))
+                if(g.TryGetComponent(out Poolee p2))
                 {
-                    p.Despawn();
+                    p2.Despawn();
                 }
             }
         }
@@ -57,7 +59,7 @@ namespace CustomCampaignTools.SDK
 
         public string GetCrateID()
         {
-            return position.ToString("F2");
+            return transform.position.ToString("F2");
         }
     }
 }

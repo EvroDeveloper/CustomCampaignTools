@@ -1,5 +1,6 @@
 using BoneLib;
 using BoneLib.Notifications;
+using CustomCampaignTools.SDK;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Il2CppSLZ.Bonelab.SaveData;
 
 namespace CustomCampaignTools
 {
@@ -16,12 +18,12 @@ namespace CustomCampaignTools
         public Campaign campaign;
 
         internal SavePoint LoadedSavePoint;
-        internal List<AmmoSave> LoadedAmmoSaves = new List<AmmoSave>();
-        internal List<FloatData> LoadedFloatDatas = new List<FloatData>();
+        internal List<AmmoSave> LoadedAmmoSaves = [];
+        internal List<FloatData> LoadedFloatDatas = [];
         internal bool DevToolsUnlocked = false;
         internal bool AvatarUnlocked = false;
-        internal List<string> UnlockedAchievements = new List<string>();
-        internal List<string> UnlockedLevels = new List<string>();
+        internal List<string> UnlockedAchievements = [];
+        internal List<string> UnlockedLevels = [];
 
         public string SaveFolder { get => $"{MelonUtils.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
@@ -34,6 +36,8 @@ namespace CustomCampaignTools
 
         public void ResetSave()
         {
+            SaveToDisk($"{SaveFolder}/save_backup.json");
+
             ClearAmmoSave();
             ClearSavePoint();
             LoadedFloatDatas = new List<FloatData>();
@@ -41,6 +45,11 @@ namespace CustomCampaignTools
             AvatarUnlocked = false;
             UnlockedAchievements = new List<string>();
             UnlockedLevels = new List<string>();
+
+            foreach(string barcode in campaign.CampaignUnlockCrates)
+                DataManager.ActiveSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
+
+            SaveToDisk();
         }
 
         #region Ammo Methods
@@ -163,7 +172,7 @@ namespace CustomCampaignTools
             }
             
             List<string> savedDespawns = [];
-            foreach(SpawnerDespawnSaver stateSaver in FindObjectsOfType<SpawnerDespawnSaver>())
+            foreach(SpawnerDespawnSaver stateSaver in GameObject.FindObjectsOfType<SpawnerDespawnSaver>())
             {
                 if(stateSaver.DontSpawnAgain(out string id))
                 {
@@ -171,8 +180,8 @@ namespace CustomCampaignTools
                 }
             }
 
-            Dictionary<string bool> savedEnableds = [];
-            foreach(ObjectEnabledSaver saver in FindObjectsOfType<ObjectEnabledSaver>())
+            Dictionary<string, bool> savedEnableds = [];
+            foreach(ObjectEnabledSaver saver in GameObject.FindObjectsOfType<ObjectEnabledSaver>())
             {
                 savedEnableds.Add(saver.gameObject.name, saver.gameObject.activeSelf);
             }
@@ -288,7 +297,7 @@ namespace CustomCampaignTools
         /// <summary>
         /// Saves the current loaded save data to file.
         /// </summary>
-        internal void SaveToDisk()
+        internal void SaveToDisk(string overwritePath = "")
         {
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
@@ -312,7 +321,7 @@ namespace CustomCampaignTools
 
             string json = JsonConvert.SerializeObject(saveData, settings);
 
-            File.WriteAllText(SavePath, json);
+            File.WriteAllText((overwritePath != string.Empty) ? overwritePath : SavePath, json);
         }
 
         /// <summary>
@@ -421,12 +430,6 @@ namespace CustomCampaignTools
                 if (!IsValid(out _)) return;
 
                 SavepointFunctions.WasLastLoadByContinue = true;
-
-                if(DespawnedSpawners.Count != 0)
-                    SavepointFunctions.LoadByContinue_SaveDespawnHint = true;
-
-                if(ObjectEnabledSaves.Keys.Count != 0)
-                    SavepointFunctions.LoadByContinue_ObjectEnabledHint = true;
                     
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }

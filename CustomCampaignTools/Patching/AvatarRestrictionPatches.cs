@@ -17,11 +17,7 @@ namespace CustomCampaignTools.Patching
         [HarmonyPostfix]
         public static void OnBodyLogEnabled(PullCordDevice __instance)
         {
-            MelonLogger.Msg($"BodylogEnable Session: {(Campaign.SessionActive ? "Active" : "Inactive")}, Avatar: {(Campaign.Session.saveData.AvatarUnlocked ? "Unlocked" : "Locked")}");
-
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
-
-            MelonLogger.Msg($"BodylogEnable Type Includes Bodylog: {(Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog) ? "True" : "False")}");
 
             if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog))
             {

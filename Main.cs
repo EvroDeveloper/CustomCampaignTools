@@ -30,9 +30,14 @@ namespace CustomCampaignTools
             {
                 if (registeredMelon.Info.Name.Contains("BrowsingPlus"))
                 {
-                    SwipezPanelPatches.ManualPatch();
+                    PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
                 }
             }
+        }
+
+        private void PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason()
+        {
+            SwipezPanelPatches.ManualPatch();
         }
 
         internal static void LevelInitialized(LevelInfo info)

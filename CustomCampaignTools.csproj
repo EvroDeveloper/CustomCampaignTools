@@ -44,6 +44,9 @@
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\ObjectEnabledSaver.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\SpawnerDespawnSaver.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\TsPmoDespawnHook.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelPanelViewPatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\HideInCampaign.cs" />

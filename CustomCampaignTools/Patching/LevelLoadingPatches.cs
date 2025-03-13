@@ -74,7 +74,7 @@ namespace CustomCampaignTools.Patching
         {
             if(musicClip.name == "music_LoadingSplash" && Campaign.SessionActive && Campaign.Session.LoadSceneMusic != null)
             {
-                musicClip = Campaign.Session.LoadSceneMusic; // blah this method sucks but its the best i can do lmao
+                musicClip = Campaign.Session.LoadSceneMusic;
             }
         }
 
@@ -84,7 +84,7 @@ namespace CustomCampaignTools.Patching
         {
             if (specificClip.name == "music_LoadingSplash" && Campaign.SessionActive && Campaign.Session.LoadSceneMusic != null)
             {
-                specificClip = Campaign.Session.LoadSceneMusic; // blah this method sucks but its the best i can do lmao
+                specificClip = Campaign.Session.LoadSceneMusic;
             }
         }
     }
