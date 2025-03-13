@@ -40,5 +40,10 @@ namespace CustomCampaignTools.SDK
         {
             Campaign.Session.saveData.UnlockLevel(barcode);
         }
+
+        public void ResetSave()
+        {
+            Campaign.Session.saveData.ResetSave();
+        }
     }
 }

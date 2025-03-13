@@ -71,6 +71,8 @@ namespace CustomCampaignTools
         public bool LockInCampaign;
         public bool LockLevelsUntilEntered;
 
+        public List<string> CampaignUnlockCrates = [];
+
         public string[] AllLevels 
         {
             get {

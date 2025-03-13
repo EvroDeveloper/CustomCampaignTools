@@ -31,7 +31,6 @@ namespace CustomCampaignTools.SDK
             _objectToSave = g;
             if(g.TryGetComponent(out Poolee p))
             {
-                MelonLogger.Msg($"Found Poolee {g.name}, hooking action into Delegates");
                 var despawnHook = g.AddComponent<TsPmoDespawnHook>();
                 despawnHook.OnDespawnDelegate += new Action<GameObject>((g) => { saveDontSpawn = true; });
             }
