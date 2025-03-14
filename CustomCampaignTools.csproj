@@ -49,6 +49,7 @@
     <Compile Include="CustomCampaignTools\MonoBehaviours\TsPmoDespawnHook.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelPanelViewPatches.cs" />
+    <Compile Include="CustomCampaignTools\Patching\RuntimeRedacterPatch.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\HideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\TriggerableNotification.cs" />
     <Compile Include="CustomCampaignTools\PlayerMenuMangler.cs" />

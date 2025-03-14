@@ -252,6 +252,8 @@ namespace CustomCampaignTools
             return [.. levels];
         }
 
+        public static List<string> RegisteredJsonPaths = [];
+
         public static void OnInitialize()
         {
             Hooking.OnLevelLoaded += OnLevelLoaded;
@@ -265,6 +267,11 @@ namespace CustomCampaignTools
                 {
                     MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
                 }
+                
+                AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) => 
+                {
+                    LoadCampaignsFromMods();
+                })
             });
         }
 
@@ -286,8 +293,9 @@ namespace CustomCampaignTools
             {
                 string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
 
-                if (jsonPaths2.Length != 0)
+                if (jsonPaths2.Length != 0 && !RegisteredJsonPaths.Contains(jsonPaths2[0]))
                 {
+                    RegisteredJsonPaths.Add(jsonPaths2[0])
                     string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
                     RegisterCampaignFromJson(jsonContent2);
                 }

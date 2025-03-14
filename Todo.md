@@ -4,7 +4,9 @@ DONE. NEEDS TESTING: Add better save support for NPC Death and AmmoBox Collected
  - Need to find a way to get a specific crate spawner from it's spawned.
  - Need to be able to find the SAME crate spawner, likely based on Barcode and Position.
 
-Patch Scannable.Redacted to lock levels
+NEEDS TESTING: Patch Scannable.Redacted to lock levels
+
+NEEDS TESTING: Runtime Campaign Adding from AutoDownload
 
 Fix up SDK
  - Update Readme: DONE
