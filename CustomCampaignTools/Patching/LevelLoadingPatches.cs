@@ -27,6 +27,22 @@ namespace CustomCampaignTools.Patching
             SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
             SavepointFunctions.WasLastLoadByContinue = false;
 
+            // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
+            if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
+            {
+                Notifier.Send(new Notification()
+                {
+                    Title = campaign.Name,
+                    Message = "This level has not yet been unlocked",
+                    Type = NotificationType.Error,
+                    ShowTitleOnPopup = true,
+                });
+
+                __result = new UniTask<Poolee>(null);
+                return false;
+            }
+
+            
             // If logic here is kinda weird but this should work.
             if(Campaign.SessionLocked)
             {
@@ -53,6 +69,21 @@ namespace CustomCampaignTools.Patching
 
             if(campaign != null)
             {
+                // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
+                if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
+                {
+                    Notifier.Send(new Notification()
+                    {
+                        Title = campaign.Name,
+                        Message = "This level has not yet been unlocked",
+                        Type = NotificationType.Error,
+                        ShowTitleOnPopup = true,
+                    });
+
+                    __result = new UniTask<Poolee>(null);
+                    return false;
+                }
+                
                 // If the level its loading into is a campaign level, force load scene to be Campaign Load scene
                 if (loadLevel.Barcode.ID != campaign.LoadScene)
                 {
