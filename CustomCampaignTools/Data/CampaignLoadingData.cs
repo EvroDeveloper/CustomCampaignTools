@@ -22,7 +22,7 @@ namespace CustomCampaignTools
         public bool SaveLevelAmmo { get; set; }
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
-
+        public List<string> CampaignUnlockCrates { get; set; }
     }
 
     [Flags]

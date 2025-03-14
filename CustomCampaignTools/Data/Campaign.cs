@@ -80,7 +80,7 @@ namespace CustomCampaignTools
             }
         }
         
-        public CampaignSaveData saveData;
+        public CampaignSaveData saveData = new CampaignSaveData();
 
         public static Campaign Session;
         public static string lastLoadedCampaignLevel;
@@ -134,6 +134,9 @@ namespace CustomCampaignTools
                 campaign.Achievements = data.Achievements;
 
                 campaign.LockInCampaign = data.LockInCampaign;
+
+                if(data.CampaignUnlockCrates != null)
+                    campaign.CampaignUnlockCrates = data.CampaignUnlockCrates;
 
                 if(campaign.Achievements != null)
                 {
