@@ -15,23 +15,16 @@ namespace CustomCampaignTools.SDK
         private int _currentPage;
         private int _lastPage => Mathf.FloorToInt(Campaign.Session.Achievements.Count / achievementViews.Length);
 
-        private GameObject nextButton;
-        private GameObject backButton;
+        private Button nextButton;
+        private Button backButton;
         private TMP_Text pageText;
         private TMP_Text unlockCount;
 
-        public void SetupReferences(Button nextButton, Button backButton, TMP_Text pageText, TMP_Text unlockCount)
+        public void Awake()
         {
-            this.achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
-
-            this.nextButton = nextButton.gameObject;
+            achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
             nextButton.onClick.AddListener(new Action(() => { NextPage(); }));
-
-            this.backButton = backButton.gameObject;
             backButton.onClick.AddListener(new Action(() => { PrevPage(); }));
-
-            this.pageText = pageText;
-            this.unlockCount = unlockCount;
         }
 
         public void Activate()
@@ -52,11 +45,11 @@ namespace CustomCampaignTools.SDK
 
         private void UpdateVisualization()
         {
-            if(_currentPage <= 0) backButton.SetActive(false);
-            else backButton.SetActive(true);
+            if(_currentPage <= 0) backButton.gameObject.SetActive(false);
+            else backButton.gameObject.SetActive(true);
 
-            if(_currentPage >= _lastPage) nextButton.SetActive(false);
-            else nextButton.SetActive(true);
+            if(_currentPage >= _lastPage) nextButton.gameObject.SetActive(false);
+            else nextButton.gameObject.SetActive(true);
 
             if(pageText != null)
                 pageText.text = $"{_currentPage+1}/{_lastPage+1}";
