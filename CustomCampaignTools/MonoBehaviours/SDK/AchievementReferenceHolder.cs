@@ -15,13 +15,6 @@ namespace CustomCampaignTools.SDK
         public TMP_Text titleTMP;
         public TMP_Text descriptionTMP;
 
-        public void SetReferences(Image img, TMP_Text title, TMP_Text description)
-        {
-            achievementIcon = img;
-            titleTMP = title;
-            descriptionTMP = description;
-        }
-
         public void ShowAchievement(AchievementData achievement)
         {
             bool unlocked = Campaign.Session.saveData.UnlockedAchievements.Contains(achievement.Key);
