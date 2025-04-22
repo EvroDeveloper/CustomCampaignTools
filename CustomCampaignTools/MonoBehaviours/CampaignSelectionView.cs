@@ -42,7 +42,7 @@ namespace CustomCampaignTools
 
         public void Enter()
         {
-            FadeLoader.Load(new Barcode(targetCampaign.MenuLevel), new Barcode(targetCampaign.LoadScene));
+            FadeLoader.Load(targetCampaign.MenuLevel.levelBarcode, new Barcode(targetCampaign.LoadScene));
         }
 
         public void Continue()
