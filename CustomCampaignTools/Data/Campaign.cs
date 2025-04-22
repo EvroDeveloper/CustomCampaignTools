@@ -27,9 +27,9 @@ namespace CustomCampaignTools
     {
         public string Name;
         public string PalletBarcode;
-        public string MenuLevel;
-        public string[] mainLevels;
-        public string[] extraLevels;
+        public CampaignLevel MenuLevel;
+        public CampaignLevel[] mainLevels;
+        public CampaignLevel[] extraLevels;
         public string LoadScene;
         public AudioClip LoadSceneMusic
         {
@@ -73,7 +73,7 @@ namespace CustomCampaignTools
 
         public List<string> CampaignUnlockCrates = [];
 
-        public string[] AllLevels 
+        public CampaignLevel[] AllLevels 
         {
             get {
                 return [.. mainLevels, .. extraLevels, MenuLevel];
@@ -179,7 +179,7 @@ namespace CustomCampaignTools
                 _sessionLocked = true;
             }
             Campaign.Session = this;
-            FadeLoader.Load(new Barcode(MenuLevel), new Barcode(LoadScene));
+            FadeLoader.Load(MenuLevel.levelBarcode, new Barcode(LoadScene));
         }
 
         public void Exit()
@@ -204,16 +204,16 @@ namespace CustomCampaignTools
             switch (type)
             {
                 case CampaignLevelType.Menu:
-                    output = [MenuLevel];
+                    output = [MenuLevel.levelBarcode.ID];
                     break;
                 case CampaignLevelType.MainLevel:
-                    output = mainLevels;
+                    output = mainLevels.ToBarcodeStrings().ToArray();
                     break;
                 case CampaignLevelType.ExtraLevel:
-                    output = extraLevels;
+                    output = extraLevels.ToBarcodeStrings().ToArray();
                     break;
                 default:
-                    output = AllLevels;
+                    output = AllLevels.ToBarcodeStrings().ToArray();
                     break;
             }
             return output;
@@ -221,7 +221,7 @@ namespace CustomCampaignTools
 
         public CampaignLevelType TypeOfLevel(string barcode)
         {
-            if (MenuLevel == barcode) return CampaignLevelType.Menu;
+            if (MenuLevel.levelBarcode == barcode) return CampaignLevelType.Menu;
             else if (mainLevels.Contains(barcode)) return CampaignLevelType.MainLevel;
             else return CampaignLevelType.ExtraLevel;
         }
@@ -230,24 +230,24 @@ namespace CustomCampaignTools
         {
             List<LevelCrate> levels = [];
 
-            if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(MenuLevel), out LevelCrate menuCrate))
+            if(MarrowGame.assetWarehouse.TryGetCrate(MenuLevel.levelBarcode, out LevelCrate menuCrate))
             {
                 levels.Add(menuCrate);
             }
-            foreach (string mainLevel in mainLevels)
+            foreach (CampaignLevel mainLevel in mainLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
 
-                if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(mainLevel), out LevelCrate mainLevelCrate) && !mainLevelCrate.Redacted)
+                if(MarrowGame.assetWarehouse.TryGetCrate(mainLevel.levelBarcode, out LevelCrate mainLevelCrate) && !mainLevelCrate.Redacted)
                 {
                     levels.Add(mainLevelCrate);
                 }
             }
-            foreach (string extraLevel in extraLevels)
+            foreach (CampaignLevel extraLevel in extraLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
                 
-                if(MarrowGame.assetWarehouse.TryGetCrate(new Barcode(extraLevel), out LevelCrate extraLevelCrate) && !extraLevelCrate.Redacted)
+                if(MarrowGame.assetWarehouse.TryGetCrate(extraLevel.levelBarcode, out LevelCrate extraLevelCrate) && !extraLevelCrate.Redacted)
                 {
                     levels.Add(extraLevelCrate);
                 }
