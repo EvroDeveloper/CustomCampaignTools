@@ -97,15 +97,16 @@ namespace CustomCampaignTools
             {
                 campaign.Name = data.Name;
 
-                campaign.mainLevels = [.. data.MainLevels];
-                campaign.extraLevels = [.. data.ExtraLevels];
-                campaign.saveData = new CampaignSaveData(campaign);
+                if (data.InitialLevel == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+                else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
-                if (data.InitialLevel == "null.empty.barcode") campaign.MenuLevel = data.MainLevels[0];
-                else campaign.MenuLevel = data.InitialLevel;
+                campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
+                campaign.extraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
 
                 if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
                 else campaign.LoadScene = data.LoadScene;
+                
+                campaign.saveData = new CampaignSaveData(campaign);
 
                 if(data.LoadSceneMusic != null && data.LoadSceneMusic != "null.empty.barcode")
                 {
@@ -226,31 +227,20 @@ namespace CustomCampaignTools
             else return CampaignLevelType.ExtraLevel;
         }
 
-        public LevelCrate[] GetUnlockedLevels()
+        public CampaignLevel[] GetUnlockedLevels()
         {
-            List<LevelCrate> levels = [];
+            List<CampaignLevel> levels = [];
 
-            if(MarrowGame.assetWarehouse.TryGetCrate(MenuLevel.levelBarcode, out LevelCrate menuCrate))
-            {
-                levels.Add(menuCrate);
-            }
+            levels.Add(MenuLevel);
             foreach (CampaignLevel mainLevel in mainLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
-
-                if(MarrowGame.assetWarehouse.TryGetCrate(mainLevel.levelBarcode, out LevelCrate mainLevelCrate) && !mainLevelCrate.Redacted)
-                {
-                    levels.Add(mainLevelCrate);
-                }
+                levels.Add(mainLevel);
             }
             foreach (CampaignLevel extraLevel in extraLevels)
             {
                 if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
-                
-                if(MarrowGame.assetWarehouse.TryGetCrate(extraLevel.levelBarcode, out LevelCrate extraLevelCrate) && !extraLevelCrate.Redacted)
-                {
-                    levels.Add(extraLevelCrate);
-                }
+                levels.Add(extraLevel);
             }
             return [.. levels];
         }
