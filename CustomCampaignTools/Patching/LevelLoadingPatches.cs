@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +27,8 @@ namespace CustomCampaignTools.Patching
             SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
             SavepointFunctions.WasLastLoadByContinue = false;
 
+            if(level.Barcode.ID == CommonBarcodes.Maps.VoidG114) return true;
+
             // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
             if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
             {
@@ -46,9 +48,11 @@ namespace CustomCampaignTools.Patching
             // If logic here is kinda weird but this should work.
             if(Campaign.SessionLocked)
             {
+                // Currently in Locked Campaign
                 if(campaign != null && Campaign.Session == campaign)
                 {
-                    // Session is locked, and campaign matches session. Make sure the level is unlocked and continue
+                    // Loading into same campaign
+                    // Make sure the target level is unlocked and continue
                     campaign.saveData.UnlockLevel(level.Barcode.ID);
                 }
                 else
@@ -66,9 +70,9 @@ namespace CustomCampaignTools.Patching
                     return false;
                 }
             }
-
-            if(campaign != null)
+            else if(campaign != null)
             {
+                // Not locked, but loading into a campaign.
                 // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
                 if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
                 {
