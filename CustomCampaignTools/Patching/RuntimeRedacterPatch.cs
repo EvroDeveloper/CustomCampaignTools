@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 namespace CustomCampaignTools.Patching
 {
-    [HarmonyPatch(typeof(Scannable))]
+    //[HarmonyPatch(typeof(Scannable))]
     public static class RuntimeRedacter
     {
-        [HarmonyPatch("get_Redacted")]
-        [HarmonyPostfix]
+        //[HarmonyPatch("get_Redacted")]
+        //[HarmonyPostfix]
         public static void GetRedactedPatch(Scannable __instance, ref bool result)
         {
             // Early Returns my beloved
