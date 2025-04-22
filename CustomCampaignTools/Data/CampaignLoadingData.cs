@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace CustomCampaignTools
@@ -6,9 +6,9 @@ namespace CustomCampaignTools
     internal class CampaignLoadingData
     {
         public string Name { get; set; }
-        public string InitialLevel { get; set; }
-        public List<string> MainLevels { get; set; }
-        public List<string> ExtraLevels { get; set; }
+        public SerializedLevelSetup InitialLevel { get; set; }
+        public List<SerializedLevelSetup> MainLevels { get; set; }
+        public List<SerializedLevelSetup> ExtraLevels { get; set; }
         public string LoadScene { get; set; }
         public string LoadSceneMusic { get; set; }
         public bool UnlockableLevels { get; set; }
@@ -23,6 +23,12 @@ namespace CustomCampaignTools
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
         public List<string> CampaignUnlockCrates { get; set; }
+    }
+
+    internal class SerializedLevelSetup
+    {
+        public string levelBarcode;
+        public string levelName;
     }
 
     [Flags]
