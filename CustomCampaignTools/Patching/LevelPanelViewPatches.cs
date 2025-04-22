@@ -16,16 +16,6 @@ namespace CustomCampaignTools.Patching
 {
     #region SLZ Level Panel
 
-    //public class ElStupidLevelCrateList : Il2CppSystem.Collections.Generic.List<LevelCrate>
-    //{
-    //    public override void Add(LevelCrate item)
-    //    {
-    //        base.Add(item);
-
-    //        MelonLogger.Msg("El Stupid was ADDED");
-    //    }
-    //}
-
     [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
@@ -33,25 +23,16 @@ namespace CustomCampaignTools.Patching
         [HarmonyPrefix]
         public static void PopulatePostfix(LevelsPanelView __instance, UniTaskVoid __result)
         {
-            __result.GetAwaiter().OnCompleted(new Action(() => ForceLevelList(__instance))); //Might Work thanks lakatrazzzzz
-            //__instance._levelCrates = new ElStupidLevelCrateList();
+            __result.GetAwaiter().GetResult().OnCompleted(new Action(() => ForceLevelList(__instance)));
+            // brrooooooo pleassszzzzz workkkingngggggg helpppppp unitaaaasssskkkkkkkk
         }
-
-        //[HarmonyPatch("set__levelCrates")]
-        //[HarmonyPrefix]
-        //public static bool LevelCratesSetterPrefix(ref Il2CppSystem.Collections.Generic.List<LevelCrate> __0)
-        //{
-        //    MelonLogger.Msg("Level Crates were SET!");
-        //    __0 = new ElStupidLevelCrateList();
-        //    return true;
-        //}
 
         public static void ForceLevelList(LevelsPanelView __instance)
         {
             if (Campaign.SessionActive && Campaign.SessionLocked)
             {
                 __instance._levelCrates.Clear();
-                foreach (LevelCrate c in Campaign.Session.GetUnlockedLevels()) __instance._levelCrates.Add(c);
+                foreach (Campaign c in Campaign.Session.GetUnlockedLevels()) __instance._levelCrates.Add(c);
             }
             else
             {
@@ -72,7 +53,7 @@ namespace CustomCampaignTools.Patching
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
                 {
                     if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
-                    CampaignCrates.AddRange(c.GetUnlockedLevels());
+                    CampaignCrates.AddRange(c.GetUnlockedLevels().ToList().ToCrates());
                 }
 
                 List<LevelCrate> outputCrates = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
@@ -115,9 +96,12 @@ namespace CustomCampaignTools.Patching
 
                 campaignToContainerOpen.Add(c, container);
 
-                foreach(LevelCrate crate in c.GetUnlockedLevels())
+                foreach(CampaignLevel level in c.GetUnlockedLevels())
                 {
-                    container.AddEntry(crate.Title, () => FadeLoader.Load(crate.Barcode, new Barcode(c.LoadScene)));
+                    if(level.crate && !level.crate.Redacted)
+                    {
+                        container.AddEntry(level.levelName, () => FadeLoader.Load(level.levelBarcode, new Barcode(c.LoadScene)));
+                    }
                 }
             }
         }
