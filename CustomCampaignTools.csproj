@@ -42,6 +42,7 @@
     <Compile Include="Bonemenu\BoneMenuCreator.cs" />
     <Compile Include="CustomCampaignTools\Data\Campaign.cs" />
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
+    <Compile Include="CustomCampaignTools\Data\CampaignLevel.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\ObjectEnabledSaver.cs" />

@@ -108,6 +108,11 @@ namespace CustomCampaignTools
             return previousLevelsAmmoSave;
         }
 
+        public AmmoSave GetSavedAmmo(CampaignLevel level)
+        {
+            return GetSavedAmmo(level.sBarcode);
+        }
+
         public AmmoSave GetSavedAmmo(string levelBarcode)
         {
             return LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
@@ -131,11 +136,11 @@ namespace CustomCampaignTools
         {
             LoadedAmmoSaves.Clear();
             // Fill default ammo saves
-            foreach (string barcode in campaign.mainLevels)
+            foreach (CampaignLevel level in campaign.mainLevels)
             {
                 LoadedAmmoSaves.Add(new AmmoSave()
                 {
-                    LevelBarcode = barcode,
+                    LevelBarcode = level.sBarcode,
                     LightAmmo = 0,
                     MediumAmmo = 0,
                     HeavyAmmo = 0,

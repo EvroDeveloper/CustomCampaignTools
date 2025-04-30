@@ -27,7 +27,7 @@ namespace CustomCampaignTools
 
         public static Campaign GetFromLevel(string barcode)
         {
-            return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Select(l => l.levelBarcode.ID).Contains(barcode));
+            return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Select(l => l.Barcode.ID).Contains(barcode));
         }
 
         public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);

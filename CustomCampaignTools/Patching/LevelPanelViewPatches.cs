@@ -32,7 +32,7 @@ namespace CustomCampaignTools.Patching
             if (Campaign.SessionActive && Campaign.SessionLocked)
             {
                 __instance._levelCrates.Clear();
-                foreach (Campaign c in Campaign.Session.GetUnlockedLevels()) __instance._levelCrates.Add(c);
+                foreach (CampaignLevel c in Campaign.Session.GetUnlockedLevels()) __instance._levelCrates.Add(c.crate);
             }
             else
             {
@@ -53,11 +53,11 @@ namespace CustomCampaignTools.Patching
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
                 {
                     if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
-                    CampaignCrates.AddRange(c.GetUnlockedLevels().ToList().ToCrates());
+                    CampaignCrates.AddRange(c.GetUnlockedLevels().ToCrates());
                 }
 
                 List<LevelCrate> outputCrates = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
-                if (prioritizedCampaign != null) outputCrates.InsertRange(0, prioritizedCampaign.GetUnlockedLevels());
+                if (prioritizedCampaign != null) outputCrates.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
 
                 __instance._levelCrates.Clear();
                 foreach (LevelCrate c in outputCrates) __instance._levelCrates.Add(c);
@@ -100,7 +100,7 @@ namespace CustomCampaignTools.Patching
                 {
                     if(level.crate && !level.crate.Redacted)
                     {
-                        container.AddEntry(level.levelName, () => FadeLoader.Load(level.levelBarcode, new Barcode(c.LoadScene)));
+                        container.AddEntry(level.Title, () => FadeLoader.Load(level.Barcode, new Barcode(c.LoadScene)));
                     }
                 }
             }

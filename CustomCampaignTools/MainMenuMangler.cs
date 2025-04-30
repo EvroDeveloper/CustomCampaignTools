@@ -26,8 +26,10 @@ namespace CustomCampaignTools
         {
             var LevelsGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(8).gameObject;
             var CampaignGrid = GameObject.Instantiate(LevelsGrid, LevelsGrid.transform.parent);
+            CampaignGrid.name = "group_CAMPAIGNS";
             CampaignGrid.transform.localPosition = Vector3.zero;
             CampaignGrid.transform.localRotation = LevelsGrid.transform.localRotation;
+            CampaignGrid.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>().text = "CAMPAIGNS";
 
             BonelabLevelsPanelView oldPanelComponent = CampaignGrid.GetComponentInChildren<BonelabLevelsPanelView>(true);
             CampaignPanelView cPanel = oldPanelComponent.gameObject.AddComponent<CampaignPanelView>();

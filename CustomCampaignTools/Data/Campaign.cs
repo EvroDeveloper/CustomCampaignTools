@@ -97,7 +97,7 @@ namespace CustomCampaignTools
             {
                 campaign.Name = data.Name;
 
-                if (data.InitialLevel == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+                if (data.InitialLevel.levelBarcode == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
@@ -180,7 +180,7 @@ namespace CustomCampaignTools
                 _sessionLocked = true;
             }
             Campaign.Session = this;
-            FadeLoader.Load(MenuLevel.levelBarcode, new Barcode(LoadScene));
+            FadeLoader.Load(MenuLevel.Barcode, new Barcode(LoadScene));
         }
 
         public void Exit()
@@ -205,16 +205,16 @@ namespace CustomCampaignTools
             switch (type)
             {
                 case CampaignLevelType.Menu:
-                    output = [MenuLevel.levelBarcode.ID];
+                    output = [MenuLevel.Barcode.ID];
                     break;
                 case CampaignLevelType.MainLevel:
-                    output = mainLevels.ToBarcodeStrings().ToArray();
+                    output = [.. mainLevels.ToBarcodeStrings()];
                     break;
                 case CampaignLevelType.ExtraLevel:
-                    output = extraLevels.ToBarcodeStrings().ToArray();
+                    output = [.. extraLevels.ToBarcodeStrings()];
                     break;
                 default:
-                    output = AllLevels.ToBarcodeStrings().ToArray();
+                    output = [.. AllLevels.ToBarcodeStrings()];
                     break;
             }
             return output;
@@ -222,8 +222,8 @@ namespace CustomCampaignTools
 
         public CampaignLevelType TypeOfLevel(string barcode)
         {
-            if (MenuLevel.levelBarcode == barcode) return CampaignLevelType.Menu;
-            else if (mainLevels.Contains(barcode)) return CampaignLevelType.MainLevel;
+            if (MenuLevel.Barcode.ID == barcode) return CampaignLevelType.Menu;
+            else if (mainLevels.ToBarcodeStrings().Contains(barcode)) return CampaignLevelType.MainLevel;
             else return CampaignLevelType.ExtraLevel;
         }
 
@@ -234,12 +234,12 @@ namespace CustomCampaignTools
             levels.Add(MenuLevel);
             foreach (CampaignLevel mainLevel in mainLevels)
             {
-                if(!saveData.UnlockedLevels.Contains(mainLevel) && LockLevelsUntilEntered) continue;
+                if(!saveData.UnlockedLevels.Contains(mainLevel.sBarcode) && LockLevelsUntilEntered) continue;
                 levels.Add(mainLevel);
             }
             foreach (CampaignLevel extraLevel in extraLevels)
             {
-                if(!saveData.UnlockedLevels.Contains(extraLevel) && LockLevelsUntilEntered) continue;
+                if(!saveData.UnlockedLevels.Contains(extraLevel.sBarcode) && LockLevelsUntilEntered) continue;
                 levels.Add(extraLevel);
             }
             return [.. levels];

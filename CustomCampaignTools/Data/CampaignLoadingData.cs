@@ -25,7 +25,7 @@ namespace CustomCampaignTools
         public List<string> CampaignUnlockCrates { get; set; }
     }
 
-    internal class SerializedLevelSetup
+    public class SerializedLevelSetup
     {
         public string levelBarcode;
         public string levelName;

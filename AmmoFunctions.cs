@@ -34,7 +34,7 @@ namespace CustomCampaignTools
             {
             }
 
-            string[] mainLevels = campaign.mainLevels;
+            CampaignLevel[] mainLevels = campaign.mainLevels;
 
             for (int i = 0; i < levelIndex; i++)
             {
