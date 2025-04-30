@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BoneLib;
 using BoneLib.Notifications;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
@@ -22,42 +23,22 @@ namespace CustomCampaignTools.Patching
         [HarmonyPrefix]
         public static bool LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
         {
-            var campaign = CampaignUtilities.GetFromLevel(level);
+            var destinationCampaign = CampaignUtilities.GetFromLevel(level);
 
             SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
             SavepointFunctions.WasLastLoadByContinue = false;
-
-            if(level.Barcode.ID == CommonBarcodes.Maps.VoidG114) return true;
-
-            // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
-            if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
-            {
-                Notifier.Send(new Notification()
-                {
-                    Title = campaign.Name,
-                    Message = "This level has not yet been unlocked",
-                    Type = NotificationType.Error,
-                    ShowTitleOnPopup = true,
-                });
-
-                __result = new UniTask<Poolee>(null);
-                return false;
-            }
-
             
-            // If logic here is kinda weird but this should work.
+
             if(Campaign.SessionLocked)
             {
-                // Currently in Locked Campaign
-                if(campaign != null && Campaign.Session == campaign)
+                if(Campaign.Session == destinationCampaign)
                 {
-                    // Loading into same campaign
-                    // Make sure the target level is unlocked and continue
-                    campaign.saveData.UnlockLevel(level.Barcode.ID);
+                    // Session is locked, and campaign matches session. Make sure the level is unlocked and continue
+                    destinationCampaign.saveData.UnlockLevel(level.Barcode.ID);
                 }
-                else
+                else if(level.Barcode.ID != CommonBarcodes.Maps.VoidG114)
                 {
-                    // Session is locked, and campaign is either null, nor not the current session. Don't allow level change
+                    // Session is locked, and destination campaign is not the current session, and not loading into g114. Don't allow level change
                     Notifier.Send(new Notification()
                     {
                         Title = Campaign.Session.Name,
@@ -70,15 +51,16 @@ namespace CustomCampaignTools.Patching
                     return false;
                 }
             }
-            else if(campaign != null)
+
+            if(destinationCampaign != null)
             {
                 // Not locked, but loading into a campaign.
                 // If loading into a different campaign than the session, and it's levels are locked, and the desired level is locked
-                if(Campaign.Session != campaign && campaign.LockLevelsUntilEntered && !campaign.saveData.UnlockedLevels.Conatins(level.Barcode.ID))
+                if(Campaign.Session != destinationCampaign && destinationCampaign.LockLevelsUntilEntered && !destinationCampaign.saveData.UnlockedLevels.Contains(level.Barcode.ID))
                 {
                     Notifier.Send(new Notification()
                     {
-                        Title = campaign.Name,
+                        Title = destinationCampaign.Name,
                         Message = "This level has not yet been unlocked",
                         Type = NotificationType.Error,
                         ShowTitleOnPopup = true,
@@ -89,11 +71,11 @@ namespace CustomCampaignTools.Patching
                 }
                 
                 // If the level its loading into is a campaign level, force load scene to be Campaign Load scene
-                if (loadLevel.Barcode.ID != campaign.LoadScene)
+                if (loadLevel.Barcode.ID != destinationCampaign.LoadScene)
                 {
-                    loadLevel = new LevelCrateReference(new Barcode(campaign.LoadScene));
+                    loadLevel = new LevelCrateReference(new Barcode(destinationCampaign.LoadScene));
                 }
-                Campaign.Session = campaign;
+                Campaign.Session = destinationCampaign;
             }
 
             return true;

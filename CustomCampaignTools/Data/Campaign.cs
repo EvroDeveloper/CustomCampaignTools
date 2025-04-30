@@ -79,8 +79,8 @@ namespace CustomCampaignTools
                 return [.. mainLevels, .. extraLevels, MenuLevel];
             }
         }
-        
-        public CampaignSaveData saveData = new CampaignSaveData();
+
+        public CampaignSaveData saveData;
 
         public static Campaign Session;
         public static string lastLoadedCampaignLevel;
@@ -260,11 +260,11 @@ namespace CustomCampaignTools
                 {
                     MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
                 }
-                
-                AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) => 
+
+                AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) =>
                 {
                     LoadCampaignsFromMods();
-                })
+                });
             });
         }
 
@@ -288,7 +288,7 @@ namespace CustomCampaignTools
 
                 if (jsonPaths2.Length != 0 && !RegisteredJsonPaths.Contains(jsonPaths2[0]))
                 {
-                    RegisteredJsonPaths.Add(jsonPaths2[0])
+                    RegisteredJsonPaths.Add(jsonPaths2[0]);
                     string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
                     RegisterCampaignFromJson(jsonContent2);
                 }

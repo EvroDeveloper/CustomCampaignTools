@@ -23,7 +23,7 @@ namespace CustomCampaignTools.Patching
         [HarmonyPrefix]
         public static void PopulatePostfix(LevelsPanelView __instance, UniTaskVoid __result)
         {
-            __result.GetAwaiter().GetResult().OnCompleted(new Action(() => ForceLevelList(__instance)));
+            __result.GetAwaiter().OnCompleted(new Action(() => ForceLevelList(__instance)));
             // brrooooooo pleassszzzzz workkkingngggggg helpppppp unitaaaasssskkkkkkkk
         }
 
