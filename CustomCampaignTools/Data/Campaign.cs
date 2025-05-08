@@ -65,7 +65,8 @@ namespace CustomCampaignTools
 
         public string[] WhitelistedAvatars;
 
-        public bool SaveLevelWeapons;
+        public bool SaveLevelInventory;
+        public List<string> InventorySaveLimit;
         public bool SaveLevelAmmo;
         public List<AchievementData> Achievements = [];
         public bool LockInCampaign;
@@ -130,7 +131,8 @@ namespace CustomCampaignTools
                 campaign.defaultCampaignAvatar = data.CampaignAvatar;
                 campaign.fallbackAvatar = data.BaseGameFallbackAvatar;
 
-                campaign.SaveLevelWeapons = data.SaveLevelWeapons;
+                campaign.SaveLevelInventory = data.SaveLevelWeapons;
+                campaign.InventorySaveLimit = data.InventorySaveLimit;
                 campaign.SaveLevelAmmo = data.SaveLevelAmmo;
                 campaign.Achievements = data.Achievements;
 
@@ -290,7 +292,14 @@ namespace CustomCampaignTools
                 {
                     RegisteredJsonPaths.Add(jsonPaths2[0]);
                     string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
-                    RegisterCampaignFromJson(jsonContent2);
+                    try
+                    {
+                        RegisterCampaignFromJson(jsonContent2);
+                    }
+                    catch
+                    {
+
+                    }
                 }
                 
             }

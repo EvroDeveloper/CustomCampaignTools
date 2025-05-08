@@ -31,15 +31,15 @@ namespace CustomCampaignTools
                 }
             }
 
-            MelonCoroutines.Start(ApplyInventoryDataAfterTime(savePoint));
+            MelonCoroutines.Start(ApplyInventoryDataAfterTime(savePoint.InventoryData));
 
         }
 
-        public static IEnumerator ApplyInventoryDataAfterTime(CampaignSaveData.SavePoint savePoint)
+        public static IEnumerator ApplyInventoryDataAfterTime(InventoryData invData)
         {
             yield return new WaitForSeconds(2);
 
-            savePoint.InventoryData.ApplyToRigmanager(Player.RigManager);
+            invData.ApplyToRigmanager(Player.RigManager);
         }
     }
 }

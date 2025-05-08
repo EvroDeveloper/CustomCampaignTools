@@ -23,8 +23,8 @@ namespace CustomCampaignTools.SDK
         public void Awake()
         {
             achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
-            nextButton.onClick.AddListener(new Action(() => { NextPage(); }));
-            backButton.onClick.AddListener(new Action(() => { PrevPage(); }));
+            nextButton.onClick.AddListener(new Action(NextPage));
+            backButton.onClick.AddListener(new Action(PrevPage));
         }
 
         public void Activate()

@@ -32,17 +32,22 @@ namespace CustomCampaignTools
 
         public static InventoryData GetFromRigmanager(RigManager rm)
         {
+            return GetFromRigmanager(rm, []);
+        }
+
+        public static InventoryData GetFromRigmanager(RigManager rm, List<string> itemFilter)
+        {
             InventoryData output = new();
             foreach (var bodySlot in rm.inventory.bodySlots)
             {
-                if (bodySlot.inventorySlotReceiver != null)
-                {
-                    var item = InventoryItem.GetFromBodyslot(bodySlot);
-                    if (item.Barcode != string.Empty)
-                    {
-                        output.InventoryItems.Add(item);
-                    }
-                }
+                if (bodySlot.inventorySlotReceiver == null) continue;
+
+                var item = InventoryItem.GetFromBodyslot(bodySlot);
+
+                if (item.Barcode == string.Empty) continue;
+                if (itemFilter.Count != 0 && !itemFilter.Contains(item.Barcode)) continue;
+
+                output.InventoryItems.Add(item);
             }
             return output;
         }

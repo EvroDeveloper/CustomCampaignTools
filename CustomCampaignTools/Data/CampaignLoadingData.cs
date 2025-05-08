@@ -19,6 +19,7 @@ namespace CustomCampaignTools
         public string BaseGameFallbackAvatar { get; set; }
         public List<string> WhitelistedAvatars { get; set; }
         public bool SaveLevelWeapons { get; set; }
+        public List<string> InventorySaveLimit { get; set; }
         public bool SaveLevelAmmo { get; set; }
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }

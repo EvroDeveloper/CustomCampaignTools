@@ -58,6 +58,10 @@ namespace CustomCampaignTools
                 else
                 {
                     campaign.saveData.SavePlayer(barcode, Vector3.zero);
+                    if(campaign.SaveLevelInventory && campaign.saveData.LoadedInventorySaves.ContainsKey(barcode))
+                    {
+                        MelonCoroutines.Start(SavepointFunctions.ApplyInventoryDataAfterTime(campaign.saveData.LoadedInventorySaves[barcode]));
+                    }
                 }
             }
             #endregion

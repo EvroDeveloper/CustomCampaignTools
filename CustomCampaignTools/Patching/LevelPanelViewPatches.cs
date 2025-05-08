@@ -19,20 +19,26 @@ namespace CustomCampaignTools.Patching
     [HarmonyPatch(typeof(LevelsPanelView))]
     public static class LevelsPanelPatches
     {
-        [HarmonyPatch(nameof(LevelsPanelView.PopulateMenuAsync))]
-        [HarmonyPrefix]
-        public static void PopulatePostfix(LevelsPanelView __instance, UniTaskVoid __result)
+        public static bool SwipezActive = false;
+        [HarmonyPatch(nameof(LevelsPanelView.CalculateSceneList))]
+        [HarmonyPostfix]
+        public static void PopulatePostfix(LevelsPanelView __instance)
         {
-            __result.GetAwaiter().OnCompleted(new Action(() => ForceLevelList(__instance)));
-            // brrooooooo pleassszzzzz workkkingngggggg helpppppp unitaaaasssskkkkkkkk
+            ForceLevelList(__instance);
         }
 
         public static void ForceLevelList(LevelsPanelView __instance)
         {
-            if (Campaign.SessionActive && Campaign.SessionLocked)
+            if(SwipezActive) return;
+
+            MelonLogger.Msg("Level Panel is OVERWRITING");
+            if (Campaign.SessionLocked)
             {
                 __instance._levelCrates.Clear();
-                foreach (CampaignLevel c in Campaign.Session.GetUnlockedLevels()) __instance._levelCrates.Add(c.crate);
+                CampaignLevel[] unlockedLevels = Campaign.Session.GetUnlockedLevels();
+                foreach (CampaignLevel c in unlockedLevels) __instance._levelCrates.Add(c.crate);
+                __instance._totalScenes = unlockedLevels.Length;
+                __instance._numberOfPages = (unlockedLevels.Length / __instance.items.Length) + 1;
             }
             else
             {
@@ -46,8 +52,8 @@ namespace CustomCampaignTools.Patching
                 // Stupid List Fuckery i hate il2cpp
                 List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
 
-                List<LevelCrate> SLZCrates = instanceCrates.Where(crate => crate.Barcode.ID.StartsWith("SLZ")).ToList();
-                List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID)).ToList();
+                List<LevelCrate> SLZCrates = instanceCrates.Where(crate => crate.Pallet.Barcode.ID.StartsWith("SLZ")).ToList();
+                List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Pallet.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID)).ToList();
 
                 List<LevelCrate> CampaignCrates = [];
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
@@ -61,6 +67,8 @@ namespace CustomCampaignTools.Patching
 
                 __instance._levelCrates.Clear();
                 foreach (LevelCrate c in outputCrates) __instance._levelCrates.Add(c);
+                __instance._totalScenes = outputCrates.Count;
+                __instance._numberOfPages = (outputCrates.Count / __instance.items.Length) + 1;
             }
         }
     }
@@ -74,12 +82,14 @@ namespace CustomCampaignTools.Patching
     {
         private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = [];
 
+
         public static void ManualPatch()
         {
             var harmony = new HarmonyLib.Harmony("swipez.panel.populate");
 
             harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.PopulateMenus)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuPopulationOverride"));
             harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.OnInitialized)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuInitContainerOverride"));
+            LevelsPanelPatches.SwipezActive = true;
         }
 
         //[HarmonyPatch(nameof(LevelPanelOverride.PopulateMenus))]

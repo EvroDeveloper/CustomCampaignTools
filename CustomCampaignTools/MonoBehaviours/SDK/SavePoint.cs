@@ -21,7 +21,7 @@ namespace CustomCampaignTools.SDK
 
             if(TryGetComponent(out BoxCollider collider))
             {
-                HashSet<MarrowEntity> boxVolEntities = new HashSet<MarrowEntity>();
+                HashSet<MarrowEntity> boxVolEntities = [];
 
                 Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER, QueryTriggerInteraction.Collide);
                 foreach (Collider tracker in trackers)
@@ -42,6 +42,11 @@ namespace CustomCampaignTools.SDK
             else {
                 Campaign.Session.saveData.SavePlayer(barcode, transform.position);
             }
+        }
+
+        public void ClearSave()
+        {
+            Campaign.Session.saveData.ClearSavePoint();
         }
     }
 }

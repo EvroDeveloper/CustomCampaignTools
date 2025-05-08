@@ -20,6 +20,7 @@ namespace CustomCampaignTools
 
         internal SavePoint LoadedSavePoint;
         internal List<AmmoSave> LoadedAmmoSaves = [];
+        internal Dictionary<string, InventoryData> LoadedInventorySaves = [];
         internal List<FloatData> LoadedFloatDatas = [];
         internal bool DevToolsUnlocked = false;
         internal bool AvatarUnlocked = false;
@@ -41,6 +42,7 @@ namespace CustomCampaignTools
 
             ClearAmmoSave();
             ClearSavePoint();
+            LoadedInventorySaves = new Dictionary<string, InventoryData>();
             LoadedFloatDatas = new List<FloatData>();
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
@@ -146,6 +148,27 @@ namespace CustomCampaignTools
                     HeavyAmmo = 0,
                 });
             }
+        }
+        #endregion
+
+        #region InventorySave Methods
+
+        public void SaveInventoryForLevel(string nextLevelBarcode)
+        {
+            if (!campaign.SaveLevelInventory) return;
+
+            InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager, campaign.InventorySaveLimit);
+            LoadedInventorySaves[nextLevelBarcode] = inventoryData;
+        }
+
+        public InventoryData GetInventory(string levelBarcode)
+        {
+            foreach(string barcode in LoadedInventorySaves.Keys)
+            {
+                if (levelBarcode != barcode) continue;
+                return LoadedInventorySaves[barcode];
+            }
+            return null;
         }
         #endregion
 
@@ -308,10 +331,11 @@ namespace CustomCampaignTools
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
 
-            SaveData saveData = new SaveData
+            SaveData saveData = new()
             {
                 SavePoint = LoadedSavePoint,
                 AmmoSaves = LoadedAmmoSaves,
+                InventorySaves = LoadedInventorySaves,
                 FloatData = LoadedFloatDatas,
                 DevToolsUnlocked = DevToolsUnlocked,
                 AvatarUnlocked = AvatarUnlocked,
@@ -361,6 +385,7 @@ namespace CustomCampaignTools
 
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
+            LoadedInventorySaves = saveData.InventorySaves;
             LoadedFloatDatas = saveData.FloatData;
             DevToolsUnlocked = saveData.DevToolsUnlocked;
             AvatarUnlocked = saveData.AvatarUnlocked;
@@ -373,6 +398,7 @@ namespace CustomCampaignTools
         {
             public SavePoint SavePoint { get; set; }
             public List<AmmoSave> AmmoSaves { get; set; }
+            public Dictionary<string, InventoryData> InventorySaves { get; set; }
             public List<FloatData> FloatData { get; set; }
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
