@@ -15,10 +15,10 @@ namespace CustomCampaignTools.SDK
         private int _currentPage;
         private int _lastPage => Mathf.FloorToInt(Campaign.Session.Achievements.Count / achievementViews.Length);
 
-        private Button nextButton;
-        private Button backButton;
-        private TMP_Text pageText;
-        private TMP_Text unlockCount;
+        public Button nextButton;
+        public Button backButton;
+        public TMP_Text pageText;
+        public TMP_Text unlockCount;
 
         public void Awake()
         {
