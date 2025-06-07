@@ -155,10 +155,24 @@ namespace CustomCampaignTools
 
         public void SaveInventoryForLevel(string nextLevelBarcode)
         {
+            LogNull(campaign, "Campaign");
+
             if (!campaign.SaveLevelInventory) return;
 
+            LogNull(Player.RigManager, "Player RigManager");
+            LogNull(campaign.InventorySaveLimit, "Inventory Save Limit");
+
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager, campaign.InventorySaveLimit);
+            LogNull(LoadedInventorySaves, "LoadedInventorySaves");
             LoadedInventorySaves[nextLevelBarcode] = inventoryData;
+
+            void LogNull(object obj, string name)
+            {
+                if(obj == null)
+                {
+                    MelonLogger.Error($"HELLO EVRO, {name.ToUpper()} IS NULL");
+                }
+            }
         }
 
         public InventoryData GetInventory(string levelBarcode)
@@ -199,7 +213,7 @@ namespace CustomCampaignTools
                     HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
                 };
             }
-            
+
             List<string> savedDespawns = [];
             foreach(SpawnerDespawnSaver stateSaver in GameObject.FindObjectsOfType<SpawnerDespawnSaver>())
             {
@@ -218,6 +232,7 @@ namespace CustomCampaignTools
             LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
             SaveToDisk();
+
         }
         #endregion
 
@@ -385,7 +400,7 @@ namespace CustomCampaignTools
 
             LoadedSavePoint = saveData.SavePoint;
             LoadedAmmoSaves = saveData.AmmoSaves;
-            LoadedInventorySaves = saveData.InventorySaves;
+            LoadedInventorySaves = saveData.InventorySaves ?? new Dictionary<string, InventoryData>();
             LoadedFloatDatas = saveData.FloatData;
             DevToolsUnlocked = saveData.DevToolsUnlocked;
             AvatarUnlocked = saveData.AvatarUnlocked;

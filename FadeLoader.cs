@@ -20,6 +20,7 @@ namespace CustomCampaignTools
         {
             HelperMethods.SpawnCrate(LoadFadeBarcode, Vector3.zero);
             yield return new WaitForSeconds(2);
+            loadScene ??= new Barcode(CommonBarcodes.Maps.LoadDefault);
             SceneStreamer.Load(level, loadScene);
         }
     }

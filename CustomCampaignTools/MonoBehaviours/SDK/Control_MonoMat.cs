@@ -86,7 +86,7 @@ namespace CustomCampaignTools.LabWorks
 
 			foreach(CrateSpawner loot in _loots)
 			{
-				//var call = loot.onSpawnEvent.AddPersistentCall(OnLootSpawned);
+				loot.onSpawnEvent.add_PersistentCalls((Il2CppSystem.Action<CrateSpawner, GameObject>)((c, g) => OnLootSpawned(c, g)));
 			}
 		}
 

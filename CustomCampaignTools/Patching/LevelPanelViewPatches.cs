@@ -31,7 +31,6 @@ namespace CustomCampaignTools.Patching
         {
             if(SwipezActive) return;
 
-            MelonLogger.Msg("Level Panel is OVERWRITING");
             if (Campaign.SessionLocked)
             {
                 __instance._levelCrates.Clear();

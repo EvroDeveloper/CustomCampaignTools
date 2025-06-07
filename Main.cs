@@ -28,7 +28,7 @@ namespace CustomCampaignTools
 
             foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
             {
-                if (registeredMelon.Info.Name.Contains("BrowsingPlus"))
+                if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
                 {
                     PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
                 }

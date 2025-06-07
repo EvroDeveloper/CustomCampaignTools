@@ -28,6 +28,13 @@ namespace CustomCampaignTools.SDK
                 {
                     if(tracker.TryGetComponent(out Tracker t))
                     {
+                        if(t.Entity == null) continue;
+                        try
+                        {
+                            if (t.Entity._poolee.SpawnableCrate.Barcode.ID == "SLZ.BONELAB.Core.Spawnable.RigManagerBlank") continue;
+                        }
+                        catch { }
+
                         boxVolEntities.Add(t.Entity);
                     }
                 }
@@ -35,6 +42,8 @@ namespace CustomCampaignTools.SDK
                 List<CampaignSaveData.BarcodePosRot> Entities = new List<CampaignSaveData.BarcodePosRot>();
                 foreach(MarrowEntity entity in boxVolEntities)
                 {
+                    if(entity._poolee == null) continue;
+                    if(entity._poolee.SpawnableCrate == null) continue;
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
                 Campaign.Session.saveData.SavePlayer(barcode, transform.position, Entities);

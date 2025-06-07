@@ -66,7 +66,7 @@ namespace CustomCampaignTools
         public string[] WhitelistedAvatars;
 
         public bool SaveLevelInventory;
-        public List<string> InventorySaveLimit;
+        public List<string> InventorySaveLimit = [];
         public bool SaveLevelAmmo;
         public List<AchievementData> Achievements = [];
         public bool LockInCampaign;
