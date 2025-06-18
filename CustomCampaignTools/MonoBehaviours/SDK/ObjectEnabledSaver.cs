@@ -13,13 +13,13 @@ namespace CustomCampaignTools.SDK
         {
             if(SavepointFunctions.CurrentLevelLoadedByContinue)
             {
-                RestoreActiveState();
+                RestoreActiveState(Campaign.Session.saveData.LoadedSavePoint);
             }
         }
 
-        public void RestoreActiveState()
+        public void RestoreActiveState(CampaignSaveData.SavePoint savePoint)
         {
-            gameObject.SetActive(Campaign.Session.saveData.LoadedSavePoint.GetEnabledStateFromName(gameObject.name, gameObject.activeSelf));
+            gameObject.SetActive(savePoint.GetEnabledStateFromName(gameObject.name, gameObject.activeSelf));
         }
     }
 }

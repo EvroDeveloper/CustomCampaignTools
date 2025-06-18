@@ -37,9 +37,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AmmoFunctions.cs" />
-    <Compile Include="Bonemenu\InventoryMenu.cs" />
-    <Compile Include="Bonemenu\BoneMenuCreator.cs" />
+    <Compile Include="CustomCampaignTools\AmmoFunctions.cs" />
+    <Compile Include="CustomCampaignTools\Bonemenu\InventoryMenu.cs" />
+    <Compile Include="CustomCampaignTools\Bonemenu\BoneMenuCreator.cs" />
+    <Compile Include="CustomCampaignTools\CampaignLogger.cs" />
     <Compile Include="CustomCampaignTools\Data\Campaign.cs" />
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLevel.cs" />
@@ -47,13 +48,13 @@
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\ObjectEnabledSaver.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\SpawnerDespawnSaver.cs" />
-    <Compile Include="CustomCampaignTools\MonoBehaviours\TsPmoDespawnHook.cs" />
+    <Compile Include="CustomCampaignTools\MonoBehaviours\CrateDespawnerHook.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelLoadingPatches.cs" />
     <Compile Include="CustomCampaignTools\Patching\LevelPanelViewPatches.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\HideInCampaign.cs" />
     <Compile Include="CustomCampaignTools\MonoBehaviours\SDK\TriggerableNotification.cs" />
     <Compile Include="CustomCampaignTools\PlayerMenuMangler.cs" />
-    <Compile Include="FadeLoader.cs" />
+    <Compile Include="CustomCampaignTools\FadeLoader.cs" />
     <Compile Include="CustomCampaignTools\Patching\HideOnAwakePatches.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\Patching\AvatarRestrictionPatches.cs" />
@@ -73,10 +74,10 @@
     <Compile Include="CustomCampaignTools\Data\AchievementData.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLoadingData.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="CustomCampaignTools\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SavepointFunctions.cs" />
-    <Compile Include="Texture2DResizeExtension.cs" />
+    <Compile Include="CustomCampaignTools\SavepointFunctions.cs" />
+    <Compile Include="CustomCampaignTools\Texture2DResizeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -157,7 +158,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CampaignIcon.png" />
+    <EmbeddedResource Include="CustomCampaignTools\Resources\CampaignIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

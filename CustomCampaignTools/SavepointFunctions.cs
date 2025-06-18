@@ -1,4 +1,5 @@
 ﻿using BoneLib;
+using CustomCampaignTools.Debug;
 using MelonLoader;
 using System.Collections;
 using UnityEngine;
@@ -27,7 +28,7 @@ namespace CustomCampaignTools
 
                 foreach(CampaignSaveData.BarcodePosRot barcode in savePoint.BoxContainedBarcodes)
                 {
-                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: ((g) => { MelonLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
+                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: ((g) => { CampaignLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
                 }
             }
 

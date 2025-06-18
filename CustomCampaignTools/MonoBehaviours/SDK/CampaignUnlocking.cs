@@ -28,10 +28,7 @@ namespace CustomCampaignTools.SDK
             if(!enableInstantly) return;
 
             PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
-            if(bodyLog != null)
-            {
-                bodyLog.gameObject.SetActive(true);
-            }
+            bodyLog?.gameObject.SetActive(true);
 
             UIRig.Instance.popUpMenu.AddAvatarsMenu();
         }
@@ -44,6 +41,16 @@ namespace CustomCampaignTools.SDK
         public void ResetSave()
         {
             Campaign.Session.saveData.ResetSave();
+        }
+
+        public void UNLOCKALL()
+        {
+            UnlockDevTools(true);
+            UnlockAvatars(true);
+            foreach (var level in Campaign.Session.AllLevels)
+            {
+                UnlockLevel(level.sBarcode);
+            }
         }
     }
 }

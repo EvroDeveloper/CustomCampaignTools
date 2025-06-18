@@ -12,10 +12,10 @@ namespace CustomCampaignTools.Bonemenu
         {
             var campaignPage = category.CreatePage(c.Name, Color.white);
 
-            campaignPage.CreateFunction("Enter Campaign", Color.white, () => c.Enter());
+            campaignPage.CreateFunction("Enter Campaign", Color.white, c.Enter);
             if(c.saveData.LoadedSavePoint.IsValid(out _))
                 campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
-            campaignPage.CreateFunction("Reset Save", Color.red, () => c.saveData.ResetSave());
+            campaignPage.CreateFunction("Reset Save", Color.red, c.saveData.ResetSave);
 
             if(c.Achievements != null)
             {
@@ -34,11 +34,11 @@ namespace CustomCampaignTools.Bonemenu
                 }
             }
 
-#if DEBUG
+#if false
             var DebugPage = campaignPage.CreatePage("Debug", Color.red);
 
             DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
-            DebugPage.CreateFunction("Unlock Avatar", Color.white, () => c.saveData.UnlockAvatar());
+            DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
 #endif
         }
     }

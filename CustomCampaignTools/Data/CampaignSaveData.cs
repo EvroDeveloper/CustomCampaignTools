@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEngine;
 using Il2CppSLZ.Bonelab.SaveData;
 using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
+using System;
 
 namespace CustomCampaignTools
 {
@@ -42,15 +43,17 @@ namespace CustomCampaignTools
 
             ClearAmmoSave();
             ClearSavePoint();
-            LoadedInventorySaves = new Dictionary<string, InventoryData>();
-            LoadedFloatDatas = new List<FloatData>();
+            LoadedInventorySaves = [];
+            LoadedFloatDatas = [];
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
-            UnlockedAchievements = new List<string>();
-            UnlockedLevels = new List<string>();
+            UnlockedAchievements = [];
+            UnlockedLevels = [];
 
             foreach(string barcode in campaign.CampaignUnlockCrates)
                 DataManager.ActiveSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
+
+            DataManager.TrySaveActiveSave(Il2CppSLZ.Marrow.SaveData.SaveFlags.DefaultAndPlayerSettingsAndUnlocks);
 
             SaveToDisk();
         }
@@ -215,7 +218,7 @@ namespace CustomCampaignTools
             }
 
             List<string> savedDespawns = [];
-            foreach(SpawnerDespawnSaver stateSaver in GameObject.FindObjectsOfType<SpawnerDespawnSaver>())
+            foreach (SpawnerDespawnSaver stateSaver in UnityEngine.Object.FindObjectsOfType<SpawnerDespawnSaver>())
             {
                 if(stateSaver.DontSpawnAgain(out string id))
                 {
@@ -434,6 +437,11 @@ namespace CustomCampaignTools
             public List<string> DespawnedSpawners;
             public Dictionary<string, bool> ObjectEnabledSaves;
 
+            public SavePoint()
+            {
+
+            }
+
             public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns, Dictionary<string, bool> savedEnableds)
             {
                 LevelBarcode = levelBarcode;
@@ -559,16 +567,10 @@ namespace CustomCampaignTools
             }
         }
 
-        public class FloatData
+        public class FloatData(string key)
         {
-            public string Key;
-            public float Value;
-
-            public FloatData(string key)
-            {
-                Key = key;
-                Value = 0f;
-            }
+            public string Key = key;
+            public float Value = 0f;
         }
     }
 }

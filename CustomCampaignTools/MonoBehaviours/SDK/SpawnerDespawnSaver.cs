@@ -31,7 +31,7 @@ namespace CustomCampaignTools.SDK
             _objectToSave = g;
             if(g.TryGetComponent(out Poolee p))
             {
-                var despawnHook = g.AddComponent<TsPmoDespawnHook>();
+                var despawnHook = g.AddComponent<CrateDespawnerHook>();
                 despawnHook.OnDespawnDelegate += new Action<GameObject>((g) => { saveDontSpawn = true; });
             }
 

@@ -35,9 +35,13 @@ namespace CustomCampaignTools.Patching
             {
                 __instance._levelCrates.Clear();
                 CampaignLevel[] unlockedLevels = Campaign.Session.GetUnlockedLevels();
-                foreach (CampaignLevel c in unlockedLevels) __instance._levelCrates.Add(c.crate);
-                __instance._totalScenes = unlockedLevels.Length;
-                __instance._numberOfPages = (unlockedLevels.Length / __instance.items.Length) + 1;
+                foreach (CampaignLevel c in unlockedLevels)
+                {
+                    if(!c.crate.Redacted)
+                        __instance._levelCrates.Add(c.crate);
+                }
+                __instance._totalScenes = __instance._levelCrates.Count;
+                __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
             }
             else
             {

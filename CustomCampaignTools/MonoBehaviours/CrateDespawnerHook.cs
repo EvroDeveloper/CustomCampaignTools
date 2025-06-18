@@ -7,9 +7,9 @@ using UnityEngine;
 namespace CustomCampaignTools
 {
     [RegisterTypeInIl2Cpp]
-    public class TsPmoDespawnHook : MonoBehaviour
+    public class CrateDespawnerHook : MonoBehaviour
     {
-        public TsPmoDespawnHook(IntPtr ptr) : base(ptr) { }
+        public CrateDespawnerHook(IntPtr ptr) : base(ptr) { }
 
         public Action<GameObject> OnDespawnDelegate { get; set; }
 

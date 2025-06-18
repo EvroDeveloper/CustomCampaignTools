@@ -1,0 +1,7 @@
+{
+    "name": "CustomCampaignTools",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/EvroDeveloper/CustomCampaignTools",
+    "description": "Provides a wide range of Campaign Features and Tools for Modders",
+    "dependencies": ["gnonme-BoneLib-3.1.2"]
+}

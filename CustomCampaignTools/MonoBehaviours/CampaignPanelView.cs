@@ -1,3 +1,4 @@
+using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
 using MelonLoader;
@@ -54,7 +55,7 @@ namespace CustomCampaignTools
         {
             if(_hasSelected) return;
 
-            MelonLogger.Msg(index);
+            CampaignLogger.Msg(index);
             int campaignIndex = (Buttons.Length * _currentPage) + index;
             Campaign c = CampaignUtilities.CampaignsToShowInMenu[campaignIndex];
 
