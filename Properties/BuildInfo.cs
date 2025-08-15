@@ -6,7 +6,7 @@
         internal const string Description = "Allows Modders to add their own Campaign functionality to Marrow Campaigns.";
         internal const string Author = "EvroDev";
         internal const string Company = "LabWorks";
-        internal const string Version = "1.0.0";
+        internal const string Version = "1.0.1";
         internal const string DownloadLink = "";
     }
 }
