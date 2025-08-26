@@ -25,7 +25,7 @@ namespace CustomCampaignTools.LabWorks
 
 		private int _multiplier;
 		private int _itemPrice;
-        private int _trueItemPrice => _itemPrice * _multiplier;
+        private int _trueItemPrice => _itemPrice;
 
 		private int _lightBullets;
 		private int _mediumBullets;
@@ -223,9 +223,15 @@ namespace CustomCampaignTools.LabWorks
 		public void InsertMagazine(Magazine magazine)
 		{
 			int ammoType = GetAmmoTypeFromMagazine(magazine);
-            AddBullets(magazine.magazineState.AmmoCount, ammoType);
 
-			AmmoInventory.RemoveCartridge(magazine.magazineState.cartridgeData, magazine.magazineState.AmmoCount);
+			string group = AmmoInventory.Instance.GetGroupByCartridge(magazine.magazineState.cartridgeData);
+			int multAmmo = magazine.magazineState.AmmoCount * _multiplier;
+			
+			int bulletsToAdd = Mathf.Min(AmmoInventory.Instance.GetCartridgeCount(group), multAmmo); // Don't let ammo count go over the amount you have
+
+            AddBullets(bulletsToAdd, ammoType);
+
+			AmmoInventory.Instance.RemoveCartridge(magazine.magazineState.cartridgeData, bulletsToAdd);
 
 			if(_totalBullets >= _trueItemPrice && !_unlocked && !_opened)
 			{
