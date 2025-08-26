@@ -23,18 +23,13 @@ namespace CustomCampaignTools.LabWorks
 
 		private List<Rigidbody> _lootBodies;
 
-		private HingeController _doorLeverCircuit;
-		private ValueCircuit _doorMotorCircuit;
-
 		private int _multiplier;
 		private int _itemPrice;
-
         private int _trueItemPrice => _itemPrice * _multiplier;
 
 		private int _lightBullets;
 		private int _mediumBullets;
 		private int _heavyBullets;
-
         private int _totalBullets => _lightBullets + _mediumBullets + _heavyBullets;
 
 		private bool _opened;
@@ -55,11 +50,36 @@ namespace CustomCampaignTools.LabWorks
 
 		private Transform giveChangeTransform;
 
+		private UltEventHolder OnAmountRose;
+		private UltEventHolder OnAmountDropped;
+		private UltEventHolder OnItemBought;
+
 		private bool _hasFields = false;
 
-		public void StartFields(GameObject lootParent, int itemPrice, int multiplier, TMP_Text _bulletBalanceTextmesh, TMP_Text _refundTextmesh, AmmoReciever reciever, string lightRefundSpawnable, string mediumRefundSpawnable, string heavyRefundSpawnable, AudioClip openedClip, AudioClip unlockedClip, AudioClip lockedClip, Transform giveChangeTransform)
+		public void StartFields(
+			GameObject lootParent, 
+			int itemPrice, 
+			int multiplier, 
+			TMP_Text _bulletBalanceTextmesh, 
+			TMP_Text _refundTextmesh, 
+			AmmoReciever reciever, 
+			string lightRefundSpawnable, 
+			string mediumRefundSpawnable, 
+			string heavyRefundSpawnable, 
+			AudioClip openedClip, 
+			AudioClip unlockedClip, 
+			AudioClip lockedClip, 
+			Transform giveChangeTransform, 
+			UltEventHolder AmountRoseEvent, 
+			UltEventHolder AmountDroppedEvent, 
+			UltEventHolder ItemBoughtEvent)
 		{
 			SetLootsFromParent(lootParent);
+			foreach(Rigidbody rb in lootParent.GetComponentsInChildren<Rigidbody>())
+			{
+				rb.isKinematic = true;
+				_lootBodies.Add(rb);
+			}
 			this._itemPrice = itemPrice;
 			this._multiplier = multiplier;
 			this._bulletBalanceTextmesh = _bulletBalanceTextmesh;
@@ -73,6 +93,10 @@ namespace CustomCampaignTools.LabWorks
 			this._lockedClip = lockedClip;
 			this.giveChangeTransform = giveChangeTransform;
 
+			this.OnAmountRose = AmountRoseEvent;
+			this.OnAmountDropped = AmountDroppedEvent;
+			this.OnItemBought = ItemBoughtEvent;
+
 			_hasFields = true;
 
 			SafeStart();
@@ -81,13 +105,14 @@ namespace CustomCampaignTools.LabWorks
 		private void SafeStart()
 		{
             reciever.OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g) );
-            _bulletBalanceTextmesh.text = _trueItemPrice.ToString();
-			_doorMotorCircuit.Value = 1f;
+			UpdateTMP();
+		}
 
-			foreach(CrateSpawner loot in _loots)
-			{
-				loot.onSpawnEvent.add_PersistentCalls((Il2CppSystem.Action<CrateSpawner, GameObject>)((c, g) => OnLootSpawned(c, g)));
-			}
+		private void UpdateTMP()
+		{
+			_refundTextmesh.text = $"{_totalBullets}";
+			int Mathf.Max(0, _trueItemPrice - _totalBullets);
+			_bulletBalanceTextmesh.text = $"{_totalBullets}";
 		}
 
 		public void OnLootSpawned(CrateSpawner spawner, GameObject entity)
@@ -118,7 +143,10 @@ namespace CustomCampaignTools.LabWorks
             _mediumBullets = 0;
             _heavyBullets = 0;
 
-			_refundTextmesh.text = "0";
+			if(!_opened)
+				OnAmountDropped.Invoke();
+
+			UpdateTMP();
 		}
 
 		public void PurchaseItem()
@@ -138,12 +166,13 @@ namespace CustomCampaignTools.LabWorks
 			CleanupHeavy(ammoToRemove);
 
 			foreach(Rigidbody loot in _lootBodies)
-			{
 				loot.isKinematic = false;
-			}
 
-			_refundTextmesh.text = _totalBullets.ToString();
+			_opened = true;
 
+			Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
+
+			UpdateTMP();
 		}
 
 		private int CleanupLight(int ammoToRemove)
@@ -193,7 +222,10 @@ namespace CustomCampaignTools.LabWorks
 
 		public void InsertMagazine(Magazine magazine)
 		{
-            AddBullets(magazine.magazineState.AmmoCount, 0);
+			int ammoType = GetAmmoTypeFromMagazine(magazine);
+            AddBullets(magazine.magazineState.AmmoCount, ammoType);
+
+			AmmoInventory.RemoveCartridge(magazine.magazineState.cartridgeData, magazine.magazineState.AmmoCount);
 
 			if(_totalBullets >= _trueItemPrice && !_unlocked && !_opened)
 			{
@@ -202,24 +234,36 @@ namespace CustomCampaignTools.LabWorks
 			}
 		}
 
+		public int GetAmmoTypeFromMagazine(Magazine mag)
+		{
+			string group = AmmoInventory.Instance.GetGroupByCartridge(mag.magazineState.cartridgeData);
+
+			if(group == "light")
+				return 0;
+			else if (group == "medium")
+				return 1;
+			else if (group == "heavy")
+				return 2;
+			else
+				return -1;
+		}
+
 		public void AddBullets(int addedBullets, int type)
 		{
+			int prevTotal = _totalBullets;
             if(type == 0)
-            {
                 _lightBullets += addedBullets;
-            }
             else if(type == 1)
-            {
                 _mediumBullets += addedBullets;
-            }
-            else if(type == 1)
-            {
+            else if(type == 2)
                 _heavyBullets += addedBullets;
-            }
 
-            _bulletBalanceTextmesh.text = (Mathf.Max(_trueItemPrice - _totalBullets, 0f)).ToString();
-            _refundTextmesh.text = _totalBullets.ToString();
+			if(prevTotal < _trueItemPrice && _totalBullets >= _trueItemPrice)
+			{
+				OnAmountRose.Invoke();
+			}
 
+            UpdateTMP();
 		}
 
 		public Rigidbody[] GetLoots()
