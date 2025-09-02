@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Marrow.Circuits;
 using Il2CppSLZ.Bonelab;
-using Il2CppSLZ.Audio;
+using Il2CppSLZ.Marrow.Audio;
 using Il2CppUltEvents;
 using BoneLib;
 
