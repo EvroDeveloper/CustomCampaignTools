@@ -5,6 +5,7 @@ using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
+using MelonLoader.Utils;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
