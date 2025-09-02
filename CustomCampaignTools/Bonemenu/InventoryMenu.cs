@@ -30,8 +30,8 @@ namespace CustomCampaignTools.Bonemenu
 
         public static void RefreshCampaignPage(Campaign c)
         {
-            Page page = campaignMenus[c];
-            page.RemoveAll();
+            Page campaignpage = campaignMenus[c];
+            campaignPage.RemoveAll();
 
             campaignPage.CreateFunction("Enter Campaign", Color.white, c.Enter);
             if(c.saveData.LoadedSavePoint.IsValid(out _))
