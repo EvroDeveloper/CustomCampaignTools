@@ -29,7 +29,7 @@ namespace CustomCampaignTools
         internal List<string> UnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
 
-        public string SaveFolder { get => $"{MelonUtils.UserDataDirectory}/Campaigns/{campaign.Name}"; }
+        public string SaveFolder { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
 
         public CampaignSaveData(Campaign c)
