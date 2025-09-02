@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Marrow.Circuits;
 using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Audio;
+using Il2CppUltEvents;
 using BoneLib;
 
 namespace CustomCampaignTools.LabWorks
@@ -111,7 +113,7 @@ namespace CustomCampaignTools.LabWorks
 		private void UpdateTMP()
 		{
 			_refundTextmesh.text = $"{_totalBullets}";
-			int Mathf.Max(0, _trueItemPrice - _totalBullets);
+			int max = Mathf.Max(0, (_trueItemPrice - _totalBullets));
 			_bulletBalanceTextmesh.text = $"{_totalBullets}";
 		}
 
@@ -155,7 +157,6 @@ namespace CustomCampaignTools.LabWorks
 			// (Unable to buy)
 			if(_totalBullets < _trueItemPrice)
 			{
-				_doorMotorCircuit.Value = 1;
 				return;
 			}
 
@@ -236,7 +237,6 @@ namespace CustomCampaignTools.LabWorks
 			if(_totalBullets >= _trueItemPrice && !_unlocked && !_opened)
 			{
 				_unlocked = true;
-				_doorMotorCircuit.Value = 0f;
 			}
 		}
 
