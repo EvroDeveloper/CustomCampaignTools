@@ -2,6 +2,8 @@
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CustomCampaignTools.Bonemenu
