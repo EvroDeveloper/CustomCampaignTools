@@ -8,9 +8,28 @@ namespace CustomCampaignTools.Bonemenu
 {
     internal class CampaignBoneMenu
     {
+        public static Dictionary<Campaign, Page> campaignMenus = new();
+
         public static void CreateCampaignPage(Page category, Campaign c)
         {
             var campaignPage = category.CreatePage(c.Name, Color.white);
+
+            campaignMenus.Add(c, campaignPage);
+
+            RefreshCampaignPage(c);
+
+#if false
+            var DebugPage = campaignPage.CreatePage("Debug", Color.red);
+
+            DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
+            DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
+#endif
+        }
+
+        public static void RefreshCampaignPage(Campaign c)
+        {
+            Page page = campaignMenus[c];
+            page.RemoveAll();
 
             campaignPage.CreateFunction("Enter Campaign", Color.white, c.Enter);
             if(c.saveData.LoadedSavePoint.IsValid(out _))
@@ -33,13 +52,6 @@ namespace CustomCampaignTools.Bonemenu
                     }
                 }
             }
-
-#if false
-            var DebugPage = campaignPage.CreatePage("Debug", Color.red);
-
-            DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
-            DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
-#endif
         }
     }
 }

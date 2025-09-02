@@ -193,6 +193,7 @@ namespace CustomCampaignTools
         public void ClearSavePoint()
         {
             LoadedSavePoint = new SavePoint();
+            CampaignBoneMenu.RefreshCampaignPage(campaign);
             SaveToDisk();
         }
 
@@ -235,6 +236,7 @@ namespace CustomCampaignTools
             LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
             SaveToDisk();
+            CampaignBoneMenu.RefreshCampaignPage(campaign);
 
         }
         #endregion
@@ -314,6 +316,7 @@ namespace CustomCampaignTools
 
                 UnlockedAchievements.Add(key);
                 SaveToDisk();
+                CampaignBoneMenu.RefreshCampaignPage(campaign);
                 return true;
             }
             return false;
