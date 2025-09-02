@@ -1,6 +1,7 @@
 using BoneLib;
 using BoneLib.Notifications;
 using CustomCampaignTools.SDK;
+using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
