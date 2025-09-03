@@ -272,17 +272,7 @@ namespace CustomCampaignTools
 
         public static void LoadCampaignsFromMods()
         {
-            string modsFolder = Path.Combine(Application.persistentDataPath, "Mods");
-
-            foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
-            {
-                if (registeredMelon.Info.Name == "RedirectModsFolder")
-                {
-                    modsFolder = GetRedirectModsFolder(modsFolder);
-                    break;
-                }
-            }
-            string[] modPaths = Directory.GetDirectories(modsFolder);
+            string[] modPaths = Directory.GetDirectories(MarrowSDK.RuntimeModsPath);
 
             foreach (string mod in modPaths)
             {
@@ -303,19 +293,6 @@ namespace CustomCampaignTools
                 }
                 
             }
-        }
-
-        public static string GetRedirectModsFolder(string normalModsFolder)
-        {
-            Type type = typeof(RedirectModsFolder.Core);
-
-            FieldInfo fieldInfo = type.GetField("pathEntry", BindingFlags.NonPublic | BindingFlags.Static);
-            MelonPreferences_Entry<string> fieldValue = (MelonPreferences_Entry<string>)(fieldInfo?.GetValue(null));
-
-            if (fieldValue.Value != "default" && fieldValue.Value != string.Empty)
-                return fieldValue.Value;
-
-            return normalModsFolder;
         }
 
         public static void OnLevelLoaded(LevelInfo info)
