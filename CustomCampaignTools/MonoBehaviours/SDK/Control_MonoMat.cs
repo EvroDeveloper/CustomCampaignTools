@@ -23,7 +23,7 @@ namespace CustomCampaignTools.LabWorks
 		private CrateSpawner[] _loots;
         public void SetLootsFromParent(GameObject parent) => _loots = parent.GetComponentsInChildren<CrateSpawner>();
 
-		private List<Rigidbody> _lootBodies;
+		private List<Rigidbody> _lootBodies = new List<Rigidbody>();
 
 		private int _multiplier;
 		private int _itemPrice;
@@ -102,6 +102,7 @@ namespace CustomCampaignTools.LabWorks
 			_hasFields = true;
 
 			SafeStart();
+			
 		}
 
 		private void SafeStart()
@@ -114,7 +115,7 @@ namespace CustomCampaignTools.LabWorks
 		{
 			_refundTextmesh.text = $"{_totalBullets}";
 			int max = Mathf.Max(0, (_trueItemPrice - _totalBullets));
-			_bulletBalanceTextmesh.text = $"{_totalBullets}";
+			_bulletBalanceTextmesh.text = $"{max}";
 		}
 
 		public void OnLootSpawned(CrateSpawner spawner, GameObject entity)
