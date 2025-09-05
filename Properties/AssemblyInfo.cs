@@ -11,7 +11,6 @@ using MelonLoader;
 [assembly: AssemblyVersion(CustomCampaignTools.BuildInfo.Version)]
 [assembly: AssemblyFileVersion(CustomCampaignTools.BuildInfo.Version)]
 [assembly: MelonInfo(typeof(CustomCampaignTools.Main), CustomCampaignTools.BuildInfo.Name, CustomCampaignTools.BuildInfo.Version, CustomCampaignTools.BuildInfo.Author, CustomCampaignTools.BuildInfo.DownloadLink)]
-[assembly: MelonColor(System.ConsoleColor.White)]
 [assembly: MelonOptionalDependencies("BrowsingPlus")]
 
 // Create and Setup a MelonGame Attribute to mark a Melon as Universal or Compatible with specific Games.
