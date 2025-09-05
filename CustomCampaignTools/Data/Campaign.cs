@@ -1,6 +1,7 @@
 using BoneLib;
 using BoneLib.Notifications;
 using CustomCampaignTools.Bonemenu;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
