@@ -14,6 +14,8 @@ namespace CustomCampaignTools.SDK
 {
 #if MELONLOADER
     [RegisterTypeInIl2Cpp]
+#else
+    [AddComponentMenu("CustomCampaignTools/Achievements/Achievement Display")]
 #endif
     public class AchievementDisplay : MonoBehaviour
     {
@@ -73,7 +75,7 @@ namespace CustomCampaignTools.SDK
 
         public void Awake()
         {
-#if MElONLOADER
+#if MELONLOADER
             achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
             nextButton.Get().onClick.AddListener(new Action(NextPage));
             backButton.Get().onClick.AddListener(new Action(PrevPage));

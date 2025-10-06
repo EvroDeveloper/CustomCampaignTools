@@ -15,6 +15,8 @@ namespace CustomCampaignTools.SDK
 {
 #if MELONLOADER
     [RegisterTypeInIl2Cpp]
+#else
+    [AddComponentMenu("CustomCampaignTools/Achievements/Achievement Reference Holder")]
 #endif
     public class AchievementReferenceHolder : MonoBehaviour
     {
