@@ -72,6 +72,10 @@ namespace CustomCampaignTools.SDK
         }
         public string GetSavePointLevelName()
         {
+#if MELONLOADER
+#else
+            return "";
+#endif
         }
 
 
