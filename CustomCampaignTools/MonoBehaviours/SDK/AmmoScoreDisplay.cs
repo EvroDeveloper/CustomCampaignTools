@@ -13,6 +13,11 @@ namespace CustomCampaignTools.SDK
         public void SetTargetBarcode(string barcode) 
         {
             Campaign campaign = CampaignUtilities.GetFromLevel(barcode);
+            if(campaign == null) 
+            {
+                MelonLogger.Msg($"[AmmoScoreDisplay] Could not find campaign for barcode {barcode}");
+                return;
+            }
             CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(barcode);
             GetComponent<TMP_Text>().text = ammoSave.GetCombinedTotal().ToString();
         }

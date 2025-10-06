@@ -21,6 +21,7 @@ namespace CustomCampaignTools
         public bool SaveLevelWeapons { get; set; }
         public List<string> InventorySaveLimit { get; set; }
         public bool SaveLevelAmmo { get; set; }
+        public string AchievementUnlockSound { get; set; }
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
         public List<string> CampaignUnlockCrates { get; set; }

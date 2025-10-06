@@ -293,6 +293,9 @@ namespace CustomCampaignTools
             {
                 if (achievement.Key != key) continue;
 
+                if(campaign.AchievementUnlockSound != null)
+                    Audio3dManager.Play2dOneShot(campaign.AchievementUnlockSound, Audio3dManager.ui, 1f, 1f);
+
                 if (achievement.cachedTexture != null)
                 {
                     Notifier.Send(new Notification()

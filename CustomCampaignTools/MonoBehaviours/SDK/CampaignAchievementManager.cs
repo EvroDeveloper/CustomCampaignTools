@@ -12,7 +12,7 @@ namespace CustomCampaignTools.SDK
 
         public bool UnlockAchievement(string Key)
         {
-            if(Campaign.SessionActive)
+            if (Campaign.SessionActive)
             {
                 return Campaign.Session.saveData.UnlockAchievement(Key);
             }
@@ -21,10 +21,19 @@ namespace CustomCampaignTools.SDK
 
         public void RelockAchievement(string Key)
         {
-            if(Campaign.SessionActive)
+            if (Campaign.SessionActive)
             {
                 Campaign.Session.saveData.LockAchievement(Key);
             }
+        }
+        
+        public bool IsAchievementUnlocked(string Key)
+        {
+            if (Campaign.SessionActive)
+            {
+                return Campaign.Session.saveData.UnlockedAchievements.Contains(Key);
+            }
+            return false;
         }
     }
 }

@@ -69,6 +69,15 @@ namespace CustomCampaignTools
         public bool SaveLevelInventory;
         public List<string> InventorySaveLimit = [];
         public bool SaveLevelAmmo;
+        public AudioClip AchievementUnlockSound
+        {
+            get
+            {
+                return _achievementUnlockSound;
+            }
+        }
+        private MonoDisc _achievementUnlockSoundDatacard;
+        private AudioClip _achievementUnlockSound;
         public List<AchievementData> Achievements = [];
         public bool LockInCampaign;
         public bool LockLevelsUntilEntered;
@@ -142,7 +151,17 @@ namespace CustomCampaignTools
                 if(data.CampaignUnlockCrates != null)
                     campaign.CampaignUnlockCrates = data.CampaignUnlockCrates;
 
-                if(campaign.Achievements != null)
+                if(data.AchievementUnlockSound != null && data.AchievementUnlockSound != "null.empty.barcode")
+                {
+                    MarrowGame.assetWarehouse.TryGetDataCard(new Barcode(data.AchievementUnlockSound), out campaign._achievementUnlockSoundDatacard);
+                    campaign._achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+                    {
+                        campaign._achievementUnlockSound = a;
+                        campaign._achievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    }));
+                }
+
+                if (campaign.Achievements != null)
                 {
                     foreach (AchievementData ach in campaign.Achievements)
                     {
