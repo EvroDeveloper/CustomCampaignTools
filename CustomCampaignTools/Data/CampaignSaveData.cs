@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using Il2CppSLZ.Bonelab.SaveData;
+using Il2CppSLZ.Marrow.Audio;
 using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
 using System;
 
