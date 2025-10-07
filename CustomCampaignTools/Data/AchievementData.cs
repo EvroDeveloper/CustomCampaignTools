@@ -14,6 +14,7 @@ namespace CustomCampaignTools
         public string Description { get; set; }
 
         public Texture2D cachedTexture;
+        public Sprite cachedSprite;
 
         public void Init()
         {
@@ -34,9 +35,10 @@ namespace CustomCampaignTools
             {
                 cachedTexture = cachedTexture.ProperResize(336, 336);
                 cachedTexture.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+                cachedSprite = Sprite.Create(cachedTexture, new Rect(0, 0, cachedTexture.width, cachedTexture.height), new Vector2(0.5f, 0.5f));
+                cachedSprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
             }
-
-
         }
     }
 }

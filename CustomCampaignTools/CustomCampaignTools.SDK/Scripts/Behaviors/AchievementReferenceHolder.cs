@@ -34,7 +34,10 @@ namespace CustomCampaignTools.SDK
             titleTMP.Get().text = achievement.Name;
             descriptionTMP.Get().text = unlocked ? achievement.Description : !achievement.Hidden ? achievement.Description : "???";
             
-            //achievement.LoadIcon((t) => { achievementIcon.sprite = t; });
+            if(achievement.cachedSprite != null)
+            {
+                achievementIcon.Get().sprite = achievement.cachedSprite;
+            }
             achievementIcon.Get().color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         }
 #else
