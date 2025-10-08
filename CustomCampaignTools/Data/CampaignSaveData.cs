@@ -451,7 +451,7 @@ namespace CustomCampaignTools
 
             }
 
-            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns, Dictionary<string, bool> savedEnableds)
+            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns, Dictionary<int, bool> savedEnableds)
             {
                 LevelBarcode = levelBarcode;
                 PositionX = position.x;
