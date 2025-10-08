@@ -1,7 +1,7 @@
 #if MELONLOADER
 using MelonLoader;
 using Il2CppTMPro;
-using Il2CppInterop.Runtime.Types.Fields;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.Attributes;
 #else
 using TMPro;
