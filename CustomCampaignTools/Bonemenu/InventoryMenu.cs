@@ -20,12 +20,13 @@ namespace CustomCampaignTools.Bonemenu
 
             RefreshCampaignPage(c);
 
-#if false
-            var DebugPage = campaignPage.CreatePage("Debug", Color.red);
+            if (c.DEVMODE)
+            {
+                var DebugPage = campaignPage.CreatePage("Debug", Color.red);
 
-            DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
-            DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
-#endif
+                DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
+                DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
+            }
         }
 
         public static void RefreshCampaignPage(Campaign c)

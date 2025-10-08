@@ -27,6 +27,7 @@ namespace CustomCampaignTools
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
         public List<string> CampaignUnlockCrates { get; set; }
+        public bool DevBuild { get; set; } = false;
     }
 
     public class SerializedLevelSetup

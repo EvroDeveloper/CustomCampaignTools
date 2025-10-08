@@ -84,10 +84,12 @@ namespace CustomCampaignTools
         public bool LockLevelsUntilEntered;
 
         public List<string> CampaignUnlockCrates = [];
+        public bool DEVMODE { get; private set; } = false;
 
-        public CampaignLevel[] AllLevels 
+        public CampaignLevel[] AllLevels
         {
-            get {
+            get
+            {
                 return [.. mainLevels, .. extraLevels, MenuLevel];
             }
         }
@@ -131,6 +133,11 @@ namespace CustomCampaignTools
                 }
 
                 campaign.ShowInMenu = data.ShowInMenu;
+                
+                if (data.Version == 0)
+                    campaign.PrioritizeInLevelPanel = true;
+                else
+                    campaign.PrioritizeInLevelPanel = data.PrioritizeInLevelPanel;
 
                 campaign.LockLevelsUntilEntered = data.UnlockableLevels;
 
@@ -169,6 +176,8 @@ namespace CustomCampaignTools
                         ach.Init();
                     }
                 }
+
+                campaign.DEVMODE = data.DevBuild;
 
                 CampaignUtilities.LoadedCampaigns.Add(campaign);
 
