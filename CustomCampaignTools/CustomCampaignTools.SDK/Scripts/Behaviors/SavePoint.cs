@@ -54,6 +54,8 @@ namespace CustomCampaignTools.SDK
             {
                 HashSet<MarrowEntity> boxVolEntities = [];
 
+                BoxCollider collider = entitySaveZone.Get();
+
                 Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER, QueryTriggerInteraction.Collide);
                 foreach (Collider tracker in trackers)
                 {
@@ -77,11 +79,11 @@ namespace CustomCampaignTools.SDK
                     if (entity._poolee.SpawnableCrate == null) continue;
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.position, Entities);
+                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get().position, Entities);
             }
             else
             {
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.position);
+                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get().position);
             }
 #endif
         }

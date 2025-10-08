@@ -233,7 +233,7 @@ namespace CustomCampaignTools
             Dictionary<string, bool> savedEnableds = [];
             foreach(ObjectEnabledSaver saver in GameObject.FindObjectsOfType<ObjectEnabledSaver>())
             {
-                savedEnableds.Add(saver.gameObject.name, saver.gameObject.activeSelf);
+                savedEnableds.Add(saver.uniqueID.Get(), saver.gameObject.activeSelf);
             }
 
             LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
@@ -444,7 +444,7 @@ namespace CustomCampaignTools
             public AmmoSave MidLevelAmmoSave;
             public List<BarcodePosRot> BoxContainedBarcodes;
             public List<string> DespawnedSpawners;
-            public Dictionary<string, bool> ObjectEnabledSaves;
+            public Dictionary<int, bool> ObjectEnabledSaves;
 
             public SavePoint()
             {
@@ -497,11 +497,11 @@ namespace CustomCampaignTools
                     
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
             }
-
-            public bool GetEnabledStateFromName(string name, bool defaultEnabled)
+            
+            public bool GetEnabledStateFromID(int id, bool defaultEnabled)
             {
-                if(ObjectEnabledSaves.Keys.Contains(name))
-                    return ObjectEnabledSaves[name];
+                if (ObjectEnabledSaves.Keys.Contains(id))
+                    return ObjectEnabledSaves[id];
                 else
                     return defaultEnabled;
             }

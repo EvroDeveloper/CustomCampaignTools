@@ -30,7 +30,7 @@ namespace CustomCampaignTools.SDK
 
         public void RestoreActiveState(CampaignSaveData.SavePoint savePoint)
         {
-            gameObject.SetActive(savePoint.GetEnabledStateFromName(gameObject.name, gameObject.activeSelf));
+            gameObject.SetActive(savePoint.GetEnabledStateFromID(uniqueID.Get(), gameObject.activeSelf));
         }
 #else 
         [Tooltip("A unique ID for this object. Used to identify it in save data. A random ID will be assigned on Reset().")]
