@@ -35,14 +35,15 @@ namespace CustomCampaignTools
                     return;
                 }
             }
-            else if (IconGUID)
+            else if (IconGUID != "")
             {
-                byte[] fileData = File.ReadAllBytes(IconGUID);
-                if (!cachedTexture.LoadImage(fileData, false))
-                {
-                    MelonLogger.Error("Failed to load texture from file: " + IconGUID);
-                    return;
-                }
+                // TODO Implement with Addressables
+                // byte[] fileData = File.ReadAllBytes(IconGUID);
+                // if (!cachedTexture.LoadImage(fileData, false))
+                // {
+                //     MelonLogger.Error("Failed to load texture from file: " + IconGUID);
+                //     return;
+                // }
             }
             else
             {
