@@ -230,7 +230,7 @@ namespace CustomCampaignTools
                 }
             }
 
-            Dictionary<string, bool> savedEnableds = [];
+            Dictionary<int, bool> savedEnableds = [];
             foreach(ObjectEnabledSaver saver in GameObject.FindObjectsOfType<ObjectEnabledSaver>())
             {
                 savedEnableds.Add(saver.uniqueID.Get(), saver.gameObject.activeSelf);
