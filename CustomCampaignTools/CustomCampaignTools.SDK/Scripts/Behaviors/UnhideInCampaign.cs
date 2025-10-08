@@ -14,8 +14,6 @@ namespace CustomCampaignTools.SDK
     //[RequireComponent(typeof(HideOnAwake))]
     [AddComponentMenu("CustomCampaignTools/Unhide In Campaign")]
 #endif
-
-    //[RequireComponent(typeof(HideOnAwake))]
     public class UnhideInCampaign : MonoBehaviour
     {
 #if MELONLOADER
