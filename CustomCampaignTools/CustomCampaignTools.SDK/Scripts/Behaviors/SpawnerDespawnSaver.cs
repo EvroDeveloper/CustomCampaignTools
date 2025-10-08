@@ -77,7 +77,7 @@ namespace CustomCampaignTools.SDK
         }
 
 #if UNITY_EDITOR
-        void Reset()
+        public void Reset()
         {
             CrateSpawner spawner = GetComponent<CrateSpawner>();
             var call = spawner.onSpawnEvent.AddPersistentCall((Action<CrateSpawner, GameObject>)Setup);

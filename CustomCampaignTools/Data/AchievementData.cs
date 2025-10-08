@@ -8,8 +8,8 @@ namespace CustomCampaignTools
     {
         public string Key { get; set; }
         public bool Hidden { get; set; }
-        public string IconGUID { get; set; }
         public byte[] IconBytes { get; set; }
+        public string IconGUID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -27,18 +27,36 @@ namespace CustomCampaignTools
 
             cachedTexture = new Texture2D(2, 2);
 
-            if (!cachedTexture.LoadImage(IconBytes, false))
+            if (IconBytes.Length != 0)
             {
-                MelonLogger.Error("Failed to load texture from embedded resource.");
+                if (!cachedTexture.LoadImage(IconBytes, false))
+                {
+                    MelonLogger.Error("Failed to load texture from embedded resource.");
+                    return;
+                }
+            }
+            else if (IconGUID)
+            {
+                byte[] fileData = File.ReadAllBytes(IconGUID);
+                if (!cachedTexture.LoadImage(fileData, false))
+                {
+                    MelonLogger.Error("Failed to load texture from file: " + IconGUID);
+                    return;
+                }
             }
             else
             {
-                cachedTexture = cachedTexture.ProperResize(336, 336);
-                cachedTexture.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
-                cachedSprite = Sprite.Create(cachedTexture, new Rect(0, 0, cachedTexture.width, cachedTexture.height), new Vector2(0.5f, 0.5f));
-                cachedSprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                MelonLogger.Error("No valid icon data found for achievement: " + Key);
+                return;
             }
+
+            
+
+            cachedTexture = cachedTexture.ProperResize(336, 336);
+            cachedTexture.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+            cachedSprite = Sprite.Create(cachedTexture, new Rect(0, 0, cachedTexture.width, cachedTexture.height), new Vector2(0.5f, 0.5f));
+            cachedSprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
         }
     }
 }

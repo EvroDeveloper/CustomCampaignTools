@@ -26,6 +26,7 @@ namespace CustomCampaignTools.SDK
         public Il2CppReferenceField<Image> achievementIcon;
         public Il2CppReferenceField<TMP_Text> titleTMP;
         public Il2CppReferenceField<TMP_Text> descriptionTMP;
+        public Il2CppReferenceField<GameObject> lockIcon;
 
         public void ShowAchievement(AchievementData achievement)
         {
@@ -33,6 +34,11 @@ namespace CustomCampaignTools.SDK
             
             titleTMP.Get().text = achievement.Name;
             descriptionTMP.Get().text = unlocked ? achievement.Description : !achievement.Hidden ? achievement.Description : "???";
+
+            if(lockIcon.Get() != null)
+            {
+                lockIcon.Get().SetActive(!unlocked);
+            }
             
             if(achievement.cachedSprite != null)
             {
@@ -41,9 +47,17 @@ namespace CustomCampaignTools.SDK
             achievementIcon.Get().color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         }
 #else
+        [Tooltip("Image to show the achievement's Icon.")]
         public Image achievementIcon;
+        
+        [Tooltip("Text to show the achievement's title.")]
         public TMP_Text titleTMP;
+
+        [Tooltip("Text to show the achievement's description.")]
         public TMP_Text descriptionTMP;
+
+        [Tooltip("Optional icon to show when the achievement is locked.")]
+        public GameObject lockIcon;
 #endif
     }
 }

@@ -5,6 +5,7 @@ namespace CustomCampaignTools
 {
     internal class CampaignLoadingData
     {
+        public int Version { get; set; } = 0;
         public string Name { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
         public List<SerializedLevelSetup> MainLevels { get; set; }
@@ -13,6 +14,7 @@ namespace CustomCampaignTools
         public string LoadSceneMusic { get; set; }
         public bool UnlockableLevels { get; set; }
         public bool ShowInMenu { get; set; }
+        public bool PrioritizeInLevelPanel { get; set; }
         public bool RestrictDevTools { get; set; }
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
         public string CampaignAvatar { get; set; }

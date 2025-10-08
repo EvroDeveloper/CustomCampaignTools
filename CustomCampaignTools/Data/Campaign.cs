@@ -43,6 +43,7 @@ namespace CustomCampaignTools
         private AudioClip _loadSceneMusic;
 
         public bool ShowInMenu;
+        public bool PrioritizeInLevelPanel = true;
 
         public bool RestrictDevTools;
         public AvatarRestrictionType AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;

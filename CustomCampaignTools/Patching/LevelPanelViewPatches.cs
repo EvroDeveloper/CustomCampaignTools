@@ -47,7 +47,7 @@ namespace CustomCampaignTools.Patching
             {
                 // Sort Campaigns to be right after SLZ levels, and put them in the right order. Need to move this over to the previous function as well, just putting session campaign first.
                 Campaign prioritizedCampaign = null;
-                if (Campaign.SessionActive)
+                if (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel)
                 {
                     prioritizedCampaign = Campaign.Session;
                 }
