@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MELONLOADER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,6 +45,7 @@
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLevel.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
+    <Compile Include="CustomCampaignTools\Data\CampaignTimeData.cs" />
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\ObjectEnabledSaver.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\SpawnerDespawnSaver.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\VariableManager.cs" />
     <Compile Include="CustomCampaignTools\Data\AchievementData.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLoadingData.cs" />
+    <Compile Include="CustomCampaignTools\Timer\LevelTiming.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="CustomCampaignTools\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -114,8 +116,9 @@
     <Reference Include="Il2CppUniTask">
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\Il2CppAssemblies\Il2CppUniTask.dll</HintPath>
     </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>..\..\TideFusion\Core\managed\MelonLoader.dll</HintPath>
+    <Reference Include="MelonLoader, Version=0.5.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net35\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net6\Newtonsoft.Json.dll</HintPath>

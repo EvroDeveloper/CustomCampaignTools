@@ -15,6 +15,7 @@ using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.Audio;
 using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
 using System;
+using CustomCampaignTools.Data;
 
 namespace CustomCampaignTools
 {
@@ -30,6 +31,7 @@ namespace CustomCampaignTools
         internal bool AvatarUnlocked = false;
         internal List<string> UnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
+        internal CampaignTimeData TimeData;
 
         public string SaveFolder { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}"; }
         public string SavePath { get => $"{SaveFolder}/save.json"; }
@@ -346,7 +348,14 @@ namespace CustomCampaignTools
                 UnlockedLevels.Add(barcode);
             }
         }
-        
+
+        #endregion
+
+        #region Timing
+        public void AddLevelTime(string barcode)
+        {
+
+        }
         #endregion
 
         #region Saving and Loading
