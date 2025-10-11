@@ -24,7 +24,7 @@ namespace CustomCampaignTools.SDK
 
         public AchievementReferenceHolder[] achievementViews;
         private int _currentPage;
-        private int _lastPage => Mathf.FloorToInt(Campaign.Session.Achievements.Count / achievementViews.Length);
+        private int _lastPage => Mathf.FloorToInt(Campaign.Session.Achievements.Count / achievementViews.Length) - 1;
 
         public Il2CppReferenceField<Button> nextButton;
         public Button NextButton => nextButton.Get();
@@ -41,7 +41,7 @@ namespace CustomCampaignTools.SDK
             if (_currentPage <= 0) BackButton.gameObject.SetActive(false);
             else BackButton.gameObject.SetActive(true);
 
-            if (_currentPage > _lastPage) NextButton.gameObject.SetActive(false);
+            if (_currentPage >= _lastPage) NextButton.gameObject.SetActive(false);
             else NextButton.gameObject.SetActive(true);
 
             if (PageText != null)
