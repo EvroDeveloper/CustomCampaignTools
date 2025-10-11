@@ -41,7 +41,7 @@ namespace CustomCampaignTools.SDK
             if (_currentPage <= 0) BackButton.gameObject.SetActive(false);
             else BackButton.gameObject.SetActive(true);
 
-            if (_currentPage >= _lastPage) NextButton.gameObject.SetActive(false);
+            if (_currentPage > _lastPage) NextButton.gameObject.SetActive(false);
             else NextButton.gameObject.SetActive(true);
 
             if (PageText != null)
