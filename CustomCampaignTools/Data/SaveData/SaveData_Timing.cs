@@ -25,17 +25,25 @@ namespace CustomCampaignTools
             {
                 trial = new TrialTime()
                 {
-                    TrialKey = trialKey,
-                    BestTime = time,
-                    PreviousTimes = new List<float>() { time }
+                    TrialKey = trialKey
                 };
                 TrialTimes.Add(trial);
             }
-            else
-            {
-                trial.PreviousTimes.Add(time);
-                if (time < trial.BestTime) trial.BestTime = time;
-            }
+            trial.AddTime(time);
+        }
+
+        public float GetTrialTime(string trialKey)
+        {
+            TrialTime trial = TrialTimes.Find(t => t.TrialKey == trialKey);
+            if (trial == null) return -1;
+            return trial.BestTime;
+        }
+
+        public float GetTrialAverage(string trialKey)
+        {
+            TrialTime trial = TrialTimes.Find(t => t.TrialKey == trialKey);
+            if (trial == null) return -1;
+            return trial.GetAverageTime();
         }
     }
 
@@ -43,7 +51,24 @@ namespace CustomCampaignTools
     {
         public string TrialKey;
         public float BestTime;
-        public List<float> PreviousTimes;
+        public List<float> PreviousTimes = new();
+
+        public float GetAverageTime()
+        {
+            if (PreviousTimes == null || PreviousTimes.Count == 0) return -1;
+            float total = 0;
+            foreach (float time in PreviousTimes)
+            {
+                total += time;
+            }
+            return total / PreviousTimes.Count;
+        }
+
+        public void AddTime(float time)
+        {
+            PreviousTimes.Add(time);
+            if (time < BestTime) BestTime = time;
+        }
     }
 
     public class LevelTime

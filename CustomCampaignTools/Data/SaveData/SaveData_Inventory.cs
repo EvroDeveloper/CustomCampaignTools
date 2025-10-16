@@ -1,9 +1,11 @@
+
+
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
         internal Dictionary<string, InventoryData> LoadedInventorySaves = [];
-        
+
         public void SaveInventoryForLevel(string nextLevelBarcode)
         {
             LogNull(campaign, "Campaign");
