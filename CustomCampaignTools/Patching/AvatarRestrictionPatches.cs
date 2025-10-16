@@ -54,9 +54,7 @@ namespace CustomCampaignTools.Patching
     [HarmonyPatch(typeof(RigManager))]
     public static class ForceAvatarSwitch
     {
-        [HarmonyPatch(nameof(RigManager.SwapAvatarCrate))]
-        [HarmonyPrefix]
-        public static void OnAvatarSwapped(RigManager __instance, ref Barcode barcode, ref UniTask<bool> __result)
+        public static void OnAvatarSwapped(RigManager __instance, Barcode barcode)
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
@@ -72,20 +70,23 @@ namespace CustomCampaignTools.Patching
                         ShowTitleOnPopup = true,
                     });
 
-                    if (Campaign.Session.WhitelistedAvatars.Contains(__instance.AvatarCrate.Barcode.ID))
-                    {
-                        barcode = __instance.AvatarCrate.Barcode;
-                    }
-                    else
-                    {
-                        barcode = new Barcode(Campaign.Session.WhitelistedAvatars[0]);
-                    }
+                    __instance.SwapAvatarCrate(new Barcode(Campaign.Session.WhitelistedAvatars[0]));
                 }
             }
             else if ((Campaign.Session.AvatarRestrictionType & AvatarRestrictionType.RestrictAvatar) != AvatarRestrictionType.None)
             {
-                barcode = new Barcode(Campaign.Session.CampaignAvatar);
+                if (barcode.ID != Campaign.Session.CampaignAvatar)
+                {  
+                    __instance.SwapAvatarCrate(new Barcode(Campaign.Session.CampaignAvatar));
+                }
             }
+        }
+
+        [HarmonyPatch(nameof(RigManager.Awake))]
+        [HarmonyPrefix]
+        public static void OnRigmanagerAwake(RigManager __instance)
+        {
+            __instance.onAvatarSwapped2 += new Action<Barcode>((b) => { OnAvatarSwapped(__instance, b); });
         }
     }
 }
