@@ -3,6 +3,7 @@ using MelonLoader;
 using CustomCampaignTools.Timing;
 #endif
 using UnityEngine;
+using System;
 
 namespace CustomCampaignTools.SDK
 {

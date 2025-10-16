@@ -2,8 +2,13 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoneLib;
 using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Warehouse;
+using CustomCampaignTools.SDK;
+using CustomCampaignTools.Bonemenu;
 using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
+using static CustomCampaignTools.CampaignSaveData;
 
 namespace CustomCampaignTools
 {

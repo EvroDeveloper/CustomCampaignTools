@@ -1,9 +1,14 @@
+using System.Collections;
+using System.Collections.Generic;
+using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
+using UnityEngine;
+
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
         internal List<AmmoSave> LoadedAmmoSaves = [];
-        
+
         public void SaveAmmoForLevel(string levelBarcode)
         {
             AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);

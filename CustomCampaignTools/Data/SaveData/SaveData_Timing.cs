@@ -1,10 +1,12 @@
 using CustomCampaignTools.Timing;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        public List<LevelTime> LevelTimes = new List<LevelTime>();
+        public List<LevelTime> levelTimes = new List<LevelTime>();
         public List<TrialTime> TrialTimes = new List<TrialTime>();
         public void AddTimeToLevel(string levelBarcode, int seconds)
         {

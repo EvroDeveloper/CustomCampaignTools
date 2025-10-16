@@ -14,7 +14,6 @@ using UnityEngine;
 using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.Audio;
 using System;
-using CustomCampaignTools.Data;
 
 namespace CustomCampaignTools
 {
@@ -49,7 +48,7 @@ namespace CustomCampaignTools
             AvatarUnlocked = false;
             UnlockedAchievements = [];
             UnlockedLevels = [];
-            
+
 
             foreach (string barcode in campaign.CampaignUnlockCrates)
                 DataManager.ActiveSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
