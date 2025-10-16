@@ -32,7 +32,7 @@ namespace CustomCampaignTools.SDK
         {
             if (textDisplay.Get() == null)
             {
-                TryGetComponent<TMP_Text>(out var tmp)
+                TryGetComponent<TMP_Text>(out var tmp);
                 textDisplay.Set(tmp);
             }
         }
