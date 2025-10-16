@@ -45,6 +45,10 @@
     <Compile Include="CustomCampaignTools\CampaignUtilities.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLevel.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignSaveData.cs" />
+    <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_Ammo.cs" />
+    <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_Inventory.cs" />
+    <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_SavePoint.cs" />
+    <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_Timing.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignTimeData.cs" />
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\ObjectEnabledSaver.cs" />
@@ -75,6 +79,7 @@
     <Compile Include="CustomCampaignTools\Data\AchievementData.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLoadingData.cs" />
     <Compile Include="CustomCampaignTools\Timer\LevelTiming.cs" />
+    <Compile Include="CustomCampaignTools\Timer\Timer.cs" />
     <Compile Include="Properties\BuildInfo.cs" />
     <Compile Include="CustomCampaignTools\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
