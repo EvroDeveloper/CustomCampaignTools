@@ -9,16 +9,16 @@ namespace CustomCampaignTools.Timing
     public static class LevelTiming
     {
         private static Timer MainTimer = new Timer();
-        private static Dictionary<string, Timer> TrialTimers = new Timer();
+        private static Dictionary<string, Timer> TrialTimers = new();
 
         public static void OnCampaignLevelLoaded(Campaign c, string levelBarcode)
         {
-            Timer.StartTimer();
+            MainTimer.StartTimer();
         }
 
         public static void OnCampaignLevelUnloaded(Campaign c, string levelBarcode)
         {
-            int seconds = Timer.GetSecondsSinceStart();
+            int seconds = (int)Timer.GetTimeSinceStart();
             c.saveData.AddTimeToLevel(levelBarcode, seconds);
         }
 

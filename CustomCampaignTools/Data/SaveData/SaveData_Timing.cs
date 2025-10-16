@@ -10,14 +10,6 @@ namespace CustomCampaignTools
         public List<TrialTime> TrialTimes = new List<TrialTime>();
         public void AddTimeToLevel(string levelBarcode, int seconds)
         {
-            if (levelTimes.ContainsKey(levelBarcode))
-            {
-                levelTimes[levelBarcode] += seconds;
-            }
-            else
-            {
-                levelTimes[levelBarcode] = seconds;
-            }
         }
 
         public void AddTrialTime(string trialKey, float time)

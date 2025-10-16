@@ -6,6 +6,7 @@ using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.UI;
 using MelonLoader;
+using System;
 using System.Linq;
 
 namespace CustomCampaignTools.Patching

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using MelonLoader;
+using BoneLib;
 
 namespace CustomCampaignTools
 {
