@@ -49,7 +49,6 @@
     <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_Inventory.cs" />
     <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_SavePoint.cs" />
     <Compile Include="CustomCampaignTools\Data\SaveData\SaveData_Timing.cs" />
-    <Compile Include="CustomCampaignTools\Data\CampaignTimeData.cs" />
     <Compile Include="CustomCampaignTools\Data\InventoryData.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\ObjectEnabledSaver.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\SpawnerDespawnSaver.cs" />
