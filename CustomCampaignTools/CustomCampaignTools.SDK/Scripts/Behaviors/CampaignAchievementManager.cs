@@ -49,5 +49,37 @@ namespace CustomCampaignTools.SDK
 #endif
             return false;
         }
+
+        public int GetAchievementsTotal()
+        {
+#if MELONLOADER
+            if (Campaign.SessionActive)
+                return Campaign.Session.Achievements.Count;
+#endif
+            return 0;
+        }
+
+        public int GetAchievementsCompleted()
+        {
+#if MELONLOADER
+            if (Campaign.SessionActive)
+                return Campaign.Session.saveData.UnlockedAchievements.Count;
+#endif
+            return 0;
+        }
+
+        public float GetAchievementsCompletedPercentage()
+        {
+#if MELONLOADER
+            if (Campaign.SessionActive)
+            {
+                int total = Campaign.Session.Achievements.Count;
+                if (total == 0) return 0f;
+                int completed = Campaign.Session.saveData.UnlockedAchievements.Count;
+                return (float)completed / (float)total;
+            }
+#endif
+            return 0f;
+        }
     }
 }
