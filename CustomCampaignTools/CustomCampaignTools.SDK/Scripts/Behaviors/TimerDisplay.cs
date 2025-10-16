@@ -44,7 +44,7 @@ namespace CustomCampaignTools.SDK
 #endif
         }
 
-        public void DisplayTrialTime(string trialKey, TimerDisplayType displayType = TimerDisplayType.Best)
+        public void DisplayTrialTime(string trialKey, TrialTimeDisplayType displayType = TrialTimeDisplayType.Best)
         {
 #if MELONLOADER
             if (textDisplay.Get() == null || !Campaign.SessionActive) return;
