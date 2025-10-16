@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomCampaignTools;
 
 namespace CustomCampaignTools.Debug
 {
@@ -14,6 +15,12 @@ namespace CustomCampaignTools.Debug
         {
             if (!EnableDebug) return;
             MelonLogger.Msg($"[CampaignLogger] {message}");
+        }
+
+        public static void Msg(Campaign campaign, object message)
+        {
+            if (!EnableDebug && !campaign.DEVMODE) return;
+            MelonLogger.Msg($"[CampaignLogger - {campaign.Name}] {message}");
         }
     }
 }
