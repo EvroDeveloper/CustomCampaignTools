@@ -18,7 +18,7 @@ namespace CustomCampaignTools.Timing
 
         public static void OnCampaignLevelUnloaded(Campaign c, string levelBarcode)
         {
-            int seconds = (int)Timer.GetTimeSinceStart();
+            int seconds = (int)MainTimer.GetTimeSinceStart();
             c.saveData.AddTimeToLevel(levelBarcode, seconds);
         }
 
