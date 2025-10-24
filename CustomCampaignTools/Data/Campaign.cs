@@ -112,10 +112,10 @@ namespace CustomCampaignTools
             {
                 campaign.Name = data.Name;
 
-                if (data.InitialLevel.levelBarcode == "null.empty.barcode" || data.InitialLevel == null) campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+                if (data.InitialLevel == null || data.InitialLevel.levelBarcode == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
-                if (data.IntroLevel.levelBarcode == "null.empty.barcode" || data.IntroLevel == null) campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel);
+                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode") campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
@@ -183,7 +183,8 @@ namespace CustomCampaignTools
 
                 campaign.DEVMODE = data.DevBuild;
 
-                GashaponHider.AddCratesToHide(data.HideCratesFromGachapon);
+                if(data.HideCratesFromGachapon != null)
+                    GashaponHider.AddCratesToHide(data.HideCratesFromGachapon);
 
                 CampaignUtilities.LoadedCampaigns.Add(campaign);
 
