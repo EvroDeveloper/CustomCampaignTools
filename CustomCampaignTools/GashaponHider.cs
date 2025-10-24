@@ -7,7 +7,7 @@ namespace CustomCampaignTools
 {
     public static class GashaponHider
     {
-        private static HashSet<Crate> HiddenCrates = new HashSet<Crate>();
+        public static HashSet<Crate> HiddenCrates = new HashSet<Crate>();
 
         public static void AddCratesToHide(List<string> crateBarcodes)
         {
