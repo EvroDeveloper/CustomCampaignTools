@@ -21,10 +21,11 @@ namespace CustomCampaignTools
         }
     }
 
-    [HarmonyPatch(typeof(Control_Gashapon), "Awake")]
+    [HarmonyPatch(typeof(Control_Gashapon))]
     public static class GashaponPatches
     {
         [HarmonyPatch(nameof(Control_Gashapon.Start))]
+        [HarmonyPrefix]
         public static void StartPrefix(Control_Gashapon __instance)
         {
             foreach (Crate crate in GashaponHider.HiddenCrates)
