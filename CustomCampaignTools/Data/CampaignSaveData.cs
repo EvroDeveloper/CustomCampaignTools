@@ -256,9 +256,9 @@ namespace CustomCampaignTools
                 parent.LoadedAmmoSaves = AmmoSaves;
                 parent.LoadedInventorySaves = InventorySaves ?? [];
                 parent.LoadedFloatDatas = FloatData ?? [];
-                parent.DevToolsUnlocked = DevToolsUnlocked ?? false;
-                parent.AvatarUnlocked = AvatarUnlocked ?? false;
-                parent.SkipIntro = SkipIntro ?? false;
+                parent.DevToolsUnlocked = DevToolsUnlocked;
+                parent.AvatarUnlocked = AvatarUnlocked;
+                parent.SkipIntro = SkipIntro;
                 parent.UnlockedAchievements = UnlockedAchievements ?? [];
                 parent.UnlockedLevels = UnlockedLevels ?? [];
                 parent.LevelTimes = LevelTimes ?? [];
