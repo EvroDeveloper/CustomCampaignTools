@@ -9,11 +9,11 @@ namespace CustomCampaignTools
     {
         private static HashSet<Crate> HiddenCrates = new HashSet<Crate>();
 
-        public void AddCratesToHide(List<string> crateBarcodes)
+        public static void AddCratesToHide(List<string> crateBarcodes)
         {
             foreach (string barcode in crateBarcodes)
             {
-                if (AssetWarehouse.Instance.TryGetCrate(barcode, out Crate crate))
+                if (AssetWarehouse.Instance.TryGetCrate(new Barcode(barcode), out Crate crate))
                 {
                     HiddenCrates.Add(crate);
                 }
@@ -25,7 +25,7 @@ namespace CustomCampaignTools
     public static class GashaponPatches
     {
         [HarmonyPatch(nameof(Control_Gashapon.Start))]
-        public static void StartPrefix(Gashapon __instance)
+        public static void StartPrefix(Control_Gashapon __instance)
         {
             foreach (Crate crate in GashaponHider.HiddenCrates)
             {

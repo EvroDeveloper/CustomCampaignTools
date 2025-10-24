@@ -25,7 +25,7 @@ namespace CustomCampaignTools
 
         public void AddTrialTime(string trialKey, float time)
         {
-            TrialTime trial = GetTrialTime(trialKey);
+            TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null)
             {
                 trial = new TrialTime()
@@ -39,19 +39,19 @@ namespace CustomCampaignTools
 
         public float GetTrialTime(string trialKey)
         {
-            TrialTime trial = GetTrialTime(trialKey);
+            TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return -1;
             return trial.BestTime;
         }
 
         public float GetTrialAverage(string trialKey)
         {
-            TrialTime trial = GetTrialTime(trialKey);
+            TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return -1;
             return trial.GetAverageTime();
         }
 
-        internal TrialTime GetTrialTime(string trialKey)
+        internal TrialTime GetTrialTimeData(string trialKey)
         {
             return TrialTimes.Find(t => t.TrialKey == trialKey);
         }
