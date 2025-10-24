@@ -7,6 +7,7 @@ namespace CustomCampaignTools
     {
         public int Version { get; set; } = 0;
         public string Name { get; set; }
+        public SerializedLevelSetup IntroLevel { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
         public List<SerializedLevelSetup> MainLevels { get; set; }
         public List<SerializedLevelSetup> ExtraLevels { get; set; }
