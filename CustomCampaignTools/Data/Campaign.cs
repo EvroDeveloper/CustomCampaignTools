@@ -118,7 +118,6 @@ namespace CustomCampaignTools
                 // do later
                 // if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode")
                 // else campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Menu);
-                campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel);
 
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
                 campaign.extraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
