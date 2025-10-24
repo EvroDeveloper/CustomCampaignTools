@@ -8,8 +8,8 @@ namespace CustomCampaignTools.Timing
 {
     public static class LevelTiming
     {
-        private static Timer MainTimer = new Timer();
-        private static Dictionary<string, Timer> TrialTimers = new();
+        private static Timer MainTimer = new();
+        private static Dictionary<string, Timer> TrialTimers = [];
 
         public static void OnCampaignLevelLoaded(Campaign c, string levelBarcode)
         {

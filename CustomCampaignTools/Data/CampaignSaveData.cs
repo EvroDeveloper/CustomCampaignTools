@@ -24,6 +24,7 @@ namespace CustomCampaignTools
         internal List<FloatData> LoadedFloatDatas = [];
         internal bool DevToolsUnlocked = false;
         internal bool AvatarUnlocked = false;
+        internal bool SkipIntro = false;
         internal List<string> UnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
 
@@ -46,6 +47,7 @@ namespace CustomCampaignTools
             LoadedFloatDatas = [];
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
+            SkipIntro = false;
             UnlockedAchievements = [];
             UnlockedLevels = [];
 
@@ -173,17 +175,7 @@ namespace CustomCampaignTools
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
 
-            SaveData saveData = new()
-            {
-                SavePoint = LoadedSavePoint,
-                AmmoSaves = LoadedAmmoSaves,
-                InventorySaves = LoadedInventorySaves,
-                FloatData = LoadedFloatDatas,
-                DevToolsUnlocked = DevToolsUnlocked,
-                AvatarUnlocked = AvatarUnlocked,
-                UnlockedAchievements = UnlockedAchievements,
-                UnlockedLevels = UnlockedLevels,
-            };
+            SaveData saveData = new(this);
 
             var settings = new JsonSerializerSettings
             {
@@ -225,14 +217,7 @@ namespace CustomCampaignTools
 
             SaveData saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
 
-            LoadedSavePoint = saveData.SavePoint;
-            LoadedAmmoSaves = saveData.AmmoSaves;
-            LoadedInventorySaves = saveData.InventorySaves ?? new Dictionary<string, InventoryData>();
-            LoadedFloatDatas = saveData.FloatData;
-            DevToolsUnlocked = saveData.DevToolsUnlocked;
-            AvatarUnlocked = saveData.AvatarUnlocked;
-            UnlockedAchievements = saveData.UnlockedAchievements ?? new List<string>();
-            UnlockedLevels = saveData.UnlockedLevels ?? new List<string>();
+            saveData.LoadSaveData(this);
         }
         #endregion
 
@@ -244,20 +229,40 @@ namespace CustomCampaignTools
             public List<FloatData> FloatData { get; set; }
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
+            public bool SkipIntro { get; set; }
             public List<string> UnlockedAchievements { get; set; }
             public List<string> UnlockedLevels { get; set; }
-        }
+            public List<LevelTime> LevelTimes = new List<LevelTime>();
+            public List<TrialTime> TrialTimes = new List<TrialTime>();
 
-        public struct AmmoSave
-        {
-            public string LevelBarcode { get; set; }
-            public int LightAmmo { get; set; }
-            public int MediumAmmo { get; set; }
-            public int HeavyAmmo { get; set; }
-
-            public int GetCombinedTotal()
+            public SaveData(CampaignSaveData parent)
             {
-                return (LightAmmo + MediumAmmo + HeavyAmmo);
+                SavePoint = parent.LoadedSavePoint;
+                AmmoSaves = parent.LoadedAmmoSaves;
+                InventorySaves = parent.LoadedInventorySaves;
+                FloatData = parent.LoadedFloatDatas;
+                DevToolsUnlocked = parent.DevToolsUnlocked;
+                AvatarUnlocked = parent.AvatarUnlocked;
+                SkipIntro = parent.SkipIntro;
+                UnlockedAchievements = parent.UnlockedAchievements;
+                UnlockedLevels = parent.UnlockedLevels;
+                LevelTimes = parent.LevelTimes;
+                TrialTimes = parent.TrialTimes;
+            }
+
+            public void LoadSaveData(CampaignSaveData parent)
+            {
+                parent.LoadedSavePoint = SavePoint;
+                parent.LoadedAmmoSaves = AmmoSaves;
+                parent.LoadedInventorySaves = InventorySaves ?? [];
+                parent.LoadedFloatDatas = FloatData;
+                parent.DevToolsUnlocked = DevToolsUnlocked;
+                parent.AvatarUnlocked = AvatarUnlocked;
+                parent.SkipIntro = SkipIntro;
+                parent.UnlockedAchievements = UnlockedAchievements ?? [];
+                parent.UnlockedLevels = UnlockedLevels ?? [];
+                parent.LevelTimes = LevelTimes ?? [];
+                parent.TrialTimes = TrialTimes ?? [];
             }
         }
 

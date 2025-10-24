@@ -58,6 +58,13 @@ namespace CustomCampaignTools
             this.type = type;
         }
 
+        public CampaignLevel(CampaignLevel copy)
+        {
+            Barcode = copy.Barcode;
+            overrideName = copy.overrideName;
+            type = copy.type;
+        }
+
         public static implicit operator Barcode(CampaignLevel c) => c.Barcode;
         public static implicit operator LevelCrate(CampaignLevel c) => c.crate;
     }

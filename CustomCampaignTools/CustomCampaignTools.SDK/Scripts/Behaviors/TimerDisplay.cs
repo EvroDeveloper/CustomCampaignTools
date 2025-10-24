@@ -24,7 +24,7 @@ namespace CustomCampaignTools.SDK
 
         public Il2CppReferenceField<TMP_Text> textDisplay;
 #else
-        public TMPro.TextMeshProUGUI textDisplay;
+        public TMPro.TMP_Text textDisplay;
 #endif
 
 #if MELONLOADER

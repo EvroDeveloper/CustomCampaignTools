@@ -12,9 +12,9 @@ namespace CustomCampaignTools
 
         public void SaveAmmoForLevel(string levelBarcode)
         {
-            AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
-
             if (!campaign.SaveLevelAmmo) return;
+
+            AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
             if (!DoesSavedAmmoExist(levelBarcode))
             {
@@ -101,6 +101,19 @@ namespace CustomCampaignTools
                     MediumAmmo = 0,
                     HeavyAmmo = 0,
                 });
+            }
+        }
+    
+        public struct AmmoSave
+        {
+            public string LevelBarcode { get; set; }
+            public int LightAmmo { get; set; }
+            public int MediumAmmo { get; set; }
+            public int HeavyAmmo { get; set; }
+
+            public int GetCombinedTotal()
+            {
+                return LightAmmo + MediumAmmo + HeavyAmmo;
             }
         }
     }

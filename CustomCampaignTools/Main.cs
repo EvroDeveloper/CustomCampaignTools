@@ -46,9 +46,10 @@ namespace CustomCampaignTools
 
             MainMenuMangler.OnLevelLoaded(info);
 
-            #region Save Data
             if (CampaignUtilities.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
             {
+                LevelTiming.OnCampaignLevelLoaded(campaign, barcode);
+
                 if (levelType != CampaignLevelType.MainLevel) return;
 
                 if (SavepointFunctions.CurrentLevelLoadedByContinue)
@@ -64,14 +65,14 @@ namespace CustomCampaignTools
                     }
                 }
             }
-            #endregion
         }
 
         private static void LevelUnloaded()
         {
             if (Campaign.SessionActive)
-            { 
+            {
                 Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
+                LevelTiming.OnCampaignLevelUnloaded(Campaign.Session, Campaign.lastLoadedCampaignLevel);
             }
         }
 

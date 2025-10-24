@@ -6,15 +6,26 @@ namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        public List<LevelTime> levelTimes = new List<LevelTime>();
-        public List<TrialTime> TrialTimes = new List<TrialTime>();
+        public List<LevelTime> LevelTimes = [];
+        public List<TrialTime> TrialTimes = [];
         public void AddTimeToLevel(string levelBarcode, int seconds)
         {
+            LevelTime levelTime = LevelTimes.Find(lt => lt.LevelBarcode == levelBarcode);
+            if (levelTime == null)
+            {
+                levelTime = new LevelTime()
+                {
+                    LevelBarcode = levelBarcode,
+                    TimeInSeconds = 0
+                };
+                LevelTimes.Add(levelTime);
+            }
+            levelTime.TimeInSeconds += seconds;
         }
 
         public void AddTrialTime(string trialKey, float time)
         {
-            TrialTime trial = TrialTimes.Find(t => t.TrialKey == trialKey);
+            TrialTime trial = GetTrialTime(trialKey);
             if (trial == null)
             {
                 trial = new TrialTime()
@@ -28,16 +39,21 @@ namespace CustomCampaignTools
 
         public float GetTrialTime(string trialKey)
         {
-            TrialTime trial = TrialTimes.Find(t => t.TrialKey == trialKey);
+            TrialTime trial = GetTrialTime(trialKey);
             if (trial == null) return -1;
             return trial.BestTime;
         }
 
         public float GetTrialAverage(string trialKey)
         {
-            TrialTime trial = TrialTimes.Find(t => t.TrialKey == trialKey);
+            TrialTime trial = GetTrialTime(trialKey);
             if (trial == null) return -1;
             return trial.GetAverageTime();
+        }
+
+        internal TrialTime GetTrialTime(string trialKey)
+        {
+            return TrialTimes.Find(t => t.TrialKey == trialKey);
         }
     }
 

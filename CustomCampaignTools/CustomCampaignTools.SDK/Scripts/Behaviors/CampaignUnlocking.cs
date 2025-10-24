@@ -51,6 +51,13 @@ namespace CustomCampaignTools.SDK
 #endif
         }
 
+        public void SetIntroSkip(bool skipIntro)
+        {
+#if MELONLOADER
+            Campaign.Session.saveData.SkipIntro = skipIntro;
+#endif
+        }
+
         public void ResetSave()
         {
 #if MELONLOADER

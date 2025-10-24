@@ -59,6 +59,7 @@
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\TriggerableNotification.cs" />
     <Compile Include="CustomCampaignTools\PlayerMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\FadeLoader.cs" />
+    <Compile Include="CustomCampaignTools\GashaponHider.cs" />
     <Compile Include="CustomCampaignTools\Patching\HideOnAwakePatches.cs" />
     <Compile Include="CustomCampaignTools\MainMenuMangler.cs" />
     <Compile Include="CustomCampaignTools\Patching\AvatarRestrictionPatches.cs" />
