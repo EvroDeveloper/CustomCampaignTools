@@ -108,12 +108,12 @@ namespace CustomCampaignTools.SDK
             int hours = 0; 
             if(displayMinutes)
             {
-                minutes = time / 60;
+                minutes = Mathf.FloorToInt(time / 60);
                 seconds = seconds % 60;
             }
             if(displayHours)
             {
-                hours = time / (60*60);
+                hours = Mathf.FloorToInt(time / (60*60));
                 seconds = seconds % (60*60);
             }
 
@@ -123,7 +123,7 @@ namespace CustomCampaignTools.SDK
             if(displaySeconds) output += $"{seconds}";
 
             if (output.EndsWith(":"))
-                output = format.Substring(0, output.Length - 1);
+                output = output.Substring(0, output.Length - 1);
 
             textDisplay.Get().text = output;
         }
@@ -138,12 +138,12 @@ namespace CustomCampaignTools.SDK
             int hours = 0; 
             if(displayMinutes)
             {
-                minutes = time / 60;
+                minutes = Mathf.FloorToInt(time / 60);
                 seconds = seconds % 60;
             }
             if(displayHours)
             {
-                hours = time / (60*60);
+                hours = Mathf.FloorToInt(time / (60*60));
                 seconds = seconds % (60*60);
             }
 
@@ -154,7 +154,7 @@ namespace CustomCampaignTools.SDK
             if(displayMilliseconds) output += $"{milliseconds}";
             
             if (output.EndsWith(":"))
-                output = format.Substring(0, output.Length - 1);
+                output = output.Substring(0, output.Length - 1);
 
             textDisplay.Get().text = textPrefix + output + textPostfix;
         }
