@@ -71,11 +71,11 @@ namespace CustomCampaignTools
             return trial.GetAverageTime();
         }
 
-        public float GetTrialLatest()
+        public float GetTrialLatest(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return -1;
-            return trial.PreviousTimes[^1];
+            return trial.PreviousTimes[trial.PreviousTimes.Count - 1];
         }
 
         internal TrialTime GetTrialTimeData(string trialKey)

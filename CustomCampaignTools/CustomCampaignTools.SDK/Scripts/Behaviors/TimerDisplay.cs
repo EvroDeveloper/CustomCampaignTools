@@ -95,9 +95,9 @@ namespace CustomCampaignTools.SDK
 #if MELONLOADER
             if (!Campaign.SessionActive) return;
 
-            if (displayType == TrialTimeDisplayType.Best) DisplayTimeSpan(Campaign.session.saveData.GetTrialBest(trialKey));
-            else if (displayType == TrialTimeDisplayType.Latest) DisplayTimeSpan(Campaign.session.saveData.GetTrailLatest(trialKey));
-            else if (displayType == TrialTimeDisplayType.Average) DisplayTimeSpan(Campaign.session.saveData.GetTrialAverage(trialKey));
+            if (displayType == TrialTimeDisplayType.Best) DisplayTimeSpan(Campaign.Session.saveData.GetTrialBest(trialKey));
+            else if (displayType == TrialTimeDisplayType.Latest) DisplayTimeSpan(Campaign.Session.saveData.GetTrailLatest(trialKey));
+            else if (displayType == TrialTimeDisplayType.Average) DisplayTimeSpan(Campaign.Session.saveData.GetTrialAverage(trialKey));
 #endif
         }
 
