@@ -217,10 +217,6 @@ namespace CustomCampaignTools
 
             SaveData saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
 
-            if(saveData == null)
-            {
-                MelonLogger.Msg($"Failed to load save data for campaign {campaign.Name}, deserialized data was null");
-            }
             saveData.LoadSaveData(this);
         }
         #endregion
@@ -233,9 +229,9 @@ namespace CustomCampaignTools
             public List<FloatData> FloatData { get; set; }
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
-            public bool SkipIntro { get; set; }
             public List<string> UnlockedAchievements { get; set; }
             public List<string> UnlockedLevels { get; set; }
+            public bool SkipIntro { get; set; }
             public List<LevelTime> LevelTimes { get; set; }
             public List<TrialTime> TrialTimes { get; set; }
 
@@ -256,10 +252,6 @@ namespace CustomCampaignTools
 
             public void LoadSaveData(CampaignSaveData parent)
             {
-                if(parent == null)
-                {
-                    MelonLogger.Msg("CampaignSaveData.SaveData constructor received null parent!");
-                }
                 parent.LoadedSavePoint = SavePoint;
                 parent.LoadedAmmoSaves = AmmoSaves;
                 parent.LoadedInventorySaves = InventorySaves ?? [];
