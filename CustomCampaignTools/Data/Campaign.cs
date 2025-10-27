@@ -201,7 +201,7 @@ namespace CustomCampaignTools
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"Failed to register campaign {data.Name} (Fail Point: {failPoint}): {ex.Message}");
+                MelonLogger.Error($"Failed to register campaign {data.Name} (Fail Point: {failPoint}): {ex}");
             }
 
             return campaign;
