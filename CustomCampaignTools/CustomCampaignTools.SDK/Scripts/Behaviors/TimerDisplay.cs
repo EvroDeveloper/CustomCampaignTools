@@ -96,7 +96,7 @@ namespace CustomCampaignTools.SDK
             if (!Campaign.SessionActive) return;
 
             if (displayType == TrialTimeDisplayType.Best) DisplayTimeSpan(Campaign.Session.saveData.GetTrialBest(trialKey));
-            else if (displayType == TrialTimeDisplayType.Latest) DisplayTimeSpan(Campaign.Session.saveData.GetTrailLatest(trialKey));
+            else if (displayType == TrialTimeDisplayType.Latest) DisplayTimeSpan(Campaign.Session.saveData.GetTrialLatest(trialKey));
             else if (displayType == TrialTimeDisplayType.Average) DisplayTimeSpan(Campaign.Session.saveData.GetTrialAverage(trialKey));
 #endif
         }
