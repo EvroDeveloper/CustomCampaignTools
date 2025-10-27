@@ -235,6 +235,10 @@ namespace CustomCampaignTools
             public List<LevelTime> LevelTimes { get; set; }
             public List<TrialTime> TrialTimes { get; set; }
 
+            public SaveData()
+            {
+            }
+            
             public SaveData(CampaignSaveData parent)
             {
                 SavePoint = parent.LoadedSavePoint;
