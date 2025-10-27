@@ -57,7 +57,7 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public float GetTrialTime(string trialKey)
+        public float GetTrialBest(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return -1;
@@ -71,6 +71,13 @@ namespace CustomCampaignTools
             return trial.GetAverageTime();
         }
 
+        public float GetTrialLatest()
+        {
+            TrialTime trial = GetTrialTimeData(trialKey);
+            if (trial == null) return -1;
+            return trial.PreviousTimes[^1];
+        }
+
         internal TrialTime GetTrialTimeData(string trialKey)
         {
             return TrialTimes.Find(t => t.TrialKey == trialKey);
@@ -81,7 +88,7 @@ namespace CustomCampaignTools
     {
         public string TrialKey;
         public float BestTime;
-        public List<float> PreviousTimes = new();
+        public List<float> PreviousTimes = [];
 
         public float GetAverageTime()
         {

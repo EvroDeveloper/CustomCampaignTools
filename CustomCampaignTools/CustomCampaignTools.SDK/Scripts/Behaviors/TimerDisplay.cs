@@ -93,7 +93,11 @@ namespace CustomCampaignTools.SDK
         public void DisplayTrialTime(string trialKey, TrialTimeDisplayType displayType = TrialTimeDisplayType.Best)
         {
 #if MELONLOADER
-            DisplayTrialTime(trialKey, displayType);
+            if (!Campaign.SessionActive) return;
+
+            if (displayType == TrialTimeDisplayType.Best) DisplayTimeSpan(Campaign.session.saveData.GetTrialBest(trialKey));
+            else if (displayType == TrialTimeDisplayType.Latest) DisplayTimeSpan(Campaign.session.saveData.GetTrailLatest(trialKey));
+            else if (displayType == TrialTimeDisplayType.Average) DisplayTimeSpan(Campaign.session.saveData.GetTrialAverage(trialKey));
 #endif
         }
 
