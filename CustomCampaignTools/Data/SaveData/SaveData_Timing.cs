@@ -8,6 +8,24 @@ namespace CustomCampaignTools
     {
         public List<LevelTime> LevelTimes = [];
         public List<TrialTime> TrialTimes = [];
+
+        public int GetLevelTime(string levelBarcode)
+        {
+            LevelTime levelTime = LevelTimes.Find(lt => lt.LevelBarcode == levelBarcode);
+            if (levelTime == null) return 0;
+            return levelTime.TimeInSeconds;
+        }
+
+        public int GetTotalCampaignTime()
+        {
+            int totalTime = 0;
+            foreach (LevelTime levelTime in LevelTimes)
+            {
+                totalTime += levelTime.TimeInSeconds;
+            }
+            return totalTime;
+        }
+
         public void AddTimeToLevel(string levelBarcode, int seconds)
         {
             LevelTime levelTime = LevelTimes.Find(lt => lt.LevelBarcode == levelBarcode);
@@ -21,6 +39,7 @@ namespace CustomCampaignTools
                 LevelTimes.Add(levelTime);
             }
             levelTime.TimeInSeconds += seconds;
+            SaveToDisk();
         }
 
         public void AddTrialTime(string trialKey, float time)
@@ -35,6 +54,7 @@ namespace CustomCampaignTools
                 TrialTimes.Add(trial);
             }
             trial.AddTime(time);
+            SaveToDisk();
         }
 
         public float GetTrialTime(string trialKey)

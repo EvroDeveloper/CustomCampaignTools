@@ -108,12 +108,10 @@ namespace CustomCampaignTools
         internal static Campaign RegisterCampaign(CampaignLoadingData data)
         {
             Campaign campaign = new();
-            string failPoint = "Pre-registration";
             try
             {
                 campaign.Name = data.Name;
 
-                failPoint = "Menu Level Setup";
                 if (data.InitialLevel.levelBarcode == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
                 
@@ -121,18 +119,14 @@ namespace CustomCampaignTools
                 // if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode")
                 // else campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Menu);
 
-                failPoint = "Main and Extra Levels Setup";
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
                 campaign.extraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
 
-                failPoint = "Load Scene Setup";
                 if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
                 else campaign.LoadScene = data.LoadScene;
                 
-                failPoint = "Save Data";
                 campaign.saveData = new CampaignSaveData(campaign);
 
-                failPoint = "Load Scene Music Setup";
                 if (data.LoadSceneMusic != null && data.LoadSceneMusic != "null.empty.barcode")
                 {
                     MarrowGame.assetWarehouse.TryGetDataCard(new Barcode(data.LoadSceneMusic), out campaign._loadMusicDatacard);
@@ -143,7 +137,6 @@ namespace CustomCampaignTools
                     }));
                 }
 
-                failPoint = "Other Settings";
                 campaign.ShowInMenu = data.ShowInMenu;
                 
                 if (data.Version == 0)
@@ -201,7 +194,7 @@ namespace CustomCampaignTools
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"Failed to register campaign {data.Name} (Fail Point: {failPoint}): {ex}");
+                MelonLogger.Error($"Failed to register campaign {data.Name}: {ex}");
             }
 
             return campaign;
