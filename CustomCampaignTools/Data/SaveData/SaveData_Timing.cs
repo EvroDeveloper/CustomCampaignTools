@@ -44,7 +44,7 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public void AddTrialTime(string trialKey, float time)
+        public bool AddTrialTime(string trialKey, float time)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null)
