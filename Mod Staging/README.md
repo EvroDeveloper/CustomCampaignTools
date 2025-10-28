@@ -16,6 +16,8 @@ The best way to learn about the SDK is to read it's README, as there are no offi
  - **Unlockable Levels**: Levels can be set to unlock as you progress, making it so that the player cannot just skip around until they've played the campaign.
  - **Level Panel Tweaks**: Show the current campaign's levels first in the levels menu
  - **Achievements**: Modders can add achivements for fun if they want to
+ - **Level Timing**: Keep track of how long you have spent in each level, and the campaign as a whole. Can be displayed if implemented
+ - **Tac Trials**: Record tac trials and save your best times, if implemented
 
 ### I am completely open to any feature suggestions. If you have any ideas for campaign features, send them my way!
 
