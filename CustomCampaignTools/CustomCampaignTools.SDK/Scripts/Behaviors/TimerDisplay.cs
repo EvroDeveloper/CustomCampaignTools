@@ -48,7 +48,7 @@ namespace CustomCampaignTools.SDK
         private TimerDisplayType timerDisplayType => (TimerDisplayType)serializedTimerDisplayType.Get();
 
         public Il2CppValueField<int> serializedTrialDisplayType;
-        private TrialTimeDisplayType trialDisplay => (TrialTimeDisplayType)serializedTrialDisplay.Get();
+        private TrialTimeDisplayType trialDisplay => (TrialTimeDisplayType)serializedTrialDisplayType.Get();
 
         private string textPrefix = "";
         private string textPostfix = "";
@@ -124,7 +124,7 @@ namespace CustomCampaignTools.SDK
             }
             else if (timerDisplayType == TimerDisplayType.LevelTime)
             {
-                DisplayLevelTime()
+                DisplayLevelTime();
             }
             else if (timerDisplayType == TimerDisplayType.TrialTime)
             {
@@ -172,7 +172,7 @@ namespace CustomCampaignTools.SDK
         public void DisplayLevelTime()
         {
             int time = Campaign.Session.saveData.GetLevelTime(targetLevelBarcode);
-            if(_alwaysUpdate && lastLoadedCampaignLevel == targetLevelBarcode) time += LevelTiming.GetMainTime();
+            if(_alwaysUpdate && Campaign.lastLoadedCampaignLevel == targetLevelBarcode) time += LevelTiming.GetMainTime();
             DisplayTimeSpan(time);
         }
 

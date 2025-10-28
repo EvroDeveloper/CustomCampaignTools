@@ -70,7 +70,7 @@ namespace CustomCampaignTools.SDK
                 }
             }
 
-            int percentageCount = (int)(Mathf.Floor((Campaign.Session.saveData.UnlockedAchievements.Count/totalAchievements) * 100)/100)
+            int percentageCount = (int)(Mathf.Floor((Campaign.Session.saveData.UnlockedAchievements.Count/totalAchievements) * 100)/100);
 
             if (UnlockCount != null)
                 UnlockCount.text = string.Format(unlockTextFormat, Campaign.Session.saveData.UnlockedAchievements.Count, totalAchievements, percentageCount);
