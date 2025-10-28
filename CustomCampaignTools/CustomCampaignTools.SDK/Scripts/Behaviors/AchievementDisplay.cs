@@ -28,12 +28,19 @@ namespace CustomCampaignTools.SDK
 
         public Il2CppReferenceField<Button> nextButton;
         public Button NextButton => nextButton.Get();
+
         public Il2CppReferenceField<Button> backButton;
         public Button BackButton => backButton.Get();
+
         public Il2CppReferenceField<TMP_Text> pageText;
         public TMP_Text PageText => pageText.Get();
+
         public Il2CppReferenceField<TMP_Text> unlockCount;
         public TMP_Text UnlockCount => unlockCount.Get();
+
+        private int totalAchievements;
+
+        private string unlockTextFormat = "{0}/{1} Achievements Unlocked";
 
 
         private void UpdateVisualization()
@@ -63,8 +70,10 @@ namespace CustomCampaignTools.SDK
                 }
             }
 
+            int percentageCount = (int)(Mathf.Floor((Campaign.Session.saveData.UnlockedAchievements.Count/totalAchievements) * 100)/100)
+
             if (UnlockCount != null)
-                UnlockCount.text = $"{Campaign.Session.saveData.UnlockedAchievements.Count}/{Campaign.Session.Achievements.Count} Achievements Unlocked";
+                UnlockCount.text = string.Format(unlockTextFormat, Campaign.Session.saveData.UnlockedAchievements.Count, totalAchievements, percentageCount);
         }
 #else 
         public Button nextButton;
@@ -79,6 +88,7 @@ namespace CustomCampaignTools.SDK
             achievementViews = GetComponentsInChildren<AchievementReferenceHolder>(true);
             nextButton.Get().onClick.AddListener(new Action(NextPage));
             backButton.Get().onClick.AddListener(new Action(PrevPage));
+            totalAchievements = Campaign.Session.Achievements.Count;
 #endif
         }
 
@@ -101,6 +111,13 @@ namespace CustomCampaignTools.SDK
 #if MELONLOADER
             _currentPage = Mathf.Max(0, _currentPage - 1);
             UpdateVisualization();
+#endif
+        }
+
+        public void SetUnlockTextFormat(string format)
+        {
+#if MELONLOADER
+            unlockTextFormat = format;
 #endif
         }
     }

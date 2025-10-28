@@ -238,7 +238,7 @@ namespace CustomCampaignTools
             public SaveData()
             {
             }
-            
+
             public SaveData(CampaignSaveData parent)
             {
                 SavePoint = parent.LoadedSavePoint;
@@ -254,8 +254,27 @@ namespace CustomCampaignTools
                 TrialTimes = parent.TrialTimes;
             }
 
+            private void CleanData()
+            {
+                foreach (AmmoSave ammoSave in AmmoSaves)
+                {
+                    if(string.IsNullOrEmpty(ammoSave.LevelBarcode))
+                    {
+                        AmmoSaves.Remove(ammoSave);
+                    }
+                }
+                foreach (LevelTime levelTime in LevelTimes)
+                {
+                    if(string.IsNullOrEmpty(levelTime.LevelBarcode))
+                    {
+                        LevelTimes.Remove(levelTime);
+                    }
+                }
+            }
+
             public void LoadSaveData(CampaignSaveData parent)
             {
+                CleanData();
                 parent.LoadedSavePoint = SavePoint;
                 parent.LoadedAmmoSaves = AmmoSaves;
                 parent.LoadedInventorySaves = InventorySaves ?? [];

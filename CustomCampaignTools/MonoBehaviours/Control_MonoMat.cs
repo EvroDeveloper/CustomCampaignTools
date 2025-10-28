@@ -14,15 +14,19 @@ using BoneLib;
 
 namespace CustomCampaignTools.LabWorks
 {
-	// Todo: Testing, Audio Playing
+#if MELONLOADER
 	[RegisterTypeInIl2Cpp]
+#endif
 	public class Control_MonoMat : MonoBehaviour
 	{
+#if MELONLOADER
 		public Control_MonoMat(IntPtr ptr) : base(ptr) {}
+#endif
 
 		private CrateSpawner[] _loots;
-        public void SetLootsFromParent(GameObject parent) => _loots = parent.GetComponentsInChildren<CrateSpawner>();
+		public void SetLootsFromParent(GameObject parent) => _loots = parent.GetComponentsInChildren<CrateSpawner>();
 
+#if MELONLOADER
 		private List<Rigidbody> _lootBodies = new List<Rigidbody>();
 
 		private int _multiplier;
@@ -57,25 +61,27 @@ namespace CustomCampaignTools.LabWorks
 		private UltEventHolder OnItemBought;
 
 		private bool _hasFields = false;
+#endif
 
 		public void StartFields(
-			GameObject lootParent, 
-			int itemPrice, 
-			int multiplier, 
-			TMP_Text _bulletBalanceTextmesh, 
-			TMP_Text _refundTextmesh, 
-			AmmoReciever reciever, 
-			string lightRefundSpawnable, 
-			string mediumRefundSpawnable, 
-			string heavyRefundSpawnable, 
-			AudioClip openedClip, 
-			AudioClip unlockedClip, 
-			AudioClip lockedClip, 
-			Transform giveChangeTransform, 
-			UltEventHolder AmountRoseEvent, 
-			UltEventHolder AmountDroppedEvent, 
+			GameObject lootParent,
+			int itemPrice,
+			int multiplier,
+			TMP_Text _bulletBalanceTextmesh,
+			TMP_Text _refundTextmesh,
+			AmmoReciever reciever,
+			string lightRefundSpawnable,
+			string mediumRefundSpawnable,
+			string heavyRefundSpawnable,
+			AudioClip openedClip,
+			AudioClip unlockedClip,
+			AudioClip lockedClip,
+			Transform giveChangeTransform,
+			UltEventHolder AmountRoseEvent,
+			UltEventHolder AmountDroppedEvent,
 			UltEventHolder ItemBoughtEvent)
 		{
+#if MELONLOADER
 			SetLootsFromParent(lootParent);
 			foreach(Rigidbody rb in lootParent.GetComponentsInChildren<Rigidbody>())
 			{
@@ -102,12 +108,13 @@ namespace CustomCampaignTools.LabWorks
 			_hasFields = true;
 
 			SafeStart();
-			
+#endif
 		}
 
+#if MELONLOADER
 		private void SafeStart()
 		{
-            reciever.OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g) );
+			reciever.OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g));
 			UpdateTMP();
 		}
 
@@ -117,18 +124,22 @@ namespace CustomCampaignTools.LabWorks
 			int max = Mathf.Max(0, (_trueItemPrice - _totalBullets));
 			_bulletBalanceTextmesh.text = $"{max}";
 		}
+#endif
 
 		public void OnLootSpawned(CrateSpawner spawner, GameObject entity)
 		{
+#if MELONLOADER
 			foreach(Rigidbody rb in entity.GetComponentsInChildren<Rigidbody>())
 			{
 				rb.isKinematic = true;
 				_lootBodies.Add(rb);
 			}
+#endif
 		}
 
 		public void GiveChange()
 		{
+#if MELONLOADER
             if(_lightBullets > 0)
             {
                 HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
@@ -150,10 +161,12 @@ namespace CustomCampaignTools.LabWorks
 				OnAmountDropped.Invoke();
 
 			UpdateTMP();
+#endif
 		}
 
 		public void PurchaseItem()
 		{
+#if MELONLOADER
 			// If the inserted bullets is less than the item price
 			// (Unable to buy)
 			if(_totalBullets < _trueItemPrice)
@@ -175,8 +188,10 @@ namespace CustomCampaignTools.LabWorks
 			Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
 
 			UpdateTMP();
+#endif
 		}
 
+#if MELONLOADER
 		private int CleanupLight(int ammoToRemove)
 		{
 			if(ammoToRemove > _lightBullets)
@@ -287,5 +302,6 @@ namespace CustomCampaignTools.LabWorks
 		public void SetLoots(Rigidbody[] loots)
 		{
 		}
+#endif
 	}
 }

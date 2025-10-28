@@ -7,6 +7,15 @@ using System.Linq;
 
 namespace CustomCampaignTools
 {
+    public enum CampaignLevelType
+    {
+        None,
+        Intro,
+        Menu,
+        MainLevel,
+        ExtraLevel // Extra levels do not save ammo
+    }
+
     public class CampaignLevel
     {
         public Campaign campaign;
@@ -63,6 +72,11 @@ namespace CustomCampaignTools
             Barcode = copy.Barcode;
             overrideName = copy.overrideName;
             type = copy.type;
+        }
+
+        public bool IsValid()
+        {
+            return AssetWarehouse.Instance.TryGetCrate(Barcode, out _);
         }
 
         public static implicit operator Barcode(CampaignLevel c) => c.Barcode;

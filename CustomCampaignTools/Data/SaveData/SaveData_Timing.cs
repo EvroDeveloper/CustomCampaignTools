@@ -28,6 +28,8 @@ namespace CustomCampaignTools
 
         public void AddTimeToLevel(string levelBarcode, int seconds)
         {
+            if (string.IsNullOrEmpty(levelBarcode)) return;
+            
             LevelTime levelTime = LevelTimes.Find(lt => lt.LevelBarcode == levelBarcode);
             if (levelTime == null)
             {
@@ -53,8 +55,9 @@ namespace CustomCampaignTools
                 };
                 TrialTimes.Add(trial);
             }
-            trial.AddTime(time);
+            bool isBest = trial.AddTime(time);
             SaveToDisk();
+            return isBest;
         }
 
         public float GetTrialBest(string trialKey)
@@ -101,10 +104,16 @@ namespace CustomCampaignTools
             return total / PreviousTimes.Count;
         }
 
-        public void AddTime(float time)
+        public bool AddTime(float time)
         {
             PreviousTimes.Add(time);
-            if (time < BestTime) BestTime = time;
+            if (time < BestTime)
+            {
+                BestTime = time;
+                return true;
+            } 
+                
+            return false;
         }
     }
 

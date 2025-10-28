@@ -22,6 +22,17 @@ namespace CustomCampaignTools.Timing
             c.saveData.AddTimeToLevel(levelBarcode, seconds);
         }
 
+        public static int GetMainTime()
+        {
+            return (int)MainTimer.GetTimeSinceStart();
+        }
+        
+        public static float GetRunningTrialTime(string key)
+        {
+            Timer trialTimer = TrialTimers[key];
+            return trialTimer.GetTimeSinceStart();
+        }
+
         public static void StartTrialTimer(string key)
         {
             if (!TrialTimers.ContainsKey(key))
@@ -49,24 +60,26 @@ namespace CustomCampaignTools.Timing
             trialTimer.ResumeTimer();
         }
 
-        public static float EndTrialTimer(string key, bool save = true)
+        public static float EndTrialTimer(string key, out bool isBest, bool save = true)
         {
             Timer trialTimer = TrialTimers[key];
             TrialTimers.Remove(key);
 
             float time = trialTimer.GetTimeSinceStart();
 
-            if(save && Campaign.SessionActive)
+            isBest = false;
+
+            if (save && Campaign.SessionActive)
             {
-                Campaign.Session.saveData.AddTrialTime(key, time);
+                isBest = SaveTrialTime(Campaign.Session, key, time);
             }
 
             return time;
         }
 
-        public static void SaveTrialTime(Campaign c, string key, float time)
+        public static bool SaveTrialTime(Campaign c, string key, float time)
         {
-            c.saveData.AddTrialTime(key, time);
+            return c.saveData.AddTrialTime(key, time);
         }
 
         public static void ONGAMEPAUSE()

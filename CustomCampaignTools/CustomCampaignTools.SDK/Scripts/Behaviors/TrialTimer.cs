@@ -27,8 +27,21 @@ namespace CustomCampaignTools.SDK
         public float EndTimer(string trialKey)
         {
 #if MELONLOADER
-            return LevelTiming.EndTrialTimer(trialKey);
+            return LevelTiming.EndTrialTimer(trialKey, out _);
+#else
+            return 0f;
 #endif
+        }
+        
+        public bool EndTimer_IsBest(string trialKey)
+                {
+#if MELONLOADER
+            LevelTiming.EndTrialTimer(trialKey, out bool best);
+            return best;
+#else
+            return false;
+#endif
+
         }
 
         public void PauseTimer(string trialKey)

@@ -13,6 +13,7 @@ namespace CustomCampaignTools
         public void SaveAmmoForLevel(string levelBarcode)
         {
             if (!campaign.SaveLevelAmmo) return;
+            if (string.IsNullOrEmpty(levelBarcode)) return;
 
             AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
