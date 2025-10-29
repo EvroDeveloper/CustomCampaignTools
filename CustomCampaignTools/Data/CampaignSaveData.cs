@@ -206,12 +206,10 @@ namespace CustomCampaignTools
             {
                 if (File.Exists(LegacySavePath))
                 {
-                    MelonLogger.Msg("Loading save from old UserData folder. It will be saved to the new location on next save.");
                     savePathToUse = LegacySavePath;
                 }
                 else
                 {
-                    MelonLogger.Msg("No save found, resetting save");
                     ClearAmmoSave();
                     LoadedSavePoint = new SavePoint();
                     LoadedFloatDatas = new List<FloatData>();
