@@ -90,12 +90,12 @@ namespace CustomCampaignTools
     public class TrialTime
     {
         public string TrialKey;
-        public float BestTime;
+        public float BestTime = -1f;
         public List<float> PreviousTimes = [];
 
         public float GetAverageTime()
         {
-            if (PreviousTimes == null || PreviousTimes.Count == 0) return -1;
+            if (PreviousTimes == null || PreviousTimes.Count == 0) return 0;
             float total = 0;
             foreach (float time in PreviousTimes)
             {
@@ -107,7 +107,7 @@ namespace CustomCampaignTools
         public bool AddTime(float time)
         {
             PreviousTimes.Add(time);
-            if (time < BestTime)
+            if (time < BestTime || BestTime <= 0f)
             {
                 BestTime = time;
                 return true;

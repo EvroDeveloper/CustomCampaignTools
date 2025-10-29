@@ -219,7 +219,7 @@ namespace CustomCampaignTools.SDK
         {
             if (textDisplay.Get() == null) return;
 
-            float time = Mathf.Max(time, 0f);
+            float time = Mathf.Max(rawTime, 0f);
 
             int msMultForRound = (int)Mathf.Pow(10, _millisecondsDepth);
             int milliseconds = Mathf.FloorToInt((time % 1f) * msMultForRound);
