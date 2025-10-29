@@ -28,8 +28,12 @@ namespace CustomCampaignTools
         internal List<string> UnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
 
-        public string SaveFolder { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}"; }
-        public string SavePath { get => $"{SaveFolder}/save.json"; }
+        public string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
+        public string SavePath { get => $"{SaveFolder}/slot_Campaign_{campaign.Name}.save.json"; }
+        public string BackupSavePath { get => $"{SaveFolder}/slot_Campaign.{campaign.Name}.save_backup.json"; }
+
+        public string LegacySaveFolder { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}"; }
+        public string LegacySavePath { get => $"{LegacySaveFolder}/save.json"; }
 
         public CampaignSaveData(Campaign c)
         {
@@ -39,7 +43,7 @@ namespace CustomCampaignTools
 
         public void ResetSave()
         {
-            SaveToDisk($"{SaveFolder}/save_backup.json");
+            SaveToDisk(BackupSavePath);
 
             ClearAmmoSave();
             ClearSavePoint();
@@ -198,6 +202,10 @@ namespace CustomCampaignTools
 
             if (!File.Exists(SavePath))
             {
+                if(File.Exists(LegacySavePath))
+                {
+                    ConvertOldSave();
+                }
                 ClearAmmoSave();
                 LoadedSavePoint = new SavePoint();
                 LoadedFloatDatas = new List<FloatData>();
@@ -218,6 +226,11 @@ namespace CustomCampaignTools
             SaveData saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
 
             saveData.LoadSaveData(this);
+        }
+
+        internal void ConvertOldSave()
+        {
+            File.Copy(LegacySavePath, SavePath);
         }
         #endregion
 
