@@ -224,16 +224,16 @@ namespace CustomCampaignTools
         public class SaveData
         {
             public SavePoint SavePoint { get; set; }
-            public List<AmmoSave> AmmoSaves { get; set; }
-            public Dictionary<string, InventoryData> InventorySaves { get; set; }
-            public List<FloatData> FloatData { get; set; }
+            public List<AmmoSave> AmmoSaves { get; set; } = [];
+            public Dictionary<string, InventoryData> InventorySaves { get; set; } = [];
+            public List<FloatData> FloatData { get; set; } = [];
             public bool DevToolsUnlocked { get; set; }
             public bool AvatarUnlocked { get; set; }
-            public List<string> UnlockedAchievements { get; set; }
-            public List<string> UnlockedLevels { get; set; }
+            public List<string> UnlockedAchievements { get; set; } = [];
+            public List<string> UnlockedLevels { get; set; } = [];
             public bool SkipIntro { get; set; }
-            public List<LevelTime> LevelTimes { get; set; }
-            public List<TrialTime> TrialTimes { get; set; }
+            public List<LevelTime> LevelTimes { get; set; } = [];
+            public List<TrialTime> TrialTimes { get; set; } = [];
 
             public SaveData()
             {
@@ -252,6 +252,7 @@ namespace CustomCampaignTools
                 UnlockedLevels = parent.UnlockedLevels;
                 LevelTimes = parent.LevelTimes;
                 TrialTimes = parent.TrialTimes;
+                CleanData();
             }
 
             private void CleanData()
@@ -286,7 +287,6 @@ namespace CustomCampaignTools
 
             public void LoadSaveData(CampaignSaveData parent)
             {
-                CleanData();
                 parent.LoadedSavePoint = SavePoint;
                 parent.LoadedAmmoSaves = AmmoSaves;
                 parent.LoadedInventorySaves = InventorySaves ?? [];
