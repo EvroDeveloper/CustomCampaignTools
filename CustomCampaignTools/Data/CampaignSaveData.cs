@@ -256,20 +256,32 @@ namespace CustomCampaignTools
 
             private void CleanData()
             {
+                List<AmmoSave> ammoSaveToRemove = [];
                 foreach (AmmoSave ammoSave in AmmoSaves)
                 {
-                    if(string.IsNullOrEmpty(ammoSave.LevelBarcode))
+                    if (string.IsNullOrEmpty(ammoSave.LevelBarcode))
                     {
-                        AmmoSaves.Remove(ammoSave);
+                        ammoSaveToRemove.Add(ammoSave);
                     }
                 }
+                foreach (AmmoSave ammoSave in ammoSaveToRemove)
+                {
+                    AmmoSaves.Remove(ammoSave);
+                }
+
+                List<LevelTime> levelTimesToRemove = [];
                 foreach (LevelTime levelTime in LevelTimes)
                 {
-                    if(string.IsNullOrEmpty(levelTime.LevelBarcode))
+                    if (string.IsNullOrEmpty(levelTime.LevelBarcode))
                     {
-                        LevelTimes.Remove(levelTime);
+                        levelTimesToRemove.Add(levelTime);
                     }
                 }
+                foreach (LevelTime levelTime in levelTimesToRemove)
+                {
+                    LevelTimes.Remove(levelTime);
+                }
+                
             }
 
             public void LoadSaveData(CampaignSaveData parent)
