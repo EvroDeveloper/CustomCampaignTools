@@ -1,6 +1,9 @@
 using CustomCampaignTools.Timing;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System;
+using System.Runtime.Serialization;
 
 namespace CustomCampaignTools
 {
@@ -71,7 +74,7 @@ namespace CustomCampaignTools
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return 0;
-            return trial.GetAverageTime();
+            return trial.AverageTime;
         }
 
         public float GetTrialLatest(string trialKey)
@@ -90,28 +93,59 @@ namespace CustomCampaignTools
     public class TrialTime
     {
         public string TrialKey;
-        public float BestTime = -1f;
+
+        [JsonIgnore]
+        public float BestTime { get; private set; }
+
+        [JsonIgnore]
+        public float AverageTime { get; private set; }
         public List<float> PreviousTimes = [];
 
-        public float GetAverageTime()
+        [OnDeserialized]
+        public void OnDeserialize()
         {
-            if (PreviousTimes == null || PreviousTimes.Count == 0) return 0;
+            if (PreviousTimes == null || PreviousTimes.Count == 0)
+            {
+                BestTime = 0;
+                AverageTime = 0;
+                return;
+            }
+            float best = PreviousTimes[0];
+            float total = 0;
+            foreach (float time in PreviousTimes)
+            {
+                if (time < best)
+                    best = time;
+                total += time;
+            }
+            BestTime = best;
+            AverageTime = total / PreviousTimes.Count;
+        }
+
+        public void UpdateAverageTime()
+        {
+            if (PreviousTimes == null || PreviousTimes.Count == 0)
+            {
+                AverageTime = 0;
+                return;
+            }
             float total = 0;
             foreach (float time in PreviousTimes)
             {
                 total += time;
             }
-            return total / PreviousTimes.Count;
+            AverageTime = total / PreviousTimes.Count;
         }
 
         public bool AddTime(float time)
         {
             PreviousTimes.Add(time);
-            if (time < BestTime || BestTime <= 0f)
+            if (time < BestTime)
             {
                 BestTime = time;
                 return true;
-            } 
+            }
+            UpdateAverageTime();
                 
             return false;
         }
