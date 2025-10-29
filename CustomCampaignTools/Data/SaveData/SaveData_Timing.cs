@@ -63,21 +63,21 @@ namespace CustomCampaignTools
         public float GetTrialBest(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
-            if (trial == null) return -1;
+            if (trial == null) return 0;
             return trial.BestTime;
         }
 
         public float GetTrialAverage(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
-            if (trial == null) return -1;
+            if (trial == null) return 0;
             return trial.GetAverageTime();
         }
 
         public float GetTrialLatest(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
-            if (trial == null) return -1;
+            if (trial == null) return 0;
             return trial.PreviousTimes[trial.PreviousTimes.Count - 1];
         }
 

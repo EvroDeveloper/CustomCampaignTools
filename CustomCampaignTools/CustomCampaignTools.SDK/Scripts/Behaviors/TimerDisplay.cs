@@ -200,13 +200,14 @@ namespace CustomCampaignTools.SDK
             if(_displayHours)
             {
                 hours = Mathf.FloorToInt(time / (60*60));
+                minutes = minutes % 60;
                 seconds = seconds % (60*60);
             }
 
             string output = "";
             if(_displayHours && hours > 0) output += $"{hours}:";
-            if(_displayMinutes) output += $"{minutes}:";
-            if(_displaySeconds) output += $"{seconds}";
+            if(_displayMinutes) output += $"{minutes:D2}:";
+            if(_displaySeconds) output += $"{seconds:D2}";
 
             if (output.EndsWith(":"))
                 output = output.Substring(0, output.Length - 1);
@@ -214,9 +215,11 @@ namespace CustomCampaignTools.SDK
             textDisplay.Get().text = output;
         }
 
-        private void DisplayTimeSpan(float time)
+        private void DisplayTimeSpan(float rawTime)
         {
             if (textDisplay.Get() == null) return;
+
+            float time = Mathf.Max(time, 0f);
 
             int msMultForRound = (int)Mathf.Pow(10, _millisecondsDepth);
             int milliseconds = Mathf.FloorToInt((time % 1f) * msMultForRound);
@@ -232,14 +235,15 @@ namespace CustomCampaignTools.SDK
             if(_displayHours)
             {
                 hours = Mathf.FloorToInt(time / (60*60));
+                minutes = minutes % 60;
                 seconds = seconds % (60*60);
             }
 
             string output = "";
             if(_displayHours && hours > 0) output += $"{hours}:";
-            if(_displayMinutes) output += $"{minutes}:";
+            if(_displayMinutes) output += $"{minutes:D2}:";
             if(_displaySeconds) output += $"{seconds:D2}";
-            if(_displayMilliseconds) output += $".{milliseconds}";
+            if(_displayMilliseconds) output += $".{milliseconds.ToString($"D{_millisecondsDepth}")}";
             
             if (output.EndsWith(":"))
                 output = output.Substring(0, output.Length - 1);
