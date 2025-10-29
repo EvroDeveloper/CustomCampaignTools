@@ -102,7 +102,7 @@ namespace CustomCampaignTools
         public List<float> PreviousTimes = [];
 
         [OnDeserialized]
-        public void OnDeserialize()
+        public void OnDeserialize(StreamingContext context)
         {
             if (PreviousTimes == null || PreviousTimes.Count == 0)
             {
