@@ -211,6 +211,7 @@ namespace CustomCampaignTools
                 }
                 else
                 {
+                    MelonLogger.Msg("No save found, resetting save");
                     ClearAmmoSave();
                     LoadedSavePoint = new SavePoint();
                     LoadedFloatDatas = new List<FloatData>();
