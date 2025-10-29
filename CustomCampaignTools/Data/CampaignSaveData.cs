@@ -200,11 +200,14 @@ namespace CustomCampaignTools
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
 
+            string savePathToUse = SavePath;
+
             if (!File.Exists(SavePath))
             {
                 if (File.Exists(LegacySavePath))
                 {
-                    ConvertOldSave();
+                    MelonLogger.Msg("Loading save from old UserData folder. It will be saved to the new location on next save.");
+                    savePathToUse = LegacySavePath;
                 }
                 else
                 {
@@ -218,7 +221,7 @@ namespace CustomCampaignTools
                 }
             }
 
-            string json = File.ReadAllText(SavePath);
+            string json = File.ReadAllText(savePathToUse);
 
             var settings = new JsonSerializerSettings
             {
@@ -231,10 +234,6 @@ namespace CustomCampaignTools
             saveData.LoadSaveData(this);
         }
 
-        internal void ConvertOldSave()
-        {
-            File.Copy(LegacySavePath, SavePath);
-        }
         #endregion
 
         public class SaveData
