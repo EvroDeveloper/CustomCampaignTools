@@ -202,17 +202,20 @@ namespace CustomCampaignTools
 
             if (!File.Exists(SavePath))
             {
-                if(File.Exists(LegacySavePath))
+                if (File.Exists(LegacySavePath))
                 {
                     ConvertOldSave();
                 }
-                ClearAmmoSave();
-                LoadedSavePoint = new SavePoint();
-                LoadedFloatDatas = new List<FloatData>();
-                DevToolsUnlocked = false;
-                AvatarUnlocked = false;
-                SaveToDisk();
-                return;
+                else
+                {
+                    ClearAmmoSave();
+                    LoadedSavePoint = new SavePoint();
+                    LoadedFloatDatas = new List<FloatData>();
+                    DevToolsUnlocked = false;
+                    AvatarUnlocked = false;
+                    SaveToDisk();
+                    return;
+                }
             }
 
             string json = File.ReadAllText(SavePath);
