@@ -78,6 +78,7 @@
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\VariableManager.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\TimerDisplay.cs" />
     <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\TrialTimer.cs" />
+    <Compile Include="CustomCampaignTools\CustomCampaignTools.SDK\Scripts\Behaviors\VersionCheck.cs" />
     <Compile Include="CustomCampaignTools\Data\AchievementData.cs" />
     <Compile Include="CustomCampaignTools\Data\CampaignLoadingData.cs" />
     <Compile Include="CustomCampaignTools\Timer\LevelTiming.cs" />
