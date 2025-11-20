@@ -67,14 +67,14 @@ namespace CustomCampaignTools
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return 0;
-            return trial.BestTime;
+            return Mathf.Max(trial.BestTime, 0);
         }
 
         public float GetTrialAverage(string trialKey)
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return 0;
-            return trial.AverageTime;
+            return Mathf.Max(trial.AverageTime, 0);
         }
 
         public float GetTrialLatest(string trialKey)
@@ -106,7 +106,7 @@ namespace CustomCampaignTools
         {
             if (PreviousTimes == null || PreviousTimes.Count == 0)
             {
-                BestTime = 0;
+                BestTime = -1;
                 AverageTime = 0;
                 return;
             }
@@ -140,7 +140,7 @@ namespace CustomCampaignTools
         public bool AddTime(float time)
         {
             PreviousTimes.Add(time);
-            if (time < BestTime)
+            if (time < BestTime || BestTime < 0)
             {
                 BestTime = time;
                 return true;
