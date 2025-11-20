@@ -325,6 +325,7 @@ namespace CustomCampaignTools
                 parent.AvatarUnlocked = AvatarUnlocked;
                 parent.SkipIntro = SkipIntro;
                 parent.RawUnlockedAchievements = UnlockedAchievements ?? [];
+                parent.UpdateValidUnlockedAchievements();
                 parent.UnlockedLevels = UnlockedLevels ?? [];
                 parent.LevelTimes = LevelTimes ?? [];
                 parent.TrialTimes = TrialTimes ?? [];
