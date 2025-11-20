@@ -2,10 +2,12 @@
 using MelonLoader;
 using CustomCampaignTools;
 using Il2CppUltEvents;
+using CustomCampaignTools.Debug;
 #else
 using UltEvents;
 #endif
 using UnityEngine;
+using System;
 
 namespace CustomCampaignTools.SDK
 {
@@ -47,12 +49,12 @@ namespace CustomCampaignTools.SDK
         public bool IsCurrentVersionGreaterOrEqual(string targetVersion)
         {
 #if MELONLOADER
-            string[] parsedCurVer = BuildInfo.Version.Split(".");
+            string[] parsedCurVer = BuildInfo.Version.Split('.');
             int curMajorVer = int.Parse(parsedCurVer[0]);
             int curMinorVer = int.Parse(parsedCurVer[1]);
             int curPatchVer = int.Parse(parsedCurVer[2]);
 
-            string[] parsedTargetVer = targetVersion.Split(".");
+            string[] parsedTargetVer = targetVersion.Split('.');
             int tarMajorVer = int.Parse(parsedTargetVer[0]);
             int tarMinorVer = int.Parse(parsedTargetVer[1]);
             int tarPatchVer = int.Parse(parsedTargetVer[2]);
