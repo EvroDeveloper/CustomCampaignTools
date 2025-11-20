@@ -10,7 +10,7 @@ namespace CustomCampaignTools.Debug
 {
     public class CampaignLogger
     {
-        const bool EnableDebug = true;
+        const bool EnableDebug = false;
         public static void Msg(object message)
         {
             if (!EnableDebug) return;
