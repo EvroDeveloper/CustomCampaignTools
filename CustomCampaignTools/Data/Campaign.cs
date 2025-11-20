@@ -75,7 +75,6 @@ namespace CustomCampaignTools
         private MonoDisc _achievementUnlockSoundDatacard;
         private AudioClip _achievementUnlockSound;
         public List<AchievementData> Achievements = [];
-        public Dictionary<string, AchievementData> AchievementsByKey = new();
         public bool LockInCampaign;
         public bool LockLevelsUntilEntered;
 
@@ -173,7 +172,6 @@ namespace CustomCampaignTools
                     foreach (AchievementData ach in campaign.Achievements)
                     {
                         ach.Init();
-                        campaign.AchievementsByKey[ach.Key] = ach;
                     }
                 }
 

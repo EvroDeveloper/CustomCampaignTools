@@ -26,7 +26,6 @@ namespace CustomCampaignTools
         internal bool AvatarUnlocked = false;
         internal bool SkipIntro = false;
         internal List<string> UnlockedAchievements = [];
-        internal List<string> RawUnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
 
         public string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
@@ -53,8 +52,7 @@ namespace CustomCampaignTools
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
             SkipIntro = false;
-            RawUnlockedAchievements = [];
-            UpdateValidUnlockedAchievements();
+            UnlockedAchievements = [];
             UnlockedLevels = [];
 
 
@@ -109,8 +107,8 @@ namespace CustomCampaignTools
         #region Achievements
         public bool UnlockAchievement(string key)
         {
-            if (RawUnlockedAchievements == null) RawUnlockedAchievements = new List<string>();
-            if (RawUnlockedAchievements.Contains(key)) return false;
+            if (UnlockedAchievements == null) UnlockedAchievements = new List<string>();
+            if (UnlockedAchievements.Contains(key)) return false;
 
             foreach (AchievementData achievement in campaign.Achievements)
             {
@@ -143,8 +141,7 @@ namespace CustomCampaignTools
                     });
                 }
 
-                RawUnlockedAchievements.Add(key);
-                UpdateValidUnlockedAchievements();
+                UnlockedAchievements.Add(key);
                 SaveToDisk();
                 CampaignBoneMenu.RefreshCampaignPage(campaign);
                 return true;
@@ -152,24 +149,11 @@ namespace CustomCampaignTools
             return false;
         }
 
-        private void UpdateValidUnlockedAchievements()
-        {
-            UnlockedAchievements.Clear();
-            foreach (string achievement in RawUnlockedAchievements)
-            {
-                if (campaign.AchievementsByKey.ContainsKey(achievement))
-                {
-                    UnlockedAchievements.Add(achievement);
-                }
-            }
-        }
-
         public void LockAchievement(string key)
         {
-            if (RawUnlockedAchievements.Contains(key))
+            if (UnlockedAchievements.Contains(key))
             {
-                RawUnlockedAchievements.Remove(key);
-                UpdateValidUnlockedAchievements();
+                UnlockedAchievements.Remove(key);
             }
         }
         #endregion
@@ -278,7 +262,7 @@ namespace CustomCampaignTools
                 DevToolsUnlocked = parent.DevToolsUnlocked;
                 AvatarUnlocked = parent.AvatarUnlocked;
                 SkipIntro = parent.SkipIntro;
-                UnlockedAchievements = parent.RawUnlockedAchievements;
+                UnlockedAchievements = parent.UnlockedAchievements;
                 UnlockedLevels = parent.UnlockedLevels;
                 LevelTimes = parent.LevelTimes;
                 TrialTimes = parent.TrialTimes;
@@ -324,7 +308,7 @@ namespace CustomCampaignTools
                 parent.DevToolsUnlocked = DevToolsUnlocked;
                 parent.AvatarUnlocked = AvatarUnlocked;
                 parent.SkipIntro = SkipIntro;
-                parent.RawUnlockedAchievements = UnlockedAchievements ?? [];
+                parent.UnlockedAchievements = UnlockedAchievements ?? [];
                 parent.UnlockedLevels = UnlockedLevels ?? [];
                 parent.LevelTimes = LevelTimes ?? [];
                 parent.TrialTimes = TrialTimes ?? [];
