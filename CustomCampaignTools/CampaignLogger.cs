@@ -10,7 +10,7 @@ namespace CustomCampaignTools.Debug
 {
     public class CampaignLogger
     {
-        const bool EnableDebug = false;
+        const bool EnableDebug = true;
         public static void Msg(object message)
         {
             if (!EnableDebug) return;
@@ -19,6 +19,11 @@ namespace CustomCampaignTools.Debug
 
         public static void Msg(Campaign campaign, object message)
         {
+            if(campaign == null)
+            {
+                Msg(message);
+                return;
+            }
             if (!EnableDebug && !campaign.DEVMODE) return;
             MelonLogger.Msg($"[CampaignLogger - {campaign.Name}] {message}");
         }

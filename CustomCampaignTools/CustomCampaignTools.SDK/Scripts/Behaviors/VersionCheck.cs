@@ -47,23 +47,28 @@ namespace CustomCampaignTools.SDK
         public bool IsCurrentVersionGreaterOrEqual(string targetVersion)
         {
 #if MELONLOADER
-            string[] parsedTargetVer = targetVersion.Split(".");
-            int majorTargetVer = int.Parse(parsedTargetVer[0]);
-            int minorTargetVer = int.Parse(parsedTargetVer[1]);
-            int patchTargetVer = int.Parse(parsedTargetVer[2]);
-
             string[] parsedCurVer = BuildInfo.Version.Split(".");
             int curMajorVer = int.Parse(parsedCurVer[0]);
             int curMinorVer = int.Parse(parsedCurVer[1]);
             int curPatchVer = int.Parse(parsedCurVer[2]);
 
-            if (curMajorVer < majorTargetVer) return false;
-            else if (curMajorVer > majorTargetVer) return true; // Major Greater
+            string[] parsedTargetVer = targetVersion.Split(".");
+            int tarMajorVer = int.Parse(parsedTargetVer[0]);
+            int tarMinorVer = int.Parse(parsedTargetVer[1]);
+            int tarPatchVer = int.Parse(parsedTargetVer[2]);
+
+            CampaignLogger.Msg(Campaign.Session, $"Comparing Current Version {curMajorVer}.{curMinorVer}.{curPatchVer} to Target Version {tarMajorVer}.{tarMinorVer}.{tarPatchVer}");
+
+            if (curMajorVer < tarMajorVer) return false;
+            else if (curMajorVer > tarMajorVer) return true; // Major Greater
+            CampaignLogger.Msg(Campaign.Session, "Major Versions Equal, testing Minor Version");
             // If they are equal, test Minor ver
-            if (curMinorVer < minorTargetVer) return false;
-            else if (curMinorVer > minorTargetVer) return true; // Major equals and Minor Greater
+            if (curMinorVer < tarMinorVer) return false;
+            else if (curMinorVer > tarMinorVer) return true; // Major equals and Minor Greater
+            CampaignLogger.Msg(Campaign.Session, "Minor Versions Equal, testing Patch Version");
             // If they are equal, test Patch ver
-            if (curPatchVer < patchTargetVer) return false;
+            if (curPatchVer < tarPatchVer) return false;
+            CampaignLogger.Msg(Campaign.Session, "Patch Version Greater or Equal");
             return true; // Major equals, Minor equals, Patch not less, good!!
 #else
             return false;
