@@ -9,6 +9,7 @@ using TMPro;
 
 using UnityEngine;
 using System;
+using CustomCampaignTools.Debug;
 
 namespace CustomCampaignTools.SDK
 {
@@ -33,7 +34,7 @@ namespace CustomCampaignTools.SDK
             Campaign campaign = CampaignUtilities.GetFromLevel(barcode);
             if (campaign == null)
             {
-                MelonLogger.Msg($"[AmmoScoreDisplay] Could not find campaign for barcode {barcode}");
+                CampaignLogger.SessionMsg($"AmmoScoreDisplay could not find campaign for barcode {barcode}");
                 return;
             }
             CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(barcode);

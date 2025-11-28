@@ -27,5 +27,10 @@ namespace CustomCampaignTools.Debug
             if (!EnableDebug && !campaign.DEVMODE) return;
             MelonLogger.Msg($"[CampaignLogger - {campaign.Name}] {message}");
         }
+
+        public static void SessionMsg(object message)
+        {
+            Msg(Campaign.Session, message);
+        }
     }
 }

@@ -2,7 +2,6 @@
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
-using Il2CppSLZ.Marrow.SceneStreaming;
 using MelonLoader;
 using System.Reflection;
 using UnityEngine;

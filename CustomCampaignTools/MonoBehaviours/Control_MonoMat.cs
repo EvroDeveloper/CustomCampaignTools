@@ -27,7 +27,7 @@ namespace CustomCampaignTools.LabWorks
 		public void SetLootsFromParent(GameObject parent) => _loots = parent.GetComponentsInChildren<CrateSpawner>();
 
 #if MELONLOADER
-		private List<Rigidbody> _lootBodies = new List<Rigidbody>();
+		private List<Rigidbody> _lootBodies = [];
 
 		private int _multiplier;
 		private int _itemPrice;
@@ -122,7 +122,7 @@ namespace CustomCampaignTools.LabWorks
 		{
 			_refundTextmesh.text = $"{_totalBullets}";
 			int max = Mathf.Max(0, (_trueItemPrice - _totalBullets));
-			_bulletBalanceTextmesh.text = $"{max}";
+			_bulletBalanceTextmesh.text = _opened ? "0" : $"{max}";
 		}
 #endif
 
@@ -142,22 +142,31 @@ namespace CustomCampaignTools.LabWorks
 #if MELONLOADER
             if(_lightBullets > 0)
             {
-                HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+				{
+					gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _lightBullets;
+				});
             }
             if(_mediumBullets > 0)
             {
-                HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+                {
+                    gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _mediumBullets;
+                });
             }
             if(_heavyBullets > 0)
             {
-                HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one);
+                HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+                {
+                    gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _heavyBullets;
+                });
             }
 
             _lightBullets = 0;
             _mediumBullets = 0;
             _heavyBullets = 0;
 
-			if(!_opened)
+			if(!_opened && OnAmountDropped != null)
 				OnAmountDropped.Invoke();
 
 			UpdateTMP();
@@ -185,7 +194,11 @@ namespace CustomCampaignTools.LabWorks
 
 			_opened = true;
 
-			Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
+			if(OnItemBought != null)
+				OnItemBought.Invoke();
+
+			//if(_openedClip != null)
+			//	Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
 
 			UpdateTMP();
 #endif
@@ -280,7 +293,7 @@ namespace CustomCampaignTools.LabWorks
             else if(type == 2)
                 _heavyBullets += addedBullets;
 
-			if(prevTotal < _trueItemPrice && _totalBullets >= _trueItemPrice)
+			if(prevTotal < _trueItemPrice && _totalBullets >= _trueItemPrice && OnAmountRose != null)
 			{
 				OnAmountRose.Invoke();
 			}

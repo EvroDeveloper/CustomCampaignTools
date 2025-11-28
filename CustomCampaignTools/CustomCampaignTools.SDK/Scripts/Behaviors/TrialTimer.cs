@@ -4,6 +4,7 @@ using CustomCampaignTools.Timing;
 #endif
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace CustomCampaignTools.SDK
 {
@@ -16,10 +17,21 @@ namespace CustomCampaignTools.SDK
     {
 #if MELONLOADER
         public TrialTimer(IntPtr ptr) : base(ptr) { }
+
+        public HashSet<string> activeTimers = new();
+
+        private void OnDestroy()
+        {
+            foreach(var timer in activeTimers)
+            {
+                EndTimer(timer);
+            }
+        }
 #endif
         public void StartTimer(string trialKey)
         {
 #if MELONLOADER
+            activeTimers.Add(trialKey);
             LevelTiming.StartTrialTimer(trialKey);
 #endif
         }
@@ -27,6 +39,7 @@ namespace CustomCampaignTools.SDK
         public float EndTimer(string trialKey)
         {
 #if MELONLOADER
+            activeTimers.Remove(trialKey);
             return LevelTiming.EndTrialTimer(trialKey, out _);
 #else
             return 0f;
@@ -36,6 +49,7 @@ namespace CustomCampaignTools.SDK
         public bool EndTimer_IsBest(string trialKey)
                 {
 #if MELONLOADER
+            activeTimers.Remove(trialKey);
             LevelTiming.EndTrialTimer(trialKey, out bool best);
             return best;
 #else

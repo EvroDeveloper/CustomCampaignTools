@@ -19,6 +19,11 @@ namespace CustomCampaignTools.Timing
             pauseCount = 0;
         }
 
+        public void ResetTimer()
+        {
+            startTime = UnityEngine.Time.time;
+        }
+
         public void PauseTimer()
         {
             if (running)

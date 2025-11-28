@@ -42,6 +42,10 @@ namespace CustomCampaignTools.Timing
                 Timer TrialTimer = TrialTimers[key];
                 TrialTimer.StartTimer();
             }
+            else
+            {
+                TrialTimers[key].ResetTimer();
+            }
         }
 
         public static void PauseTrialTimer(string key)
