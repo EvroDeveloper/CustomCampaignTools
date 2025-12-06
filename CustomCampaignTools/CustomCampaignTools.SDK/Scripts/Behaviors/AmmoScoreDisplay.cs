@@ -3,13 +3,13 @@ using MelonLoader;
 using Il2CppTMPro;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.Attributes;
+using CustomCampaignTools.Debug;
 #else
 using TMPro;
 #endif
 
 using UnityEngine;
 using System;
-using CustomCampaignTools.Debug;
 
 namespace CustomCampaignTools.SDK
 {

@@ -9,7 +9,7 @@ The best way to learn about the SDK is to read it's README, as there are no offi
 ## Features
  - **Main Menu Button**: Adds a button in the Main Menu to easily allow you to jump straight into a campaign.
  - **Ammo Saving**: The player's ammo count will have it's high score be saved throughout every main level, similar to how Boneworks saved ammo. 
- - **Inventory Saving**: The player's inventory can be enabled to save through levels of the campaign, with an option to filter for only certain items to be transfered.
+ - **Inventory Saving**: The player's inventory can be enabled to save through levels of the campaign, with an option to filter for only certain items to be transferred.
  - **Save Points**: Campaigns can have Save Points and Continue Buttons to make it easy to continue right where you left off when playing
  - **Custom Load Scene, and Custom Loading Music** per campaign
  - **Cheat Restriction**: Dev Tools and Avatar Switching can be disabled and restricted until the player finishes the campaign for the first time. Avatars can be restricted to a single campaign avatar, or to a whitelist of valid ones.

@@ -19,7 +19,8 @@ namespace CustomCampaignTools.SDK
 
         void Awake()
         {
-            gameObject.SetActive(false);
+            if(Campagin.SessionActive)
+                gameObject.SetActive(false);
         }
 #endif
     }

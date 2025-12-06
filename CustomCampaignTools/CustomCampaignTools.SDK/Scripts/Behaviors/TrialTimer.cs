@@ -47,7 +47,7 @@ namespace CustomCampaignTools.SDK
         }
         
         public bool EndTimer_IsBest(string trialKey)
-                {
+        {
 #if MELONLOADER
             activeTimers.Remove(trialKey);
             LevelTiming.EndTrialTimer(trialKey, out bool best);
@@ -55,7 +55,6 @@ namespace CustomCampaignTools.SDK
 #else
             return false;
 #endif
-
         }
 
         public void PauseTimer(string trialKey)

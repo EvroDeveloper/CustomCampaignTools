@@ -41,7 +41,26 @@ namespace CustomCampaignTools.Bonemenu
 
             if(c.Achievements != null)
             {
-                var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);  
+                var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
+                var achievementSubPage = achievementPage;
+
+                for(int i = 0; i < c.UnlockedAchievements.Count; i++)
+                {
+                    if(i % 10 == 0)
+                    {
+                        achievementSubPage = achievementPage.CreatePage($"Achievements {i + 1}-{Mathf.Min(i + 10, c.UnlockedAchievements.Count)}", Color.yellow);
+                    }
+
+                    string key = c.UnlockedAchievements[i];
+                    try
+                    {
+                        achievementSubPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                    }
+                    catch
+                    {
+                        MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                    }
+                }
 
                 foreach(string key in c.saveData.UnlockedAchievements)
                 {

@@ -23,6 +23,8 @@ namespace CustomCampaignTools.SDK
 
         void Awake()
         {
+            if(!Campagin.SessionActive) return;
+            
             if (TryGetComponent(out UltEventHolder ult))
             {
                 ult.Invoke();
