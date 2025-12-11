@@ -2,6 +2,7 @@ using BoneLib.Notifications;
 using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.Audio;
+using Il2CppSLZ.Marrow.SaveData;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.Utils;
 using Newtonsoft.Json;
@@ -52,9 +53,9 @@ namespace CustomCampaignTools
 
 
             foreach (string barcode in campaign.CampaignUnlockCrates)
-                DataManager.ActiveSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
+                DataManager._instance._activeSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
 
-            DataManager.TrySaveActiveSave(Il2CppSLZ.Marrow.SaveData.SaveFlags.DefaultAndPlayerSettingsAndUnlocks);
+            DataManager.TrySaveActiveSave(SaveFlags.DefaultAndPlayerSettingsAndUnlocks);
 
             SaveToDisk();
         }

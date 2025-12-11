@@ -1,8 +1,11 @@
 using BoneLib;
 using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Debug;
+using CustomCampaignTools.Games.BoneLab;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSystem.Numerics;
 using MelonLoader;
 using Newtonsoft.Json;
 using System;
@@ -37,26 +40,8 @@ namespace CustomCampaignTools
         public bool PrioritizeInLevelPanel = true;
 
         public bool RestrictDevTools;
-        public AvatarRestrictionType AvatarRestrictionType = AvatarRestrictionType.DisableBodyLog | AvatarRestrictionType.RestrictAvatar;
-        public string CampaignAvatar
-        {
-            get
-            {
-                if(_cachedAvatar == string.Empty || _cachedAvatar == null)
-                {
-                    if (MarrowGame.assetWarehouse.HasCrate(new Barcode(defaultCampaignAvatar)))
-                        _cachedAvatar = defaultCampaignAvatar;
-                    else
-                        _cachedAvatar = fallbackAvatar;
-                }
-                return _cachedAvatar;
-            }
-        }
-        private string defaultCampaignAvatar;
-        private string fallbackAvatar;
-        private string _cachedAvatar;
-
-        public string[] WhitelistedAvatars;
+        public bool IsBodylogRestricted;
+        public IAvatarRestrictor avatarRestrictor;
 
         public bool SaveLevelInventory;
         public List<string> InventorySaveLimit = [];
@@ -135,13 +120,16 @@ namespace CustomCampaignTools
 
                 campaign.LockLevelsUntilEntered = data.UnlockableLevels;
 
-                campaign.AvatarRestrictionType = data.AvatarRestrictionType;
-                campaign.WhitelistedAvatars = [.. data.WhitelistedAvatars];
+                if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
+                    campaign.avatarRestrictor = new WhitelistAvatarRestrictor(data.WhitelistedAvatars);
+                else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
+                    campaign.avatarRestrictor = new DefaultAvatarRestrictor(new Barcode(data.CampaignAvatar), new Barcode(data.BaseGameFallbackAvatar));
+                else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
+                    campaign.avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
+                
+                campaign.IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
 
                 campaign.RestrictDevTools = data.RestrictDevTools;
-
-                campaign.defaultCampaignAvatar = data.CampaignAvatar;
-                campaign.fallbackAvatar = data.BaseGameFallbackAvatar;
 
                 campaign.SaveLevelInventory = data.SaveLevelWeapons;
                 campaign.InventorySaveLimit = data.InventorySaveLimit;
@@ -176,21 +164,31 @@ namespace CustomCampaignTools
                 if(data.HideCratesFromGachapon != null)
                     GashaponHider.AddCratesToHide(data.HideCratesFromGachapon);
 
-                CampaignUtilities.LoadedCampaigns.Add(campaign);
-
-                CampaignBoneMenu.CreateCampaignPage(BoneMenuCreator.campaignCategory, campaign);
-
+                CampaignUtilities.AddCampaign(campaign);
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"Failed to register campaign {data.Name}: {ex}");
+                CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex}");
             }
 
             return campaign;
         }
 
-        public static Campaign RegisterCampaignFromJson(string json)
+
+        public static Campaign RegisterCampaignFromPallet(Pallet pallet)
         {
+            if (!AssetWarehouse.Instance.TryGetPalletManifest(pallet.Barcode, out var manifest))
+            {
+                CampaignLogger.Error($"Failed to register campaign from pallet {pallet.Barcode}: Pallet manifest not found");
+                return null;
+            }
+
+            string campaignJsonPath = Path.Combine(Path.GetDirectoryName(manifest.PalletPath), "campaign.json.bundle");
+            if (!File.Exists(campaignJsonPath)) return null;
+            CampaignLogger.Msg("Json FOUND for Pallet " + pallet.Title);
+
+            string json = File.ReadAllText(campaignJsonPath);
+
             var settings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -198,7 +196,6 @@ namespace CustomCampaignTools
             };
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
-
             return RegisterCampaign(campaignValueHolder);
         }
 
@@ -286,48 +283,48 @@ namespace CustomCampaignTools
         public static void OnInitialize()
         {
             Hooking.OnLevelLoaded += OnLevelLoaded;
-            AssetWarehouse._onReady += new Action(() =>
-            {
-                try
-                {
-                    LoadCampaignsFromMods();
-                }
-                catch (Exception ex)
-                {
-                    MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
-                }
+            // AssetWarehouse._onReady += new Action(() =>
+            // {
+            //     try
+            //     {
+            //         LoadCampaignsFromMods();
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
+            //     }
 
-                AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) =>
-                {
-                    LoadCampaignsFromMods();
-                });
-            });
+            //     AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) =>
+            //     {
+            //         LoadCampaignsFromMods();
+            //     });
+            // });
         }
 
-        public static void LoadCampaignsFromMods()
-        {
-            string[] modPaths = Directory.GetDirectories(MarrowSDK.RuntimeModsPath);
+        // public static void LoadCampaignsFromMods()
+        // {
+        //     string[] modPaths = Directory.GetDirectories(MarrowSDK.RuntimeModsPath);
 
-            foreach (string mod in modPaths)
-            {
-                string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
+        //     foreach (string mod in modPaths)
+        //     {
+        //         string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
 
-                if (jsonPaths2.Length != 0 && !RegisteredJsonPaths.Contains(jsonPaths2[0]))
-                {
-                    RegisteredJsonPaths.Add(jsonPaths2[0]);
-                    string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
-                    try
-                    {
-                        RegisterCampaignFromJson(jsonContent2);
-                    }
-                    catch
-                    {
+        //         if (jsonPaths2.Length != 0 && !RegisteredJsonPaths.Contains(jsonPaths2[0]))
+        //         {
+        //             RegisteredJsonPaths.Add(jsonPaths2[0]);
+        //             string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
+        //             try
+        //             {
+        //                 RegisterCampaignFromJson(jsonContent2);
+        //             }
+        //             catch
+        //             {
 
-                    }
-                }
+        //             }
+        //         }
                 
-            }
-        }
+        //     }
+        // }
 
         public static void OnLevelLoaded(LevelInfo info)
         {

@@ -12,21 +12,15 @@ namespace CustomCampaignTools.Bonemenu
     {
         public static Dictionary<Campaign, Page> campaignMenus = new();
 
-        public static void CreateCampaignPage(Page category, Campaign c)
+        public static void CreateCampaignPage(Campaign c)
         {
-            var campaignPage = category.CreatePage(c.Name, Color.white);
-
-            campaignMenus.Add(c, campaignPage);
+            if (!campaignMenus.ContainsKey(c))
+            {
+                var campaignPage = BoneMenuCreator.campaignCategory.CreatePage(c.Name, Color.white);
+                campaignMenus.Add(c, campaignPage);
+            }
 
             RefreshCampaignPage(c);
-
-            if (c.DEVMODE)
-            {
-                var DebugPage = campaignPage.CreatePage("Debug", Color.red);
-
-                DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
-                DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
-            }
         }
 
         public static void RefreshCampaignPage(Campaign c)
@@ -35,23 +29,23 @@ namespace CustomCampaignTools.Bonemenu
             campaignPage.RemoveAll();
 
             campaignPage.CreateFunction("Enter Campaign", Color.white, c.Enter);
-            if(c.saveData.LoadedSavePoint.IsValid(out _))
+            if (c.saveData.LoadedSavePoint.IsValid(out _))
                 campaignPage.CreateFunction("Continue Campaign", Color.white, () => c.saveData.LoadedSavePoint.LoadContinue(c));
             campaignPage.CreateFunction("Reset Save", Color.red, c.saveData.ResetSave);
 
-            if(c.Achievements != null)
+            if (c.Achievements != null)
             {
                 var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
                 var achievementSubPage = achievementPage;
 
-                for(int i = 0; i < c.UnlockedAchievements.Count; i++)
+                for (int i = 0; i < c.saveData.UnlockedAchievements.Count; i++)
                 {
-                    if(i % 10 == 0)
+                    if (i % 10 == 0)
                     {
-                        achievementSubPage = achievementPage.CreatePage($"Achievements {i + 1}-{Mathf.Min(i + 10, c.UnlockedAchievements.Count)}", Color.yellow);
+                        achievementSubPage = achievementPage.CreatePage($"Achievements {i + 1}-{Mathf.Min(i + 10, c.saveData.UnlockedAchievements.Count)}", Color.yellow);
                     }
 
-                    string key = c.UnlockedAchievements[i];
+                    string key = c.saveData.UnlockedAchievements[i];
                     try
                     {
                         achievementSubPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
@@ -62,7 +56,7 @@ namespace CustomCampaignTools.Bonemenu
                     }
                 }
 
-                foreach(string key in c.saveData.UnlockedAchievements)
+                foreach (string key in c.saveData.UnlockedAchievements)
                 {
                     try
                     {
@@ -73,6 +67,14 @@ namespace CustomCampaignTools.Bonemenu
                         MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
                     }
                 }
+            }
+
+            if (c.DEVMODE)
+            {
+                var DebugPage = campaignPage.CreatePage("Debug", Color.red);
+
+                DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
+                DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
             }
         }
     }

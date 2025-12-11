@@ -6,15 +6,15 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.Games.BoneLab
 {
-    public static class PlayerMenuMangler
+    public class BoneLabPlayerMenuMangler : IMenuMangler
     {
         // Much of code taken from Bonemenu, sorry!
-        static PreferencesPanelView panelView;
-        public static GameObject optionsPanel;
+        PreferencesPanelView panelView;
+        public GameObject optionsPanel;
 
-        public static Transform OptionsGrid
+        public Transform OptionsGrid
         {
             get
             {
@@ -24,13 +24,12 @@ namespace CustomCampaignTools
                 return _optionsGrid;
             }
         }
-        private static Transform _optionsGrid;
+        private Transform _optionsGrid;
 
-        private static GameObject _optionButton;
-        private static Button _optionButtonComponent;
+        private GameObject _optionButton;
+        private Button _optionButtonComponent;
 
-
-        public static void Initialize()
+        public void MangleMenu()
         {
             if(!Campaign.SessionActive) return;
 

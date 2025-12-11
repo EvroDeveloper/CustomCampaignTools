@@ -2,6 +2,7 @@ using BoneLib;
 using Il2CppSLZ.Bonelab;
 using Il2CppTMPro;
 using Il2CppUltEvents;
+using CustomCampaignTools.Games;
 using MelonLoader;
 using System;
 using System.IO;
@@ -9,20 +10,13 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.Games.BoneLab
 {
-    public class MainMenuMangler
+    public class BoneLabMainMenuMangler : IMenuMangler
     {
         public static Sprite CampaignSprite;
-        public static void OnLevelLoaded(LevelInfo info)
-        {
-            if(info.barcode == CommonBarcodes.Maps.VoidG114)
-            {
-                MangleMainMenu();
-            }
-        }
 
-        public static void MangleMainMenu()
+        public void MangleMenu()
         {
             var LevelsGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(8).gameObject;
             var CampaignGrid = GameObject.Instantiate(LevelsGrid, LevelsGrid.transform.parent);

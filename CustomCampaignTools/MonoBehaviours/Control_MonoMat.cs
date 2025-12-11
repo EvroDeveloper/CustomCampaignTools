@@ -59,8 +59,6 @@ namespace CustomCampaignTools.LabWorks
 		private UltEventHolder OnAmountRose;
 		private UltEventHolder OnAmountDropped;
 		private UltEventHolder OnItemBought;
-
-		private bool _hasFields = false;
 #endif
 
 		public void StartFields(
@@ -104,8 +102,6 @@ namespace CustomCampaignTools.LabWorks
 			this.OnAmountRose = AmountRoseEvent;
 			this.OnAmountDropped = AmountDroppedEvent;
 			this.OnItemBought = ItemBoughtEvent;
-
-			_hasFields = true;
 
 			SafeStart();
 #endif

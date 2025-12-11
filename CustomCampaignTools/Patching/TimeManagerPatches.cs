@@ -1,6 +1,7 @@
 using Il2CppSLZ.Marrow;
 using MelonLoader;
 using HarmonyLib;
+using CustomCampaignTools.Timing;
 
 namespace CustomCampaignTools.Patching
 {

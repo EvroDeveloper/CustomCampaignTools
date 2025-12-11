@@ -20,7 +20,7 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog))
+            if (Campaign.Session.IsBodylogRestricted)
             {
                 __instance.gameObject.SetActive(false);
             }
@@ -36,7 +36,7 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
+            if (Campaign.Session.IsBodylogRestricted)
             {
                 __instance.Deactivate();
                 __instance.popUpMenu.Deactivate();
@@ -59,26 +59,11 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            if (Campaign.Session.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
+            if(Campaign.Session.avatarRestrictor != null)
             {
-                if (!Campaign.Session.WhitelistedAvatars.Contains(barcode.ID))
+                if(!Campaign.Session.avatarRestrictor.IsAvatarAllowed(barcode))
                 {
-                    Notifier.Send(new Notification()
-                    {
-                        Title = Campaign.Session.Name,
-                        Message = "This avatar is not allowed at this time",
-                        Type = NotificationType.Error,
-                        ShowTitleOnPopup = true,
-                    });
-
-                    __instance.SwapAvatarCrate(new Barcode(Campaign.Session.WhitelistedAvatars[0]));
-                }
-            }
-            else if ((Campaign.Session.AvatarRestrictionType & AvatarRestrictionType.RestrictAvatar) != AvatarRestrictionType.None)
-            {
-                if (barcode.ID != Campaign.Session.CampaignAvatar)
-                {  
-                    __instance.SwapAvatarCrate(new Barcode(Campaign.Session.CampaignAvatar));
+                    Campaign.Session.avatarRestrictor.OnFailedAvatarSwitch(__instance);
                 }
             }
         }

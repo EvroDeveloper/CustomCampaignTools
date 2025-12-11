@@ -5,7 +5,7 @@ namespace CustomCampaignTools
 {
     internal class CampaignLoadingData
     {
-        public int Version { get; set; } = 0;
+        public int Version { get; set; } = 1;
         public string Name { get; set; }
         public SerializedLevelSetup IntroLevel { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
@@ -21,9 +21,11 @@ namespace CustomCampaignTools
         public string CampaignAvatar { get; set; }
         public string BaseGameFallbackAvatar { get; set; }
         public List<string> WhitelistedAvatars { get; set; }
+        public AvatarStatRanges AvatarStatRanges { get; set; }
         public bool SaveLevelWeapons { get; set; }
         public List<string> InventorySaveLimit { get; set; }
         public bool SaveLevelAmmo { get; set; }
+        public bool UpdateSaveOnLevelEnter { get; set; }
         public string AchievementUnlockSound { get; set; }
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
@@ -44,6 +46,19 @@ namespace CustomCampaignTools
         None = 0,
         DisableBodyLog = 1,
         RestrictAvatar = 2,
-        EnforceWhitelist = 4
+        EnforceWhitelist = 4,
+        EnforceStatRange = 8
+    }
+
+    public class AvatarStatRanges
+    {
+        public float heightRangeLow;
+        public float heightRangeHigh;
+
+        public float massRangeLow;
+        public float massRangeHigh;
+        
+        public float armRangeLow;
+        public float armRangeHigh;
     }
 }

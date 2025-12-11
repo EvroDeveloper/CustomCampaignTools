@@ -1,5 +1,7 @@
 ﻿using BoneLib;
 using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Games;
+using CustomCampaignTools.Games.BoneLab;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
 using MelonLoader;
@@ -10,6 +12,11 @@ namespace CustomCampaignTools
 {
     internal class Main : MelonMod
     {
+        public override void OnInitializeMelon()
+        {
+            GameManager.InitializeGameConfiguration();
+        }
+
         public override void OnLateInitializeMelon()
         {
             // Create Bonemenu
@@ -24,7 +31,7 @@ namespace CustomCampaignTools
             string resourceName = "CampaignIcon.png";
             Assembly assembly = MelonAssembly.Assembly;
 
-            MainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
+            BoneLabMainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
 
             foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
             {
@@ -44,7 +51,7 @@ namespace CustomCampaignTools
         {
             string barcode = info.barcode;
 
-            MainMenuMangler.OnLevelLoaded(info);
+            GameManager.OnLevelLoaded(info);
 
             if (CampaignUtilities.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
             {
@@ -78,7 +85,7 @@ namespace CustomCampaignTools
 
         private static void OnUIRigCreated()
         {
-            PlayerMenuMangler.Initialize();
+            GameManager.ManglePlayerMenu();
             Campaign.OnUIRigCreated();
         }
     }

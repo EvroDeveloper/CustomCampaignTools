@@ -3,7 +3,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using HarmonyLib;
 using System.Collections.Generic;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.Games.BoneLab
 {
     public static class GashaponHider
     {
@@ -21,11 +21,8 @@ namespace CustomCampaignTools
         }
     }
 
-    [HarmonyPatch(typeof(Control_Gashapon))]
     public static class GashaponPatches
     {
-        [HarmonyPatch(nameof(Control_Gashapon.Start))]
-        [HarmonyPrefix]
         public static void StartPrefix(Control_Gashapon __instance)
         {
             foreach (Crate crate in GashaponHider.HiddenCrates)
@@ -33,6 +30,13 @@ namespace CustomCampaignTools
                 __instance.blackList.Add(crate);
                 __instance.blackListStrings.Add(crate.Barcode);
             }
+        }
+
+        public static void ManualPatch()
+        {
+            HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("com.customcampaigntools.bonelab.gashaponhider");
+
+            harmony.Patch(typeof(Control_Gashapon).GetMethod(nameof(Control_Gashapon.Start)), prefix: new HarmonyMethod(typeof(GashaponPatches), nameof(StartPrefix)));
         }
     }
 }

@@ -1,10 +1,11 @@
 #if MELONLOADER
 using MelonLoader;
 using CustomCampaignTools;
-using CustomCampaignTools.Utilities;
 #endif
 using UnityEngine;
 using System;
+using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.SDK
 {
@@ -57,7 +58,7 @@ namespace CustomCampaignTools.SDK
         public bool GetSavePointValid()
         {
 #if MELONLOADER
-            return Campaign.Session.saveData.LoadedSavePoint.IsValid();
+            return Campaign.Session.saveData.LoadedSavePoint.IsValid(out _);
 #else
             return false;
 #endif
@@ -65,16 +66,23 @@ namespace CustomCampaignTools.SDK
         public string GetSavePointLevelBarcode()
         {
 #if MELONLOADER
-            return Campaign.Session.saveData.LoadedSavePoint.LevelBarcode;
+            if(Campaign.Session.saveData.LoadedSavePoint.IsValid(out _))
+                return Campaign.Session.saveData.LoadedSavePoint.LevelBarcode;
+            else
+                return "";
 #else
-            return "";
+            return string.Empty;
 #endif
         }
         public string GetSavePointLevelName()
         {
 #if MELONLOADER
+            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(new Barcode(Campaign.Session.saveData.LoadedSavePoint.LevelBarcode), out var level))
+                return level.Title;
+            else
+                return "";
 #else
-            return "";
+            return string.Empty;
 #endif
         }
 

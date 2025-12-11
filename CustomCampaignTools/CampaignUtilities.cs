@@ -1,5 +1,8 @@
+using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader.TinyJSON;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +12,27 @@ namespace CustomCampaignTools
     public static class CampaignUtilities
     {
         public static List<Campaign> LoadedCampaigns = [];
+
+        internal static void AddCampaign(Campaign campaign)
+        {
+            CampaignLogger.Msg("Adding Campaign: " + campaign.Name);
+            bool loaded = false;
+            foreach (var c in LoadedCampaigns)
+            {
+                if (c.Name == campaign.Name)
+                {
+                    CampaignLogger.Msg("Campaign Already Found, Replacing");
+                    LoadedCampaigns.Remove(c);
+                    c.saveData.SaveToDisk();
+                    LoadedCampaigns.Add(campaign);
+                    loaded = true;
+                    break;
+                }
+            }
+            if(!loaded) LoadedCampaigns.Add(campaign);
+            _menuCampaigns = null;
+            CampaignBoneMenu.CreateCampaignPage(campaign);
+        }
 
         public static List<Campaign> CampaignsToShowInMenu
         {
