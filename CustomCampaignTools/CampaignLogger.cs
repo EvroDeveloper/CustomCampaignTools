@@ -11,8 +11,13 @@ namespace CustomCampaignTools.Debug
 {
     public class CampaignLogger
     {
-        private static MelonLogger.Instance loggerInstance = new MelonLogger.Instance("CustomCampaignTools");
+        private static MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
+
+#if DEBUG
         const bool EnableDebug = true;
+#else
+        const bool EnableDebug = false;
+#endif
         public static void Msg(object message, bool force = false)
         {
             if (!EnableDebug && !force) return;

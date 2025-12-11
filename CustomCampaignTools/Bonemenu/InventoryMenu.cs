@@ -10,7 +10,7 @@ namespace CustomCampaignTools.Bonemenu
 {
     internal class CampaignBoneMenu
     {
-        public static Dictionary<Campaign, Page> campaignMenus = new();
+        public static Dictionary<Campaign, Page> campaignMenus = [];
 
         public static void CreateCampaignPage(Campaign c)
         {
@@ -38,33 +38,38 @@ namespace CustomCampaignTools.Bonemenu
                 var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
                 var achievementSubPage = achievementPage;
 
-                for (int i = 0; i < c.saveData.UnlockedAchievements.Count; i++)
+                if(c.saveData.UnlockedAchievements.Count > 10)
                 {
-                    if (i % 10 == 0)
+                    for (int i = 0; i < c.saveData.UnlockedAchievements.Count; i++)
                     {
-                        achievementSubPage = achievementPage.CreatePage($"Achievements {i + 1}-{Mathf.Min(i + 10, c.saveData.UnlockedAchievements.Count)}", Color.yellow);
-                    }
+                        if (i % 10 == 0)
+                        {
+                            achievementSubPage = achievementPage.CreatePage($"Achievements {i + 1}-{Mathf.Min(i + 10, c.saveData.UnlockedAchievements.Count)}", Color.yellow);
+                        }
 
-                    string key = c.saveData.UnlockedAchievements[i];
-                    try
-                    {
-                        achievementSubPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
-                    }
-                    catch
-                    {
-                        MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                        string key = c.saveData.UnlockedAchievements[i];
+                        try
+                        {
+                            achievementSubPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                        }
+                        catch
+                        {
+                            MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                        }
                     }
                 }
-
-                foreach (string key in c.saveData.UnlockedAchievements)
+                else
                 {
-                    try
+                    foreach (string key in c.saveData.UnlockedAchievements)
                     {
-                        achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
-                    }
-                    catch
-                    {
-                        MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                        try
+                        {
+                            achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                        }
+                        catch
+                        {
+                            MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+                        }
                     }
                 }
             }
