@@ -23,9 +23,20 @@ namespace CustomCampaignTools
         public string PalletBarcode;
         public CampaignLevel IntroLevel;
         public CampaignLevel MenuLevel;
+
+        public CampaignLevel InitialLevel
+        {
+            get
+            {
+                if (!saveData.SkipIntro && IntroLevel.IsValid())
+                    return IntroLevel;
+                else
+                    return MenuLevel;
+            }
+        }
         public CampaignLevel[] mainLevels;
         public CampaignLevel[] extraLevels;
-        public string LoadScene;
+        public Barcode LoadScene;
         public AudioClip LoadSceneMusic
         {
             get
@@ -96,8 +107,8 @@ namespace CustomCampaignTools
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
                 campaign.extraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
 
-                if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = CommonBarcodes.Maps.LoadMod;
-                else campaign.LoadScene = data.LoadScene;
+                if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = new Barcode(CommonBarcodes.Maps.LoadMod);
+                else campaign.LoadScene = new Barcode(data.LoadScene);
                 
                 campaign.saveData = new CampaignSaveData(campaign);
 
@@ -206,10 +217,8 @@ namespace CustomCampaignTools
                 _sessionLocked = true;
             }
             Campaign.Session = this;
-            if (!saveData.SkipIntro && IntroLevel.IsValid())
-                FadeLoader.Load(IntroLevel.Barcode, new Barcode(LoadScene));
-            else
-                FadeLoader.Load(MenuLevel.Barcode, new Barcode(LoadScene));
+            
+            FadeLoader.Load(InitialLevel.Barcode, LoadScene);
         }
 
         public void Exit()

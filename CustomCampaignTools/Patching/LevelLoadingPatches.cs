@@ -44,9 +44,9 @@ namespace CustomCampaignTools.Patching
                 destinationCampaign.saveData.UnlockLevel(level.Barcode.ID);
 
                 // If the level its loading into is a campaign level, force load scene to be Campaign Load scene
-                if (loadLevel.Barcode.ID != destinationCampaign.LoadScene)
+                if (loadLevel.Barcode != destinationCampaign.LoadScene)
                 {
-                    loadLevel = new LevelCrateReference(new Barcode(destinationCampaign.LoadScene));
+                    loadLevel = new LevelCrateReference(destinationCampaign.LoadScene);
                 }
                 Campaign.Session = destinationCampaign;
             }

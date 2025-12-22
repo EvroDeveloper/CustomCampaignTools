@@ -49,6 +49,12 @@ namespace CustomCampaignTools
             return LoadedCampaigns.FirstOrDefault(x => x.Name == name);
         }
 
+        public static Campaign GetFromPallet(Barcode pallet)
+        {
+            if (pallet == null) return null;
+            return LoadedCampaigns.FirstOrDefault(x => x.PalletBarcode == pallet.ID);
+        }
+
         public static Campaign GetFromLevel(string barcode)
         {
             return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Select(l => l.Barcode.ID).Contains(barcode));

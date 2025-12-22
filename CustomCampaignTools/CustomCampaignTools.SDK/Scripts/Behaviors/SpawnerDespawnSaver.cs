@@ -9,6 +9,7 @@ using UltEvents;
 #endif
 using System;
 using UnityEngine;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -26,10 +27,12 @@ namespace CustomCampaignTools.SDK
 #if MELONLOADER
         public SpawnerDespawnSaver(IntPtr ptr) : base(ptr) { }
 
+        public Il2CppValueField<int> uniqueID;
+
         public bool LoadedFromSave = false;
 
         private GameObject _objectToSave;
-        private bool saveDontSpawn;
+        public bool hasBeenDespawned;
 
         public void Awake()
         {
@@ -38,17 +41,9 @@ namespace CustomCampaignTools.SDK
                 LoadedFromSave = true;
             }
         }
-
-        public bool DontSpawnAgain(out string id)
-        {
-            id = GetCrateID();
-            return saveDontSpawn;
-        }
-
-        public string GetCrateID()
-        {
-            return transform.position.ToString("F2");
-        }
+#else
+        [Tooltip("A unique ID for this object. Used to identify it in save data. A random ID will be assigned on Reset().")]
+        public int uniqueID;
 #endif
         public void Setup(CrateSpawner c, GameObject g)
         {
@@ -57,16 +52,16 @@ namespace CustomCampaignTools.SDK
             if (g.TryGetComponent(out Poolee p))
             {
                 var despawnHook = g.AddComponent<CrateDespawnerHook>();
-                despawnHook.OnDespawnDelegate += new Action<GameObject>((g) => { saveDontSpawn = true; });
+                despawnHook.OnDespawnDelegate += new Action<GameObject>((g) => { hasBeenDespawned = true; });
             }
 
             // From here down WORKS
             var brain = g.GetComponentInChildren<AIBrain>();
             if (brain)
             {
-                brain.onDeathDelegate += new Action<AIBrain>((g) => saveDontSpawn = true);
+                brain.onDeathDelegate += new Action<AIBrain>((g) => hasBeenDespawned = true);
             }
-            if (LoadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DespawnedSpawners.Contains(GetCrateID()))
+            if (LoadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DespawnedSpawners.Contains(uniqueID.Get()))
             {
                 if (g.TryGetComponent(out Poolee p2))
                 {
@@ -79,6 +74,8 @@ namespace CustomCampaignTools.SDK
 #if UNITY_EDITOR
         public void Reset()
         {
+            uniqueID = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            
             CrateSpawner spawner = GetComponent<CrateSpawner>();
             var call = spawner.onSpawnEvent.AddPersistentCall((Action<CrateSpawner, GameObject>)Setup);
 

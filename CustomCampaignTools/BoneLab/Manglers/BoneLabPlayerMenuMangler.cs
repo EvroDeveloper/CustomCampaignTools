@@ -58,7 +58,7 @@ namespace CustomCampaignTools.Games.BoneLab
             menuButtonComp.onClick.m_PersistentCalls.Clear();
             menuButtonComp.onClick.m_Calls.ClearPersistent();
             menuButtonComp.onClick.m_Calls.Clear();
-            menuButtonComp.onClick.AddListener(new Action(() => FadeLoader.Load(Campaign.Session.MenuLevel, new Barcode(Campaign.Session.LoadScene))));
+            menuButtonComp.onClick.AddListener(new Action(() => FadeLoader.Load(Campaign.Session.MenuLevel, Campaign.Session.LoadScene)));
         }
     }
 }

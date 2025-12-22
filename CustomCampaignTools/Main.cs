@@ -4,6 +4,7 @@ using CustomCampaignTools.Games;
 using CustomCampaignTools.Games.BoneLab;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
+using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using System.Reflection;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace CustomCampaignTools
         public override void OnInitializeMelon()
         {
             GameManager.InitializeGameConfiguration();
+            ArgumentHandler.HandleArguments(Environment.GetCommandLineArgs());
         }
 
         public override void OnLateInitializeMelon()
@@ -39,6 +41,14 @@ namespace CustomCampaignTools
                 {
                     PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
                 }
+            }
+        }
+
+        public override void OnSceneWasInitialized(int buildIndex, string sceneName)
+        {
+            if(buildIndex == 0)
+            {
+                BonelabBootstrapperPatch.OnBootstrapSceneLoaded();
             }
         }
 

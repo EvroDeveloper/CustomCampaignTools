@@ -44,12 +44,12 @@ namespace CustomCampaignTools
                 };
             }
 
-            List<string> savedDespawns = [];
+            List<int> savedDespawns = [];
             foreach (SpawnerDespawnSaver stateSaver in UnityEngine.Object.FindObjectsOfType<SpawnerDespawnSaver>())
             {
-                if (stateSaver.DontSpawnAgain(out string id))
+                if (stateSaver.hasBeenDespawned)
                 {
-                    savedDespawns.Add(id);
+                    savedDespawns.Add(stateSaver.uniqueID.Get());
                 }
             }
 
@@ -76,7 +76,7 @@ namespace CustomCampaignTools
             public InventoryData InventoryData;
             public AmmoSave MidLevelAmmoSave;
             public List<BarcodePosRot> BoxContainedBarcodes;
-            public List<string> DespawnedSpawners;
+            public List<int> DespawnedSpawners;
             public Dictionary<int, bool> ObjectEnabledSaves;
 
             public SavePoint()
@@ -84,7 +84,7 @@ namespace CustomCampaignTools
 
             }
 
-            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<string> savedDespawns, Dictionary<int, bool> savedEnableds)
+            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
             {
                 LevelBarcode = levelBarcode;
                 PositionX = position.x;
@@ -119,7 +119,7 @@ namespace CustomCampaignTools
 
             public void LoadContinue(Campaign campaign)
             {
-                LoadContinue(new Barcode(campaign.LoadScene));
+                LoadContinue(campaign.LoadScene);
             }
 
             public void LoadContinue(Barcode loadScene)
@@ -133,7 +133,7 @@ namespace CustomCampaignTools
 
             public bool GetEnabledStateFromID(int id, bool defaultEnabled)
             {
-                if (ObjectEnabledSaves.Keys.Contains(id))
+                if (ObjectEnabledSaves.ContainsKey(id))
                     return ObjectEnabledSaves[id];
                 else
                     return defaultEnabled;

@@ -25,7 +25,7 @@ namespace CustomCampaignTools.SDK
             if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
             
-            campaign.saveData.LoadedSavePoint.LoadContinue(new Barcode(campaign.LoadScene));
+            campaign.saveData.LoadedSavePoint.LoadContinue(campaign.LoadScene);
 #endif
         }
 
