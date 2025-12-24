@@ -1,6 +1,5 @@
 using BoneLib.Notifications;
 using HarmonyLib;
-using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -36,7 +35,7 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            if (Campaign.Session.IsBodylogRestricted)
+            if (!Campaign.Session.avatarRestrictor.IsAvatarMenuAllowed())
             {
                 __instance.Deactivate();
                 __instance.popUpMenu.Deactivate();
@@ -49,6 +48,15 @@ namespace CustomCampaignTools.Patching
                     ShowTitleOnPopup = true,
                 });
             }
+        }
+
+        [HarmonyPatch(nameof(AvatarsPanelView.SelectItem))]
+        [HarmonyPrefix]
+        public static bool OnElementSelected()
+        {
+            if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return true;
+
+            return true;
         }
     }
 

@@ -5,7 +5,7 @@ using Il2CppSLZ.VRMK;
 using BoneLib.Notifications;
 using BoneLib;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.AvatarRestriction
 {
     public class StatBasedAvatarRestrictor : IAvatarRestrictor
     {
@@ -46,6 +46,11 @@ namespace CustomCampaignTools
         bool IsInRange(float value, Vector2 range)
         {
             return range.x <= value && value <= range.y;
+        }
+
+        public bool IsAvatarMenuAllowed()
+        {
+            return true;
         }
     }
 }

@@ -22,18 +22,18 @@ namespace CustomCampaignTools
         public string Title
         {
             get{
-                if(overrideName == string.Empty) return crate.Title;
-                return overrideName;
+                if(_overrideName == string.Empty) return Crate.Title;
+                return _overrideName;
             }
         }
 
-        public string sBarcode => Barcode.ID;
+        public string BarcodeString => Barcode.ID;
 
-        private string overrideName = "";
+        private readonly string _overrideName = "";
 
         public CampaignLevelType type;
 
-        public LevelCrate crate
+        public LevelCrate Crate
         {
             get {
                 if(_crate != null) return _crate;
@@ -44,31 +44,31 @@ namespace CustomCampaignTools
 
         private LevelCrate _crate;
 
-        public bool isUnlocked
+        public bool Unlocked
         {
             get {
-                return !campaign.LockLevelsUntilEntered || campaign.saveData.UnlockedLevels.Contains(sBarcode);
+                return !campaign.LockLevelsUntilEntered || campaign.saveData.UnlockedLevels.Contains(BarcodeString);
             }
         }
 
         public CampaignLevel(string barcode, string name, CampaignLevelType type)
         {
             Barcode = new Barcode(barcode);
-            overrideName = name;
+            _overrideName = name;
             this.type = type;
         }
 
         public CampaignLevel(SerializedLevelSetup levelSetup, CampaignLevelType type)
         {
             Barcode = new Barcode(levelSetup.levelBarcode);
-            overrideName = levelSetup.levelName;
+            _overrideName = levelSetup.levelName;
             this.type = type;
         }
 
         public CampaignLevel(CampaignLevel copy)
         {
             Barcode = copy.Barcode;
-            overrideName = copy.overrideName;
+            _overrideName = copy._overrideName;
             type = copy.type;
         }
 
@@ -78,29 +78,29 @@ namespace CustomCampaignTools
         }
 
         public static implicit operator Barcode(CampaignLevel c) => c.Barcode;
-        public static implicit operator LevelCrate(CampaignLevel c) => c.crate;
+        public static implicit operator LevelCrate(CampaignLevel c) => c.Crate;
     }
 
     public static class CampaignLevelListManipulation
     {
         public static List<string> ToBarcodeStrings(this CampaignLevel[] list)
         {
-            return list.Select(c => c.Barcode.ID).ToList();
+            return [.. list.Select(c => c.Barcode.ID)];
         }
 
         public static List<Barcode> ToBarcodes(this CampaignLevel[] list)
         {
-            return list.Select(c => c.Barcode).ToList();
+            return [.. list.Select(c => c.Barcode)];
         }
 
         public static List<string> ToNames(this List<CampaignLevel> list)
         {
-            return list.Select(c => c.Title).ToList();
+            return [.. list.Select(c => c.Title)];
         }
 
         public static List<LevelCrate> ToCrates(this CampaignLevel[] list)
         {
-            return list.Select(c => c.crate).Where(c => c != null).ToList();
+            return [.. list.Select(c => c.Crate).Where(c => c != null)];
         }
     }
 }

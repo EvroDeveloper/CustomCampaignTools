@@ -7,6 +7,7 @@ namespace CustomCampaignTools
     {
         public int Version { get; set; } = 1;
         public string Name { get; set; }
+        public string PalletBarcode { get; set; }
         public SerializedLevelSetup IntroLevel { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
         public List<SerializedLevelSetup> MainLevels { get; set; }
@@ -31,6 +32,8 @@ namespace CustomCampaignTools
         public bool LockInCampaign { get; set; }
         public List<string> CampaignUnlockCrates { get; set; }
         public List<string> HideCratesFromGachapon { get; set; }
+        public string RigManagerOverride { get; set; }
+        public string GameplayRigOverride { get; set; }
         public bool DevBuild { get; set; } = false;
     }
 

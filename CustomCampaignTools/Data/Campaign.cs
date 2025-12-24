@@ -1,4 +1,5 @@
 using BoneLib;
+using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Games.BoneLab;
@@ -20,7 +21,7 @@ namespace CustomCampaignTools
     public class Campaign
     {
         public string Name;
-        public string PalletBarcode;
+        public Barcode PalletBarcode;
         public CampaignLevel IntroLevel;
         public CampaignLevel MenuLevel;
 
@@ -71,6 +72,9 @@ namespace CustomCampaignTools
         public bool LockLevelsUntilEntered;
 
         public List<string> CampaignUnlockCrates = [];
+
+        public Barcode RigManagerOverride;
+        public Barcode GameplayRigOverride;
         public bool DEVMODE { get; private set; } = false;
 
         public CampaignLevel[] AllLevels
@@ -97,11 +101,12 @@ namespace CustomCampaignTools
             try
             {
                 campaign.Name = data.Name;
+                campaign.PalletBarcode = new Barcode(data.PalletBarcode);
 
                 if (data.InitialLevel.levelBarcode == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
-                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode") campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.sBarcode, campaign.MenuLevel.Title, CampaignLevelType.Intro);
+                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode") campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
                 else campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
 
                 campaign.mainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
@@ -207,6 +212,7 @@ namespace CustomCampaignTools
             };
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
+            campaignValueHolder.PalletBarcode = pallet.Barcode.ID;
             return RegisterCampaign(campaignValueHolder);
         }
 
@@ -221,7 +227,7 @@ namespace CustomCampaignTools
             FadeLoader.Load(InitialLevel.Barcode, LoadScene);
         }
 
-        public void Exit()
+        public static void Exit()
         {
             _sessionLocked = false;
             FadeLoader.Load(new Barcode(CommonBarcodes.Maps.VoidG114), new Barcode(CommonBarcodes.Maps.LoadDefault));
@@ -239,25 +245,14 @@ namespace CustomCampaignTools
 
         private string[] GetBarcodeArrayOfLevelType(CampaignLevelType type)
         {
-            string[] output;
-            switch (type)
+            string[] output = type switch
             {
-                case CampaignLevelType.Intro:
-                    output = [IntroLevel.sBarcode];
-                    break;
-                case CampaignLevelType.Menu:
-                    output = [MenuLevel.sBarcode];
-                    break;
-                case CampaignLevelType.MainLevel:
-                    output = [.. mainLevels.ToBarcodeStrings()];
-                    break;
-                case CampaignLevelType.ExtraLevel:
-                    output = [.. extraLevels.ToBarcodeStrings()];
-                    break;
-                default:
-                    output = [.. AllLevels.ToBarcodeStrings()];
-                    break;
-            }
+                CampaignLevelType.Intro => [IntroLevel.BarcodeString],
+                CampaignLevelType.Menu => [MenuLevel.BarcodeString],
+                CampaignLevelType.MainLevel => [.. mainLevels.ToBarcodeStrings()],
+                CampaignLevelType.ExtraLevel => [.. extraLevels.ToBarcodeStrings()],
+                _ => [.. AllLevels.ToBarcodeStrings()],
+            };
             return output;
         }
 
@@ -276,12 +271,12 @@ namespace CustomCampaignTools
             levels.Add(MenuLevel);
             foreach (CampaignLevel mainLevel in mainLevels)
             {
-                if(!saveData.UnlockedLevels.Contains(mainLevel.sBarcode) && LockLevelsUntilEntered) continue;
+                if(!saveData.UnlockedLevels.Contains(mainLevel.BarcodeString) && LockLevelsUntilEntered) continue;
                 levels.Add(mainLevel);
             }
             foreach (CampaignLevel extraLevel in extraLevels)
             {
-                if(!saveData.UnlockedLevels.Contains(extraLevel.sBarcode) && LockLevelsUntilEntered) continue;
+                if(!saveData.UnlockedLevels.Contains(extraLevel.BarcodeString) && LockLevelsUntilEntered) continue;
                 levels.Add(extraLevel);
             }
             return [.. levels];
@@ -292,48 +287,7 @@ namespace CustomCampaignTools
         public static void OnInitialize()
         {
             Hooking.OnLevelLoaded += OnLevelLoaded;
-            // AssetWarehouse._onReady += new Action(() =>
-            // {
-            //     try
-            //     {
-            //         LoadCampaignsFromMods();
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         MelonLogger.Error("Coudnt load the campaigns from the mods folder: " + ex.Message);
-            //     }
-
-            //     AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>((barcode) =>
-            //     {
-            //         LoadCampaignsFromMods();
-            //     });
-            // });
         }
-
-        // public static void LoadCampaignsFromMods()
-        // {
-        //     string[] modPaths = Directory.GetDirectories(MarrowSDK.RuntimeModsPath);
-
-        //     foreach (string mod in modPaths)
-        //     {
-        //         string[] jsonPaths2 = Directory.GetFiles(mod, "campaign.json.bundle");
-
-        //         if (jsonPaths2.Length != 0 && !RegisteredJsonPaths.Contains(jsonPaths2[0]))
-        //         {
-        //             RegisteredJsonPaths.Add(jsonPaths2[0]);
-        //             string jsonContent2 = File.ReadAllText(jsonPaths2[0]);
-        //             try
-        //             {
-        //                 RegisterCampaignFromJson(jsonContent2);
-        //             }
-        //             catch
-        //             {
-
-        //             }
-        //         }
-                
-        //     }
-        // }
 
         public static void OnLevelLoaded(LevelInfo info)
         {

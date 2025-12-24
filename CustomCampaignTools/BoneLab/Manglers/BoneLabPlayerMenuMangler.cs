@@ -37,20 +37,24 @@ namespace CustomCampaignTools.Games.BoneLab
             optionsPanel = panelView.pages[panelView.defaultPage];
             _optionsGrid = optionsPanel.transform.Find("grid_Options");
 
-            // need to ensure i'm copying a correct one
-            _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(4).gameObject, _optionsGrid);
-            _optionButton.SetActive(true);
+            if (!ArgumentHandler.forcedCampaign)
+            {
 
-            var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true);
-            tmp.text = "Exit Campaign";
+                // need to ensure i'm copying a correct one
+                _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(4).gameObject, _optionsGrid);
+                _optionButton.SetActive(true);
 
-            _optionButton.transform.SetSiblingIndex(_optionsGrid.childCount - 1);
+                var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true);
+                tmp.text = "Exit Campaign";
 
-            _optionButtonComponent = _optionButton.GetComponent<Button>();
-            _optionButtonComponent.onClick.m_PersistentCalls.Clear();
-            _optionButtonComponent.onClick.m_Calls.ClearPersistent();
-            _optionButtonComponent.onClick.m_Calls.Clear();
-            _optionButtonComponent.onClick.AddListener(new Action(Campaign.Session.Exit));
+                _optionButton.transform.SetSiblingIndex(_optionsGrid.childCount - 1);
+
+                _optionButtonComponent = _optionButton.GetComponent<Button>();
+                _optionButtonComponent.onClick.m_PersistentCalls.Clear();
+                _optionButtonComponent.onClick.m_Calls.ClearPersistent();
+                _optionButtonComponent.onClick.m_Calls.Clear();
+                _optionButtonComponent.onClick.AddListener(new Action(Campaign.Exit));
+            }
 
             // Fix name later
             var menuButton = _optionsGrid.Find("button_MainMenu");

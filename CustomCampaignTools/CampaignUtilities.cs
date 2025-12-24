@@ -38,7 +38,7 @@ namespace CustomCampaignTools
         {
             get
             {
-                _menuCampaigns ??= LoadedCampaigns.Where(c => c.ShowInMenu).ToList();
+                _menuCampaigns ??= [.. LoadedCampaigns.Where(c => c.ShowInMenu)];
                 return _menuCampaigns;
             }
         }
@@ -52,7 +52,7 @@ namespace CustomCampaignTools
         public static Campaign GetFromPallet(Barcode pallet)
         {
             if (pallet == null) return null;
-            return LoadedCampaigns.FirstOrDefault(x => x.PalletBarcode == pallet.ID);
+            return LoadedCampaigns.FirstOrDefault(x => x.PalletBarcode == pallet);
         }
 
         public static Campaign GetFromLevel(string barcode)

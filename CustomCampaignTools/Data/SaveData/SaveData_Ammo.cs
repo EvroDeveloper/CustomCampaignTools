@@ -67,7 +67,7 @@ namespace CustomCampaignTools
 
         public AmmoSave GetSavedAmmo(CampaignLevel level)
         {
-            return GetSavedAmmo(level.sBarcode);
+            return GetSavedAmmo(level.BarcodeString);
         }
 
         public AmmoSave GetSavedAmmo(string levelBarcode)
@@ -97,7 +97,7 @@ namespace CustomCampaignTools
             {
                 LoadedAmmoSaves.Add(new AmmoSave()
                 {
-                    LevelBarcode = level.sBarcode,
+                    LevelBarcode = level.BarcodeString,
                     LightAmmo = 0,
                     MediumAmmo = 0,
                     HeavyAmmo = 0,

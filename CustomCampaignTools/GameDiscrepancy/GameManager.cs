@@ -1,7 +1,6 @@
 using BoneLib;
 using MelonLoader;
 
-
 namespace CustomCampaignTools.Games
 {
     public static class GameManager
@@ -31,6 +30,11 @@ namespace CustomCampaignTools.Games
             {
                 currentGameConfiguration.mainMenuMangler.MangleMenu();
             }
+        }
+
+        internal static void OnBootstrapSceneLoaded()
+        {
+            currentGameConfiguration.OnBootstrapSceneLoaded();
         }
     }
 }

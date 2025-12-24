@@ -72,7 +72,7 @@ namespace CustomCampaignTools.SDK
             UnlockAvatars(true);
             foreach (var level in Campaign.Session.AllLevels)
             {
-                UnlockLevel(level.sBarcode);
+                UnlockLevel(level.BarcodeString);
             }
 #endif
         }

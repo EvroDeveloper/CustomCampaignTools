@@ -48,7 +48,7 @@ namespace CustomCampaignTools
         {
             if(buildIndex == 0)
             {
-                BonelabBootstrapperPatch.OnBootstrapSceneLoaded();
+                GameManager.OnBootstrapSceneLoaded();
             }
         }
 

@@ -11,7 +11,7 @@ namespace CustomCampaignTools.Debug
 {
     public class CampaignLogger
     {
-        private static MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
+        private static readonly MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
 
 #if DEBUG
         const bool EnableDebug = true;
@@ -21,7 +21,7 @@ namespace CustomCampaignTools.Debug
         public static void Msg(object message, bool force = false)
         {
             if (!EnableDebug && !force) return;
-            MelonLogger.Msg($"[CampaignLogger] {message}");
+            loggerInstance.Msg($"[CampaignLogger] {message}");
         }
 
         public static void Msg(Campaign campaign, object message, bool force = false)
@@ -42,7 +42,7 @@ namespace CustomCampaignTools.Debug
 
         public static void Error(object message)
         {
-            MelonLogger.Error($"[CampaignLogger] {message}");
+            loggerInstance.Error($"[CampaignLogger] {message}");
         }
 
         public static void SessionMsg(object message)

@@ -6,7 +6,7 @@ namespace CustomCampaignTools
     public static class ArgumentHandler
     {
         public static bool forcedCampaign = false;
-        public static Barcode campaignToLoad = new Barcode();
+        public static Barcode campaignToLoad;
 
 
         public static void HandleArguments(string[] args)

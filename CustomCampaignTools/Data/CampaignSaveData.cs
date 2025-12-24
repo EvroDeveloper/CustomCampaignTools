@@ -1,14 +1,12 @@
 using BoneLib.Notifications;
 using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.Debug;
 using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.Audio;
 using Il2CppSLZ.Marrow.SaveData;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.Utils;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace CustomCampaignTools
@@ -24,7 +22,7 @@ namespace CustomCampaignTools
         internal List<string> UnlockedAchievements = [];
         internal List<string> UnlockedLevels = [];
 
-        public string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
+        public static string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
         public string SavePath { get => $"{SaveFolder}/slot_Campaign_{campaign.Name}.save.json"; }
         public string BackupSavePath { get => $"{SaveFolder}/slot_Campaign.{campaign.Name}.save_backup.json"; }
 
@@ -103,7 +101,7 @@ namespace CustomCampaignTools
         #region Achievements
         public bool UnlockAchievement(string key)
         {
-            if (UnlockedAchievements == null) UnlockedAchievements = new List<string>();
+            UnlockedAchievements ??= [];
             if (UnlockedAchievements.Contains(key)) return false;
 
             foreach (AchievementData achievement in campaign.Achievements)
@@ -221,7 +219,12 @@ namespace CustomCampaignTools
             var settings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+                {
+                    CampaignLogger.Error(campaign, $"Error found when parsing path {args.ErrorContext.Path} of Save Data. This property will be reset");
+                    args.ErrorContext.Handled = true;
+                }
             };
 
             SaveData saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);

@@ -3,7 +3,7 @@ using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.VRMK;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.AvatarRestriction
 {
     public class WhitelistAvatarRestrictor : IAvatarRestrictor
     {
@@ -22,6 +22,11 @@ namespace CustomCampaignTools
         public bool IsAvatarAllowed(Barcode avatarBarcode)
         {
             return WhitelistedAvatars.Contains(avatarBarcode.ID);
+        }
+
+        public bool IsAvatarMenuAllowed()
+        {
+            return true;
         }
 
         public void OnFailedAvatarSwitch(RigManager rm)

@@ -10,5 +10,10 @@ namespace CustomCampaignTools.Games
         {
             
         }
+
+        public virtual void OnBootstrapSceneLoaded()
+        {
+
+        }
     }
 }

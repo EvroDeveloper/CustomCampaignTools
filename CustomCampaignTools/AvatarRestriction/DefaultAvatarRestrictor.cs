@@ -1,3 +1,4 @@
+using CustomCampaignTools.AvatarRestriction;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -46,6 +47,11 @@ namespace CustomCampaignTools
         public void OnFailedAvatarSwitch(RigManager rm)
         {
             rm.SwapAvatarCrate(CampaignAvatar);
+        }
+
+        public bool IsAvatarMenuAllowed()
+        {
+            return false;
         }
     }
 }

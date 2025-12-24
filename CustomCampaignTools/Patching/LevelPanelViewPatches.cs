@@ -10,6 +10,8 @@ using System.Linq;
 using BrowsingPlus.PanelUI;
 using Il2CppCysharp.Threading.Tasks;
 using MelonLoader;
+using UnityEngine;
+using Il2CppTMPro;
 
 
 namespace CustomCampaignTools.Patching
@@ -22,23 +24,48 @@ namespace CustomCampaignTools.Patching
         public static bool SwipezActive = false;
         [HarmonyPatch(nameof(LevelsPanelView.CalculateSceneList))]
         [HarmonyPostfix]
-        public static void PopulatePostfix(LevelsPanelView __instance)
+        public static void CalculateSceneListPostfix(LevelsPanelView __instance)
         {
             ForceLevelList(__instance);
+        }
+
+        [HarmonyPatch(nameof(LevelsPanelView.UpdatePageItems))]
+        [HarmonyPostfix]
+        public static void UpdatePageItemsPostfix(LevelsPanelView __instance, int pageIdx, int maxItems)
+        {
+            if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign || (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel))
+            {
+                int startingIndex = maxItems * pageIdx;
+
+                for (int i = 0; i < maxItems; i++)
+                {
+                    GameObject obj = __instance.items[i];
+
+                    TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+                    if (text == null) continue;
+
+                    int levelIndex = startingIndex + i;
+                    LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
+                    CampaignLevel cLevel = Campaign.Session.AllLevels.FirstOrDefault((c) => c.Barcode == __instance._levelCrates[levelIndex].Barcode);
+                    if (cLevel == null) continue;
+
+                    text.text = cLevel.Title;
+                } 
+            }
         }
 
         public static void ForceLevelList(LevelsPanelView __instance)
         {
             if(SwipezActive) return;
 
-            if (Campaign.SessionLocked)
+            if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign)
             {
                 __instance._levelCrates.Clear();
                 CampaignLevel[] unlockedLevels = Campaign.Session.GetUnlockedLevels();
                 foreach (CampaignLevel c in unlockedLevels)
                 {
-                    if(!c.crate.Redacted)
-                        __instance._levelCrates.Add(c.crate);
+                    if(!c.Crate.Redacted)
+                        __instance._levelCrates.Add(c.Crate);
                 }
                 __instance._totalScenes = __instance._levelCrates.Count;
                 __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
@@ -55,8 +82,8 @@ namespace CustomCampaignTools.Patching
                 // Stupid List Fuckery i hate il2cpp
                 List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
 
-                List<LevelCrate> SLZCrates = instanceCrates.Where(crate => crate.Pallet.Barcode.ID.StartsWith("SLZ")).ToList();
-                List<LevelCrate> NonCampaignCrates = instanceCrates.Where(crate => !crate.Pallet.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID)).ToList();
+                List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.Barcode.ID.StartsWith("SLZ"))];
+                List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID))];
 
                 List<LevelCrate> CampaignCrates = [];
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
@@ -85,7 +112,6 @@ namespace CustomCampaignTools.Patching
     {
         private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = [];
 
-
         public static void ManualPatch()
         {
             var harmony = new HarmonyLib.Harmony("swipez.panel.populate");
@@ -111,7 +137,7 @@ namespace CustomCampaignTools.Patching
 
                 foreach(CampaignLevel level in c.GetUnlockedLevels())
                 {
-                    if(level.crate && !level.crate.Redacted)
+                    if(level.Crate && !level.Crate.Redacted)
                     {
                         container.AddEntry(level.Title, () => FadeLoader.Load(level.Barcode, c.LoadScene));
                     }
@@ -134,7 +160,7 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive) return;
 
-            if(campaignToContainerOpen.Keys.Contains(Campaign.Session))
+            if(campaignToContainerOpen.ContainsKey(Campaign.Session))
             {
                 __instance.OpenContainer(campaignToContainerOpen[Campaign.Session]);
             }
