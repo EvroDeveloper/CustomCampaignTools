@@ -50,8 +50,8 @@ namespace CustomCampaignTools.Patching
             }
         }
 
-        [HarmonyPatch(nameof(AvatarsPanelView.SelectItem))]
-        [HarmonyPrefix]
+        //[HarmonyPatch(nameof(AvatarsPanelView.SelectItem))]
+        //[HarmonyPrefix]
         public static bool OnElementSelected()
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return true;
