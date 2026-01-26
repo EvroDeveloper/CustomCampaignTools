@@ -8,8 +8,10 @@ using BoneLib.Notifications;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
+using Il2CppSLZ.Marrow.Data;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using UnityEngine;
@@ -75,6 +77,26 @@ namespace CustomCampaignTools.Patching
             if (specificClip.name == "music_LoadingSplash" && Campaign.SessionActive && Campaign.Session.LoadSceneMusic != null)
             {
                 specificClip = Campaign.Session.LoadSceneMusic;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(AssetSpawner))]
+    public static class RigReplacerPatches
+    {
+        [HarmonyPatch(nameof(AssetSpawner.SpawnAsync))]
+        [HarmonyPrefix]
+        public static void OnSpawnableSpawned(AssetSpawner __instance, ref Spawnable spawnable)
+        {
+            if(!Campaign.SessionActive) return;
+
+            if(spawnable.crateRef == MarrowGame.marrowSettings.UIEventSystem && Campaign.Session.GameplayRigOverride.IsValid())
+            {
+                spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride);
+            }
+            else if(spawnable.crateRef == MarrowGame.marrowSettings.DefaultPlayerRig && Campaign.Session.RigManagerOverride.IsValid())
+            {
+                spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride);
             }
         }
     }

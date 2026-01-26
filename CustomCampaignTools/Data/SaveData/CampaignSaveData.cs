@@ -15,9 +15,8 @@ namespace CustomCampaignTools
         public static string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
         public string SavePath { get => $"{SaveFolder}/slot_Campaign_{campaign.Name}.save.json"; }
         public string BackupSavePath { get => $"{SaveFolder}/slot_Campaign.{campaign.Name}.save_backup.json"; }
-
-        public string LegacySaveFolder { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}"; }
-        public string LegacySavePath { get => $"{LegacySaveFolder}/save.json"; }
+        
+        public string LegacySavePath { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}/save.json"; }
 
         public CampaignSaveData(Campaign c)
         {
