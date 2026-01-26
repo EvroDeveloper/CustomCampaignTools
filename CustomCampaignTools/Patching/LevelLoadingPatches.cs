@@ -81,22 +81,22 @@ namespace CustomCampaignTools.Patching
         }
     }
 
-    [HarmonyPatch(typeof(AssetSpawner))]
+    [HarmonyPatch(typeof(AssetSpawner._SpawnAsync_d__15))]
     public static class RigReplacerPatches
     {
-        [HarmonyPatch(nameof(AssetSpawner.SpawnAsync))]
+        [HarmonyPatch(nameof(AssetSpawner._SpawnAsync_d__15.MoveNext))]
         [HarmonyPrefix]
-        public static void OnSpawnableSpawned(AssetSpawner __instance, ref Spawnable spawnable)
+        public static void OnSpawnableSpawned(AssetSpawner._SpawnAsync_d__15 __instance)
         {
             if(!Campaign.SessionActive) return;
 
-            if(spawnable.crateRef == MarrowGame.marrowSettings.UIEventSystem && Campaign.Session.GameplayRigOverride.IsValid())
+            if(__instance.spawnable.crateRef == MarrowGame.marrowSettings.UIEventSystem && Campaign.Session.GameplayRigOverride.IsValid())
             {
-                spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride);
+                __instance.spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride);
             }
-            else if(spawnable.crateRef == MarrowGame.marrowSettings.DefaultPlayerRig && Campaign.Session.RigManagerOverride.IsValid())
+            else if(__instance.spawnable.crateRef == MarrowGame.marrowSettings.DefaultPlayerRig && Campaign.Session.RigManagerOverride.IsValid())
             {
-                spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride);
+                __instance.spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride);
             }
         }
     }
