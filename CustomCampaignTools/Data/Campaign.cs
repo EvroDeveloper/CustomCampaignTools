@@ -175,6 +175,9 @@ namespace CustomCampaignTools
                     }
                 }
 
+                campaign.RigManagerOverride = new Barcode(data.RigManagerOverride);
+                campaign.GameplayRigOverride = new Barcode(data.GameplayRigOverride);
+
                 campaign.DEVMODE = data.DevBuild;
 
                 if(data.HideCratesFromGachapon != null)
