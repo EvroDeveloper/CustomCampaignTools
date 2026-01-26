@@ -19,7 +19,7 @@ namespace CustomCampaignTools
 
             CampaignSaveData.SavePoint savePoint = campaign.saveData.LoadedSavePoint;
 
-            if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
+            if (!savePoint.IsValid(out bool hasSpawnPoint))
                 return;
 
             if (hasSpawnPoint)
@@ -28,7 +28,7 @@ namespace CustomCampaignTools
 
                 foreach(CampaignSaveData.BarcodePosRot barcode in savePoint.BoxContainedBarcodes)
                 {
-                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: ((g) => { CampaignLogger.Msg($"Successfully Spawned {barcode} in Box"); }));
+                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: (g) => { CampaignLogger.Msg(campaign, $"Successfully Spawned {barcode} in Box"); });
                 }
             }
 

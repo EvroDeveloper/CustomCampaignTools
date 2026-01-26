@@ -1,14 +1,10 @@
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using BoneLib;
-using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using CustomCampaignTools.SDK;
 using CustomCampaignTools.Bonemenu;
 using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
-using static CustomCampaignTools.CampaignSaveData;
+using CustomCampaignTools.Debug;
 
 namespace CustomCampaignTools
 {
@@ -61,9 +57,10 @@ namespace CustomCampaignTools
 
             LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
+            CampaignLogger.Msg(campaign, $"Saved player at {position} in level {levelBarcode}");
+
             SaveToDisk();
             CampaignBoneMenu.RefreshCampaignPage(campaign);
-
         }
 
         public struct SavePoint

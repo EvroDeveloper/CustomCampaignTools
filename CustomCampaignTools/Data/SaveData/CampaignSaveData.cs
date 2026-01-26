@@ -1,8 +1,5 @@
-using BoneLib.Notifications;
-using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
 using Il2CppSLZ.Bonelab.SaveData;
-using Il2CppSLZ.Marrow.Audio;
 using Il2CppSLZ.Marrow.SaveData;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.Utils;
@@ -14,13 +11,6 @@ namespace CustomCampaignTools
     public partial class CampaignSaveData
     {
         public Campaign campaign;
-
-        internal List<FloatData> LoadedFloatDatas = [];
-        internal bool DevToolsUnlocked = false;
-        internal bool AvatarUnlocked = false;
-        internal bool SkipIntro = false;
-        internal List<string> UnlockedAchievements = [];
-        internal List<string> UnlockedLevels = [];
 
         public static string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
         public string SavePath { get => $"{SaveFolder}/slot_Campaign_{campaign.Name}.save.json"; }
@@ -57,112 +47,6 @@ namespace CustomCampaignTools
 
             SaveToDisk();
         }
-
-        #region Float Data
-        public void SetValue(string key, float value)
-        {
-            GetFloatDataEntry(key).Value = value;
-            SaveToDisk();
-        }
-        public float GetValue(string key)
-        {
-            return GetFloatDataEntry(key).Value;
-        }
-        private FloatData GetFloatDataEntry(string key)
-        {
-            FloatData found = null;
-            try
-            {
-                found = LoadedFloatDatas.First(f => f.Key == key);
-            }
-            catch
-            {
-                found = new FloatData(key);
-                LoadedFloatDatas.Add(found);
-            }
-            return found;
-        }
-        #endregion
-
-        #region Cheats Unlocking
-        public void UnlockDevTools()
-        {
-            DevToolsUnlocked = true;
-            SaveToDisk();
-        }
-
-        public void UnlockAvatar()
-        {
-            AvatarUnlocked = true;
-            SaveToDisk();
-        }
-        #endregion
-
-        #region Achievements
-        public bool UnlockAchievement(string key)
-        {
-            UnlockedAchievements ??= [];
-            if (UnlockedAchievements.Contains(key)) return false;
-
-            foreach (AchievementData achievement in campaign.Achievements)
-            {
-                if (achievement.Key != key) continue;
-
-                if (campaign.AchievementUnlockSound != null)
-                    Audio3dManager.Play2dOneShot(campaign.AchievementUnlockSound, Audio3dManager.ui, new Il2CppSystem.Nullable<float>(1f), new Il2CppSystem.Nullable<float>(1f));
-
-                if (achievement.cachedTexture != null)
-                {
-                    Notifier.Send(new Notification()
-                    {
-                        CustomIcon = achievement.cachedTexture,
-                        Title = $"Achievement Get: {achievement.Name}",
-                        Message = achievement.Description,
-                        Type = NotificationType.CustomIcon,
-                        PopupLength = 5,
-                        ShowTitleOnPopup = true,
-                    });
-                }
-                else
-                {
-                    Notifier.Send(new Notification()
-                    {
-                        Title = $"Achievement Get: {achievement.Name}",
-                        Message = achievement.Description,
-                        Type = NotificationType.Information,
-                        PopupLength = 5,
-                        ShowTitleOnPopup = true
-                    });
-                }
-
-                UnlockedAchievements.Add(key);
-                SaveToDisk();
-                CampaignBoneMenu.RefreshCampaignPage(campaign);
-                return true;
-            }
-            return false;
-        }
-
-        public void LockAchievement(string key)
-        {
-            if (UnlockedAchievements.Contains(key))
-            {
-                UnlockedAchievements.Remove(key);
-            }
-        }
-        #endregion
-
-        #region Levels
-
-        public void UnlockLevel(string barcode)
-        {
-            if (!UnlockedLevels.Contains(barcode))
-            {
-                UnlockedLevels.Add(barcode);
-            }
-        }
-
-        #endregion
 
         #region Saving and Loading
         /// <summary>
