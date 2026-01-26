@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.Notifications;
+using CustomCampaignTools.Debug;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
@@ -90,13 +91,23 @@ namespace CustomCampaignTools.Patching
         {
             if(!Campaign.SessionActive) return;
 
-            if(__instance.spawnable.crateRef == MarrowGame.marrowSettings.UIEventSystem && Campaign.Session.GameplayRigOverride.IsValid())
+            if (__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.UIEventSystem.Barcode && Campaign.Session.GameplayRigOverride.IsValid())
             {
-                __instance.spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride);
+                __instance.spawnable = new Spawnable()
+                {
+                    crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride),
+                    policyData = __instance.spawnable.policyData
+                };
+                CampaignLogger.Msg("Swapped UI Event System to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
             }
-            else if(__instance.spawnable.crateRef == MarrowGame.marrowSettings.DefaultPlayerRig && Campaign.Session.RigManagerOverride.IsValid())
+            else if(__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.DefaultPlayerRig.Barcode && Campaign.Session.RigManagerOverride.IsValid())
             {
-                __instance.spawnable.crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride);
+                __instance.spawnable = new Spawnable()
+                {
+                    crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride),
+                    policyData = __instance.spawnable.policyData
+                };
+                CampaignLogger.Msg("Swapped RigManager to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
             }
         }
     }
