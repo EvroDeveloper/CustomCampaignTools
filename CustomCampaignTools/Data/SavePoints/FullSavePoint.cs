@@ -22,7 +22,8 @@ public class FullSavePoint
         FullSavePoint savePoint = new()
         {
             levelBarcode = new(SceneStreamer.Session.Level.Barcode),
-            playerPosition = new(Player.RigManager.transform.position),
+            playerPosition = new(Player.RigManager.physicsRig.centerOfPressure.position),
+            playerForward = new(Player.RigManager.physicsRig.centerOfPressure.forward),
             playerAmmoSave = AmmoSave.CreateFromPlayer(),
             playerInventoryData = InventoryData.GetFromRigmanager(Player.RigManager),
             sceneEntityData = SceneEntityData.GenerateSceneEntitySave(),
@@ -31,14 +32,9 @@ public class FullSavePoint
         return savePoint;
     }
 
-    public bool IsValid()
-    {
-        return true;
-    }
-
     public void LoadSave()
     {
-        if(SceneStreamer.Session.Level.Barcode != levelBarcode.ToBarcode())
+        if(SceneStreamer.Session.Level.Barcode != levelBarcode.ToBarcode() || true) // force on for now for easy reload testing
         {
             // Start a scene load and then manage all the shit at specific times in the scene streamer
             // Might be a headache overriding crate spawners
@@ -60,24 +56,12 @@ public class FullSavePoint
         }
         else
         {
-            Player.RigManager.Teleport(playerPosition.ToVector3()); // Will redo playerforward once its actually saved
+            Player.RigManager.Teleport(playerPosition.ToVector3(), playerForward.ToVector3());
             AmmoInventory.Instance.ClearAmmo();
             playerAmmoSave.AddToPlayer();
             playerInventoryData.ApplyToRigmanager(Player.RigManager);
             sceneEntityData.RestoreAllLevelEntities();
             // Also need to figure out how to despawn all cratespawners, and then respawn them from the scene entity data. Doing that later
         }
-    }
-
-    public void OnSceneLoadedFromContinue()
-    {
-        // Ideally prevent all normal crate spawners from spawning
-        // Teleport Player
-        Player.RigManager.Teleport(playerPosition.ToVector3(), playerForward.ToVector3());
-
-        // Apply Ammo Save
-        // Apply Scene Entity Data
-        // Apply Inventory Save (inventory entities shouldnt end up saved in the first place)
-        playerInventoryData.ApplyToRigManagerDelayed();
     }
 }

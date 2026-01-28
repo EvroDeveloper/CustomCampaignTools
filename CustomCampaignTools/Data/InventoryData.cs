@@ -86,7 +86,7 @@ namespace CustomCampaignTools.Data
 
         public void SpawnInSlot(InventorySlotReceiver slot)
         {
-            if(Barcode != null && Barcode != string.Empty && slot != null)
+            if(Barcode != null && Barcode != string.Empty && slot != null && slot.GetHost() == null)
             {
                 var task = slot.SpawnInSlotAsync(new Barcode(Barcode));
             }
