@@ -1,6 +1,7 @@
 ﻿using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using HarmonyLib;
+using CustomCampaignTools.Data;
 
 namespace CustomCampaignTools
 {
@@ -24,19 +25,12 @@ namespace CustomCampaignTools
             // Accumulate ammo saves from previous levels
             for (int i = 0; i < levelIndex; i++)
             {
-                CampaignSaveData.AmmoSave levelAmmo = campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i));
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, levelAmmo.LightAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, levelAmmo.MediumAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, levelAmmo.HeavyAmmo);
+                campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).AddToPlayer();
             }
 
             if(SavepointFunctions.CurrentLevelLoadedByContinue)
             {
-                var savePoint = Campaign.Session.saveData.LoadedSavePoint;
-                // Save Points can have a mid-level ammo score, loading into a level only gives previous ammo high scores so I have to add extra from the save point
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, savePoint.MidLevelAmmoSave.LightAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, savePoint.MidLevelAmmoSave.MediumAmmo);
-                AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, savePoint.MidLevelAmmoSave.HeavyAmmo);
+                Campaign.Session.saveData.LoadedSavePoint.MidLevelAmmoSave.AddToPlayer();
             }
         }
     }

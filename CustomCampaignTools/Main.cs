@@ -74,10 +74,10 @@ namespace CustomCampaignTools
                 }
                 else
                 {
-                    campaign.saveData.SavePlayer(barcode, Vector3.zero);
-                    if(campaign.SaveLevelInventory && campaign.saveData.LoadedInventorySaves.ContainsKey(barcode))
+                    campaign.saveData.SavePlayer(barcode, null);
+                    if(campaign.SaveLevelInventory && campaign.saveData.InventorySaves.ContainsKey(barcode))
                     {
-                        MelonCoroutines.Start(SavepointFunctions.ApplyInventoryDataAfterTime(campaign.saveData.LoadedInventorySaves[barcode]));
+                        campaign.saveData.InventorySaves[barcode].ApplyToRigManagerDelayed();
                     }
                 }
             }

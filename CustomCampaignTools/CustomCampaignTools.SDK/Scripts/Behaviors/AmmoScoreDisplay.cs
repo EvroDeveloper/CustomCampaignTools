@@ -4,6 +4,7 @@ using Il2CppTMPro;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.Attributes;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.Data;
 #else
 using TMPro;
 #endif
@@ -37,7 +38,7 @@ namespace CustomCampaignTools.SDK
                 CampaignLogger.SessionMsg($"AmmoScoreDisplay could not find campaign for barcode {barcode}");
                 return;
             }
-            CampaignSaveData.AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(barcode);
+            AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(barcode);
             if(textMeshPro.Get() == null)
                 textMeshPro.Set(GetComponent<TMP_Text>());
             GetComponent<TMP_Text>().text = ammoSave.GetCombinedTotal().ToString();

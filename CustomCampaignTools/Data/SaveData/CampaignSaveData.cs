@@ -1,3 +1,4 @@
+using CustomCampaignTools.Data;
 using CustomCampaignTools.Debug;
 using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.SaveData;
@@ -10,18 +11,22 @@ namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
+        [JsonIgnore]
         public Campaign campaign;
 
+        [JsonIgnore]
         public static string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
-        public string SavePath { get => $"{SaveFolder}/slot_Campaign_{campaign.Name}.save.json"; }
+        public static string GetSavePath(Campaign c) => $"{SaveFolder}/slot_Campaign_{c.Name}.save.json";
+        [JsonIgnore]
         public string BackupSavePath { get => $"{SaveFolder}/slot_Campaign.{campaign.Name}.save_backup.json"; }
-        
-        public string LegacySavePath { get => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{campaign.Name}/save.json"; }
+        public static string GetLegacySavePath(Campaign c) => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{c.Name}/save.json";
+
+        public CampaignSaveData() {}
 
         public CampaignSaveData(Campaign c)
         {
             campaign = c;
-            LoadFromDisk();
+            ClearAmmoSave();
         }
 
         public void ResetSave()
@@ -30,8 +35,8 @@ namespace CustomCampaignTools
 
             ClearAmmoSave();
             ClearSavePoint();
-            LoadedInventorySaves = [];
-            LoadedFloatDatas = [];
+            InventorySaves = [];
+            FloatData = [];
             DevToolsUnlocked = false;
             AvatarUnlocked = false;
             SkipIntro = false;
@@ -55,149 +60,44 @@ namespace CustomCampaignTools
         {
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
-
-            SaveData saveData = new(this);
-
-            var settings = new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
-            };
-
-            string json = JsonConvert.SerializeObject(saveData, settings);
-
-            File.WriteAllText((overwritePath != string.Empty) ? overwritePath : SavePath, json);
+            
+            SerializerUtils.SaveObjectToFile(this, (overwritePath != string.Empty) ? overwritePath : GetSavePath(campaign));
         }
 
         /// <summary>
         /// Loads the save data from file. This should *probably* only be called at initialization.
         /// </summary>
-        internal void LoadFromDisk()
+        internal static CampaignSaveData LoadFromDisk(Campaign c)
         {
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
 
-            string savePathToUse = SavePath;
+            string savePathToUse = GetSavePath(c);
 
-            if (!File.Exists(SavePath))
+            if (!File.Exists(savePathToUse))
             {
-                if (File.Exists(LegacySavePath))
+                if (File.Exists(GetLegacySavePath(c)))
                 {
-                    savePathToUse = LegacySavePath;
+                    savePathToUse = GetLegacySavePath(c);
                 }
                 else
                 {
-                    ClearAmmoSave();
-                    LoadedSavePoint = new SavePoint();
-                    LoadedFloatDatas = new List<FloatData>();
-                    DevToolsUnlocked = false;
-                    AvatarUnlocked = false;
-                    SaveToDisk();
-                    return;
+                    // Create a blank save, none exists in either save path
+                    CampaignSaveData newSave = new(c);
+                    
+                    newSave.SaveToDisk();
+                    return newSave;
                 }
             }
 
-            string json = File.ReadAllText(savePathToUse);
-
-            var settings = new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
-                {
-                    CampaignLogger.Error(campaign, $"Error found when parsing path {args.ErrorContext.Path} of Save Data. This property will be reset");
-                    args.ErrorContext.Handled = true;
-                }
-            };
-
-            SaveData saveData = JsonConvert.DeserializeObject<SaveData>(json, settings);
-
-            saveData.LoadSaveData(this);
+            CampaignSaveData saveData = SerializerUtils.LoadObjectFromFile<CampaignSaveData>(savePathToUse);
+            saveData.campaign = c;
+            return saveData;
         }
 
         #endregion
 
-        public class SaveData
-        {
-            public SavePoint SavePoint { get; set; }
-            public List<AmmoSave> AmmoSaves { get; set; } = [];
-            public Dictionary<string, InventoryData> InventorySaves { get; set; } = [];
-            public List<FloatData> FloatData { get; set; } = [];
-            public bool DevToolsUnlocked { get; set; }
-            public bool AvatarUnlocked { get; set; }
-            public List<string> UnlockedAchievements { get; set; } = [];
-            public List<string> UnlockedLevels { get; set; } = [];
-            public bool SkipIntro { get; set; }
-            public List<LevelTime> LevelTimes { get; set; } = [];
-            public List<TrialTime> TrialTimes { get; set; } = [];
-
-            public SaveData()
-            {
-            }
-
-            public SaveData(CampaignSaveData parent)
-            {
-                SavePoint = parent.LoadedSavePoint;
-                AmmoSaves = parent.LoadedAmmoSaves;
-                InventorySaves = parent.LoadedInventorySaves;
-                FloatData = parent.LoadedFloatDatas;
-                DevToolsUnlocked = parent.DevToolsUnlocked;
-                AvatarUnlocked = parent.AvatarUnlocked;
-                SkipIntro = parent.SkipIntro;
-                UnlockedAchievements = parent.UnlockedAchievements;
-                UnlockedLevels = parent.UnlockedLevels;
-                LevelTimes = parent.LevelTimes;
-                TrialTimes = parent.TrialTimes;
-                CleanData();
-            }
-
-            private void CleanData()
-            {
-                List<AmmoSave> ammoSaveToRemove = [];
-                foreach (AmmoSave ammoSave in AmmoSaves)
-                {
-                    if (string.IsNullOrEmpty(ammoSave.LevelBarcode))
-                    {
-                        ammoSaveToRemove.Add(ammoSave);
-                    }
-                }
-                foreach (AmmoSave ammoSave in ammoSaveToRemove)
-                {
-                    AmmoSaves.Remove(ammoSave);
-                }
-
-                List<LevelTime> levelTimesToRemove = [];
-                foreach (LevelTime levelTime in LevelTimes)
-                {
-                    if (string.IsNullOrEmpty(levelTime.LevelBarcode))
-                    {
-                        levelTimesToRemove.Add(levelTime);
-                    }
-                }
-                foreach (LevelTime levelTime in levelTimesToRemove)
-                {
-                    LevelTimes.Remove(levelTime);
-                }
-                
-            }
-
-            public void LoadSaveData(CampaignSaveData parent)
-            {
-                parent.LoadedSavePoint = SavePoint;
-                parent.LoadedAmmoSaves = AmmoSaves;
-                parent.LoadedInventorySaves = InventorySaves ?? [];
-                parent.LoadedFloatDatas = FloatData ?? [];
-                parent.DevToolsUnlocked = DevToolsUnlocked;
-                parent.AvatarUnlocked = AvatarUnlocked;
-                parent.SkipIntro = SkipIntro;
-                parent.UnlockedAchievements = UnlockedAchievements ?? [];
-                parent.UnlockedLevels = UnlockedLevels ?? [];
-                parent.LevelTimes = LevelTimes ?? [];
-                parent.TrialTimes = TrialTimes ?? [];
-            }
-        }
-
-        public class FloatData(string key)
+        public class FloatDataPair(string key)
         {
             public string Key = key;
             public float Value = 0f;

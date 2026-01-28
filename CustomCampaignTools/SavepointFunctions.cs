@@ -24,23 +24,15 @@ namespace CustomCampaignTools
 
             if (hasSpawnPoint)
             {
-                Player.RigManager.Teleport(savePoint.GetPosition());
+                Player.RigManager.Teleport(savePoint.Position.ToVector3(), savePoint.GetForwardVector());
 
                 foreach(CampaignSaveData.BarcodePosRot barcode in savePoint.BoxContainedBarcodes)
                 {
-                    HelperMethods.SpawnCrate(barcode.barcode, barcode.GetPosition(), barcode.GetRotation(), Vector3.one, spawnAction: (g) => { CampaignLogger.Msg(campaign, $"Successfully Spawned {barcode} in Box"); });
+                    HelperMethods.SpawnCrate(barcode.barcode, barcode.position.ToVector3(), barcode.rotation.ToQuaternion(), Vector3.one, spawnAction: (g) => { CampaignLogger.Msg(campaign, $"Successfully Spawned {barcode} in Box"); });
                 }
             }
 
-            MelonCoroutines.Start(ApplyInventoryDataAfterTime(savePoint.InventoryData));
-
-        }
-
-        public static IEnumerator ApplyInventoryDataAfterTime(InventoryData invData)
-        {
-            yield return new WaitForSeconds(2);
-
-            invData.ApplyToRigmanager(Player.RigManager);
+            savePoint.InventoryData.ApplyToRigManagerDelayed();
         }
     }
 }

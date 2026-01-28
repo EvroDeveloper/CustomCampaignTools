@@ -115,7 +115,7 @@ namespace CustomCampaignTools
                 if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = new Barcode(CommonBarcodes.Maps.LoadMod);
                 else campaign.LoadScene = new Barcode(data.LoadScene);
                 
-                campaign.saveData = new CampaignSaveData(campaign);
+                campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
                 if (data.LoadSceneMusic != null && data.LoadSceneMusic != "null.empty.barcode")
                 {

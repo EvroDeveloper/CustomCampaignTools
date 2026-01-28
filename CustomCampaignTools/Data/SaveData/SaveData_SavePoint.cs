@@ -3,14 +3,15 @@ using BoneLib;
 using Il2CppSLZ.Marrow.Warehouse;
 using CustomCampaignTools.SDK;
 using CustomCampaignTools.Bonemenu;
-using AmmoInventory = Il2CppSLZ.Marrow.AmmoInventory;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.Data;
+using CustomCampaignTools.Data.SimpleSerializables;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal SavePoint LoadedSavePoint;
+        public SavePoint LoadedSavePoint = new();
 
         public void ClearSavePoint()
         {
@@ -19,25 +20,19 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public void SavePlayer(string levelBarcode, Vector3 position, List<BarcodePosRot> boxBarcodes = null)
+        public void SavePlayer(string levelBarcode, Transform transform, List<BarcodePosRot> boxBarcodes = null)
         {
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
-            boxBarcodes ??= new List<BarcodePosRot>();
+            boxBarcodes ??= [];
 
-            AmmoSave ammoSave = new AmmoSave();
+            AmmoSave ammoSave = new();
 
-            if (campaign.SaveLevelAmmo && position != Vector3.zero)
+            if (campaign.SaveLevelAmmo && transform != null)
             {
                 AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
-                ammoSave = new AmmoSave
-                {
-                    LevelBarcode = levelBarcode,
-                    LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light") - previousAmmoSave.LightAmmo,
-                    MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium") - previousAmmoSave.MediumAmmo,
-                    HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy") - previousAmmoSave.HeavyAmmo
-                };
+                ammoSave = AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave;
             }
 
             List<int> savedDespawns = [];
@@ -55,20 +50,19 @@ namespace CustomCampaignTools
                 savedEnableds.Add(saver.uniqueID.Get(), saver.gameObject.activeSelf);
             }
 
-            LoadedSavePoint = new SavePoint(levelBarcode, position, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
+            LoadedSavePoint = new SavePoint(levelBarcode, transform, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
-            CampaignLogger.Msg(campaign, $"Saved player at {position} in level {levelBarcode}");
+            CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {levelBarcode}");
 
             SaveToDisk();
             CampaignBoneMenu.RefreshCampaignPage(campaign);
         }
 
-        public struct SavePoint
+        public class SavePoint
         {
             public string LevelBarcode;
-            public float PositionX;
-            public float PositionY;
-            public float PositionZ;
+            public Vector3Ser Position;
+            public float RotationAngle;
 
             public InventoryData InventoryData;
             public AmmoSave MidLevelAmmoSave;
@@ -81,12 +75,13 @@ namespace CustomCampaignTools
 
             }
 
-            public SavePoint(string levelBarcode, Vector3 position, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
+            public SavePoint(string levelBarcode, Transform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
             {
                 LevelBarcode = levelBarcode;
-                PositionX = position.x;
-                PositionY = position.y;
-                PositionZ = position.z;
+                
+                Position = new(transform.position);
+
+                RotationAngle = transform.eulerAngles.y;
 
                 InventoryData = inventoryData;
                 MidLevelAmmoSave = ammoSave;
@@ -103,7 +98,7 @@ namespace CustomCampaignTools
             /// <returns></returns>
             public bool IsValid(out bool hasSpawnPoint)
             {
-                if (GetPosition() == Vector3.zero)
+                if (Position.ToVector3() == Vector3.zero)
                     hasSpawnPoint = false;
                 else
                     hasSpawnPoint = true;
@@ -136,9 +131,9 @@ namespace CustomCampaignTools
                     return defaultEnabled;
             }
 
-            public Vector3 GetPosition()
+            public Vector3 GetForwardVector()
             {
-                return new Vector3(PositionX, PositionY, PositionZ);
+                return Quaternion.Euler(0, RotationAngle, 0) * new Vector3(0, 0, 1);
             }
         }
 
@@ -146,50 +141,17 @@ namespace CustomCampaignTools
         {
             public string barcode;
 
-            public float x;
-            public float y;
-            public float z;
-
-            public float qX;
-            public float qY;
-            public float qZ;
-            public float qW;
-
-            public float sX;
-            public float sY;
-            public float sZ;
+            public Vector3Ser position;
+            public QuaternionSer rotation;
+            public Vector3Ser scale;
 
             public BarcodePosRot(Barcode barcode, Vector3 position, Quaternion rotation, Vector3 scale)
             {
                 this.barcode = barcode.ID;
 
-                x = position.x;
-                y = position.y;
-                z = position.z;
-
-                qX = rotation.x;
-                qY = rotation.y;
-                qZ = rotation.z;
-                qW = rotation.w;
-
-                sX = scale.x;
-                sY = scale.y;
-                sZ = scale.z;
-            }
-
-            public Vector3 GetPosition()
-            {
-                return new Vector3(x, y, z);
-            }
-
-            public Quaternion GetRotation()
-            {
-                return new Quaternion(qX, qY, qZ, qW);
-            }
-
-            public Vector3 GetScale()
-            {
-                return new Vector3(sX, sY, sZ);
+                this.position = new(position);
+                this.rotation = new(rotation);
+                this.scale = new(scale);
             }
         }
     }

@@ -79,11 +79,11 @@ namespace CustomCampaignTools.SDK
                     if (entity._poolee.SpawnableCrate == null) continue;
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get().position, Entities);
+                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get(), Entities);
             }
             else
             {
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get().position);
+                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get());
             }
 #endif
         }

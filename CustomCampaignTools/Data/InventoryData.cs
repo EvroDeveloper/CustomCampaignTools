@@ -1,9 +1,13 @@
+using BoneLib;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.Data
 {
     public class InventoryData
     {
@@ -16,7 +20,7 @@ namespace CustomCampaignTools
                 var item = InventoryItems[i];
                 try
                 {
-                    var realBodySlot = rm.inventory.bodySlots.Where((s) => { return s.gameObject.name == item.SlotName; }).First().inventorySlotReceiver;
+                    var realBodySlot = rm.inventory.bodySlots.First((s) => { return s.gameObject.name == item.SlotName; }).inventorySlotReceiver;
                     if (realBodySlot != null)
                     {
                         item.SpawnInSlot(realBodySlot);
@@ -26,6 +30,18 @@ namespace CustomCampaignTools
                 {
                 }
             }
+        }
+
+        private IEnumerator CoApplyToRigManagerAfterTime()
+        {
+            yield return new WaitForSeconds(2);
+
+            ApplyToRigmanager(Player.RigManager);
+        }
+
+        public void ApplyToRigManagerDelayed()
+        {
+            MelonCoroutines.Start(CoApplyToRigManagerAfterTime());
         }
 
         public static InventoryData GetFromRigmanager(RigManager rm)

@@ -2,7 +2,7 @@ namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal List<FloatData> LoadedFloatDatas = [];
+        internal List<FloatDataPair> FloatData = [];
         
         public void SetValue(string key, float value)
         {
@@ -13,17 +13,17 @@ namespace CustomCampaignTools
         {
             return GetFloatDataEntry(key).Value;
         }
-        private FloatData GetFloatDataEntry(string key)
+        private FloatDataPair GetFloatDataEntry(string key)
         {
-            FloatData found = null;
+            FloatDataPair found = null;
             try
             {
-                found = LoadedFloatDatas.First(f => f.Key == key);
+                found = FloatData.First(f => f.Key == key);
             }
             catch
             {
-                found = new FloatData(key);
-                LoadedFloatDatas.Add(found);
+                found = new FloatDataPair(key);
+                FloatData.Add(found);
             }
             return found;
         }
