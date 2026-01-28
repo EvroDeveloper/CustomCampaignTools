@@ -37,10 +37,7 @@ namespace CustomCampaignTools.Bonemenu
 
             testingPage.CreateFunction("Test Load Save", Color.green, () =>
             {
-                if(lastSavedPoint != null)
-                {
-                    lastSavedPoint.sceneEntityData.RestoreAllLevelEntities();
-                }
+                lastSavedPoint?.LoadSave();
             });
 #endif
         }

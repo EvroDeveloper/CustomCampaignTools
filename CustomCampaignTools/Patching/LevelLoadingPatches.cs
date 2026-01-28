@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BoneLib;
-using BoneLib.Notifications;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.Timing;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
@@ -14,7 +8,6 @@ using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
-using MelonLoader;
 using UnityEngine;
 
 namespace CustomCampaignTools.Patching
@@ -22,11 +15,13 @@ namespace CustomCampaignTools.Patching
     [HarmonyPatch(typeof(SceneStreamer))]
     public static class LevelLoadingPatches
     {
+        public static Action OnNextSceneLoaded = ()=>{};
+
         [HarmonyPatch(nameof(SceneStreamer.LoadAsync), [typeof(LevelCrateReference), typeof(LevelCrateReference)])]
         [HarmonyPrefix]
         public static bool LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
         {
-            var destinationCampaign = CampaignUtilities.GetFromLevel(level);
+            bool loadingIntoCampaign = CampaignUtilities.IsCampaignLevel(level.Barcode.ID, out var destinationCampaign, out CampaignLevelType levelType);
 
             SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
             SavepointFunctions.WasLastLoadByContinue = false;
@@ -42,7 +37,7 @@ namespace CustomCampaignTools.Patching
                 }
             }
 
-            if(destinationCampaign != null)
+            if(loadingIntoCampaign)
             {
                 destinationCampaign.saveData.UnlockLevel(level.Barcode.ID);
 
@@ -52,6 +47,26 @@ namespace CustomCampaignTools.Patching
                     loadLevel = new LevelCrateReference(destinationCampaign.LoadScene);
                 }
                 Campaign.Session = destinationCampaign;
+
+                OnNextSceneLoaded += () =>
+                {
+                    LevelTiming.OnCampaignLevelLoaded(destinationCampaign, level.Barcode.ID);
+                };
+
+                if(levelType == CampaignLevelType.MainLevel)
+                {
+                    if (!SavepointFunctions.CurrentLevelLoadedByContinue)
+                    {
+                        OnNextSceneLoaded += () =>
+                        {
+                            destinationCampaign.saveData.SavePlayer(level.Barcode.ID, null);
+                            if(destinationCampaign.SaveLevelInventory && destinationCampaign.saveData.InventorySaves.ContainsKey(level.Barcode.ID))
+                            {
+                                destinationCampaign.saveData.InventorySaves[level.Barcode.ID].ApplyToRigManagerDelayed();
+                            }
+                        };
+                    }
+                }
             }
 
             return true;

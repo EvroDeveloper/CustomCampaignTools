@@ -6,6 +6,7 @@ using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Data;
 using CustomCampaignTools.Data.SimpleSerializables;
+using CustomCampaignTools.Patching;
 
 namespace CustomCampaignTools
 {
@@ -121,6 +122,10 @@ namespace CustomCampaignTools
                 SavepointFunctions.WasLastLoadByContinue = true;
 
                 FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
+
+                // Prepare things to happen on next load
+                AmmoInventoryPatches.OnNextAwake += (a) => Campaign.Session.saveData.LoadedSavePoint.MidLevelAmmoSave.AddToPlayer();
+                LevelLoadingPatches.OnNextSceneLoaded += SavepointFunctions.LoadPlayerFromSave;
             }
 
             public bool GetEnabledStateFromID(int id, bool defaultEnabled)

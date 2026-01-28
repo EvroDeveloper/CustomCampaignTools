@@ -62,25 +62,8 @@ namespace CustomCampaignTools
 
             GameManager.OnLevelLoaded(info);
 
-            if (CampaignUtilities.IsCampaignLevel(barcode, out Campaign campaign, out var levelType))
-            {
-                LevelTiming.OnCampaignLevelLoaded(campaign, barcode);
-
-                if (levelType != CampaignLevelType.MainLevel) return;
-
-                if (SavepointFunctions.CurrentLevelLoadedByContinue)
-                {
-                    SavepointFunctions.LoadPlayerFromSave();
-                }
-                else
-                {
-                    campaign.saveData.SavePlayer(barcode, null);
-                    if(campaign.SaveLevelInventory && campaign.saveData.InventorySaves.ContainsKey(barcode))
-                    {
-                        campaign.saveData.InventorySaves[barcode].ApplyToRigManagerDelayed();
-                    }
-                }
-            }
+            LevelLoadingPatches.OnNextSceneLoaded.Invoke();
+            LevelLoadingPatches.OnNextSceneLoaded = ()=>{};
         }
 
         private static void LevelUnloaded()
