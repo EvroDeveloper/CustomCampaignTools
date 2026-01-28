@@ -1,6 +1,7 @@
 using System;
 using BoneLib;
 using CustomCampaignTools.Data.SimpleSerializables;
+using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Pool;
@@ -67,9 +68,16 @@ public class SceneEntityData
     {
         foreach(MarrowEntity entity in UnityEngine.Object.FindObjectsOfType<MarrowEntity>(true))
         {
-            if(entity._poolee.SpawnableCrate == null)
+            try
+            { 
+                if(entity._poolee.SpawnableCrate == null)
+                {
+                    RestoreLevelEntity(entity);
+                }
+            }
+            catch (Exception e)
             {
-                RestoreLevelEntity(entity);
+                CampaignLogger.Error(e.Message);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Utilities;
 
@@ -25,6 +26,11 @@ public class MarrowEntityPoseSer
 
         for (int i = 0; i < bodyPoses.Length; i++)
         {
+            if(bodyPoses[i] == null)
+            {
+                CampaignLogger.Error($"Body Pose {i} was null. Skipping...");
+                normalBodyPose[i] = new SimpleTransform();
+            }
             normalBodyPose[i] = bodyPoses[i].ToSimpleTransform();
         }
 
