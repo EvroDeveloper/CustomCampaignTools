@@ -63,6 +63,24 @@ public class SceneEntityData
         }
     }
 
+    public void RestoreAllLevelEntities()
+    {
+        foreach(MarrowEntity entity in UnityEngine.Object.FindObjectsOfType<MarrowEntity>(true))
+        {
+            if(entity._poolee.SpawnableCrate == null)
+            {
+                RestoreLevelEntity(entity);
+            }
+        }
+    }
+
+    public void SpawnAllSpawnedEntities()
+    {
+        foreach(SpawnedEntitySave spawnedEntitySave in spawnedEntitySaves)
+        {
+            spawnedEntitySave.Spawn();
+        }
+    }
 
     public void RestoreLevelEntity(MarrowEntity entity)
     {

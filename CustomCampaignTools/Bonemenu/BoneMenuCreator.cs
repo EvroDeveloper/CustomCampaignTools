@@ -20,6 +20,7 @@ namespace CustomCampaignTools.Bonemenu
 
 #if DEBUG
         public static Page testingPage;
+        public static FullSavePoint lastSavedPoint;
 #endif
         
         public static void CreateBoneMenu()
@@ -29,9 +30,17 @@ namespace CustomCampaignTools.Bonemenu
             testingPage = Page.Root.CreatePage("Evro Testing", Color.red);
             testingPage.CreateFunction("Test Create Save", Color.red, () =>
             {
-                var savePoint = FullSavePoint.CreateSavePoint();
+                lastSavedPoint = FullSavePoint.CreateSavePoint();
 
-                CampaignLogger.Msg(SerializerUtils.SerializeObject(savePoint));
+                CampaignLogger.Msg(SerializerUtils.SerializeObject(lastSavedPoint));
+            });
+
+            testingPage.CreateFunction("Test Load Save", Color.green, () =>
+            {
+                if(lastSavedPoint != null)
+                {
+                    lastSavedPoint.sceneEntityData.RestoreAllLevelEntities();
+                }
             });
 #endif
         }
