@@ -1,6 +1,7 @@
 using System;
 using BoneLib;
 using CustomCampaignTools.Data.SimpleSerializables;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.Utilities;
@@ -38,6 +39,9 @@ public class SceneEntityData
 
     public void SaveEntity(MarrowEntity entity)
     {
+        if(entity.GetComponentInParent<AssetSpawner>() != null) return; // Ignore template spawnables
+        if(entity.GetComponentInParent<RigManager>() != null) return; // Ignore Rigmanager entities
+
         if(entity._poolee.SpawnableCrate == null)
         {
             // From-level entity, hash and save data
@@ -77,7 +81,8 @@ public class SceneEntityData
         while(checkingTransform != null)
         {
             hash2.Add(checkingTransform.gameObject.name);
-            hash2.Add(checkingTransform.GetSiblingIndex());
+            if(checkingTransform.parent != null) // I got differing hashes and I think its because of the jumbled nature of the root objects in the scene. Only check sibling index on non-root objects
+                hash2.Add(checkingTransform.GetSiblingIndex());
             checkingTransform = checkingTransform.parent;
         }
 
