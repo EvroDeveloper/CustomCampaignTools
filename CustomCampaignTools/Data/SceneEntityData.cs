@@ -87,14 +87,14 @@ public class SceneEntityData
 
 public class SpawnedEntitySave
 {
-    public Barcode barcode;
+    public BarcodeSer barcode;
     public MarrowEntitySaveData saveData;
 
     public SpawnedEntitySave(MarrowEntity entity)
     {
         if(entity._poolee.SpawnableCrate != null)
         {
-            barcode = entity._poolee.SpawnableCrate.Barcode;
+            barcode = new(entity._poolee.SpawnableCrate.Barcode);
             saveData = new(entity);
         }
     }
@@ -102,7 +102,7 @@ public class SpawnedEntitySave
     public void Spawn(Action<MarrowEntity> callback = null)
     {
         HelperMethods.SpawnCrate(
-            new SpawnableCrateReference(barcode),
+            new SpawnableCrateReference(barcode.ToBarcode()),
             saveData.entityPosition.position.ToVector3(),
             saveData.entityPosition.rotation.ToQuaternion(),
             saveData.entityPosition.scale.ToVector3(),
@@ -121,7 +121,8 @@ public class SpawnedEntitySave
 
 public class MarrowEntitySaveData
 {
-    public bool IsDespawned;
+    public string name;
+    public bool isDespawned;
     public TransformSer entityPosition;
     public MarrowEntityPoseSer entityPose;
     public Vector3Ser[] bodyVelocities;
@@ -130,6 +131,8 @@ public class MarrowEntitySaveData
 
     public MarrowEntitySaveData(MarrowEntity entity)
     {
+        name = entity.gameObject.name;
+        
         entityPosition = new(entity.transform, false);
 
         MarrowEntityPose readPose = new();
@@ -137,7 +140,7 @@ public class MarrowEntitySaveData
 
         entityPose = new(readPose);
 
-        IsDespawned = entity.IsDespawned;
+        isDespawned = entity.IsDespawned;
         if(!entity.IsDespawned)
         {
             bool shouldApplyVelocities = false;
@@ -177,7 +180,7 @@ public class MarrowEntitySaveData
 
         entity.WritePose(entityPose.ToMarrowEntityPose());
 
-        if(IsDespawned)
+        if(isDespawned)
         {
             entity.Despawn();
         }
