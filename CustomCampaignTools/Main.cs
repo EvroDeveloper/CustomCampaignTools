@@ -63,7 +63,7 @@ namespace CustomCampaignTools
             GameManager.OnLevelLoaded(info);
 
             LevelLoadingPatches.OnNextSceneLoaded.Invoke();
-            LevelLoadingPatches.OnNextSceneLoaded = ()=>{};
+            LevelLoadingPatches.OnNextSceneLoaded = () => {};
         }
 
         private static void LevelUnloaded()

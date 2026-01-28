@@ -23,7 +23,7 @@ public class MarrowEntityPoseSer
         MarrowEntityPose pose = new();
         SimpleTransform[] normalBodyPose = new SimpleTransform[bodyPoses.Length];
 
-        for (int i = 0; i < pose.bodyPoses.Count; i++)
+        for (int i = 0; i < bodyPoses.Length; i++)
         {
             normalBodyPose[i] = bodyPoses[i].ToSimpleTransform();
         }
