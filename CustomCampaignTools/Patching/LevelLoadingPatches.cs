@@ -97,11 +97,11 @@ namespace CustomCampaignTools.Patching
         }
     }
 
-    [HarmonyPatch(typeof(AssetSpawner._SpawnAsync_d__15))]
+    //[HarmonyPatch(typeof(AssetSpawner._SpawnAsync_d__15))]
     public static class RigReplacerPatches
     {
-        [HarmonyPatch(nameof(AssetSpawner._SpawnAsync_d__15.MoveNext))]
-        [HarmonyPrefix]
+        //[HarmonyPatch(nameof(AssetSpawner._SpawnAsync_d__15.MoveNext))]
+        //[HarmonyPrefix]
         public static void OnSpawnableSpawned(AssetSpawner._SpawnAsync_d__15 __instance)
         {
             if(!Campaign.SessionActive) return;
