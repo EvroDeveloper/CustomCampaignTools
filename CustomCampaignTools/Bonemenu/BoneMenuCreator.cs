@@ -6,6 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.BoneMenu;
+using CustomCampaignTools.Data;
+using CustomCampaignTools.Data.SavePoints;
+using CustomCampaignTools.Data.SimpleSerializables;
+using CustomCampaignTools.Debug;
 using UnityEngine;
 
 namespace CustomCampaignTools.Bonemenu
@@ -13,10 +17,23 @@ namespace CustomCampaignTools.Bonemenu
     public static class BoneMenuCreator
     {
         public static Page campaignCategory;
+
+#if DEBUG
+        public static Page testingPage;
+#endif
         
         public static void CreateBoneMenu()
         {
             campaignCategory = Page.Root.CreatePage("Campaigns", Color.yellow);
+#if DEBUG
+            testingPage = Page.Root.CreatePage("Evro Testing", Color.red);
+            testingPage.CreateFunction("Test Create Save", Color.red, () =>
+            {
+                var savePoint = FullSavePoint.CreateSavePoint();
+
+                CampaignLogger.Msg(SerializerUtils.SerializeObject(savePoint));
+            });
+#endif
         }
     }
 }
