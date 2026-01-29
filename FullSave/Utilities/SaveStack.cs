@@ -11,7 +11,7 @@ public static class SaveStack
     public static List<FullSavePoint> fullSavesList = [];
 
     public static string SaveFolder { get => Path.Combine(Application.persistentDataPath, "Saves"); }
-    private static string GetSavePath(FullSavePoint savePoint) => $"{SaveFolder}/slot_FullSave_{savePoint.creationDate:s}.save.json";
+    private static string GetSavePath(FullSavePoint savePoint) => $"{SaveFolder}/slot_FullSave_{savePoint.creationDate:yyyyMMdd.HHmmss}.save.json";
 
     public static void LoadSavesFromFiles()
     {
