@@ -32,7 +32,14 @@ public class SceneEntityData
 
         foreach(MarrowEntity entity in entities)
         {
-            output.SaveEntity(entity);
+            try
+            {
+                output.SaveEntity(entity);
+            }
+            catch(Exception e)
+            {
+                CampaignLogger.Error($"Unable to save entity {entity.gameObject.name}, {e.Message}");
+            }
         }
 
         return output;
@@ -180,7 +187,7 @@ public class MarrowEntitySaveData
 
             foreach(MarrowBody body in entity.Bodies)
             {
-                if(body.TryGetRigidbody(out var rb))
+                if(body != null && body.TryGetRigidbody(out var rb))
                 {
                     if(!rb.IsSleeping())
                     {
