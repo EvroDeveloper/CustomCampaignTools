@@ -1,15 +1,18 @@
 using System;
 using BoneLib;
-using CustomCampaignTools.Data.SimpleSerializables;
-using CustomCampaignTools.Patching;
+using FullSave.Data.SimpleSerializables;
+using FullSave.Utilities;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
+using Newtonsoft.Json;
 
-namespace CustomCampaignTools.Data.SavePoints;
+namespace FullSave.Data;
 
 public class FullSavePoint
 {
+    public DateTime creationDate;
     public BarcodeSer levelBarcode;
+    public string levelName;
     public Vector3Ser playerPosition;
     public Vector3Ser playerForward;
     public AmmoSave playerAmmoSave;
@@ -21,7 +24,9 @@ public class FullSavePoint
     {
         FullSavePoint savePoint = new()
         {
+            creationDate = DateTime.Now,
             levelBarcode = new(SceneStreamer.Session.Level.Barcode),
+            levelName = SceneStreamer.Session.Level.Title,
             playerPosition = new(Player.RigManager.physicsRig.centerOfPressure.position),
             playerForward = new(Player.RigManager.physicsRig.centerOfPressure.forward),
             playerAmmoSave = AmmoSave.CreateFromPlayer(),
@@ -41,18 +46,18 @@ public class FullSavePoint
             FadeLoader.Load(levelBarcode.ToBarcode(), new Il2CppSLZ.Marrow.Warehouse.Barcode(CommonBarcodes.Maps.LoadDefault));
 
             // Temporarily disable Crate Spawner spawning
-            CrateSpawnerAwakePatch.BlockCrateSpawns = true;
+            CrateSpawnerBlocker.BlockCrateSpawns = true;
 
             // Set up things to happen
-            LevelLoadingPatches.OnNextSceneLoaded += () => 
+            SceneLoaderUtils.OnNextSceneLoaded += () => 
             { 
-                CrateSpawnerAwakePatch.BlockCrateSpawns = false; 
+                CrateSpawnerBlocker.BlockCrateSpawns = false; 
                 Player.RigManager.Teleport(playerPosition.ToVector3());
                 playerInventoryData.ApplyToRigManagerDelayed();
                 sceneEntityData.RestoreAllLevelEntities();
                 sceneEntityData.SpawnAllSpawnedEntities();
             };
-            AmmoInventoryPatches.OnNextAwake += (a) => playerAmmoSave.AddToPlayer();
+            AmmoInventoryPatches.OnNextAmmoInventoryAwake += playerAmmoSave.AddToPlayer;
         }
         else
         {

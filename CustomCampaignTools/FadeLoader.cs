@@ -7,7 +7,7 @@ using BoneLib;
 
 namespace CustomCampaignTools
 {
-    public class FadeLoader
+    public static class FadeLoader
     {
         public static readonly string LoadFadeBarcode = "c1534c5a-dac0-44a1-b656-6c235646584c";
 
