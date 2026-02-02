@@ -108,6 +108,9 @@
       <HintPath>/Users/evanbassett/Downloads/MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MonoBehaviours/" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>cp "$(TargetDir)$(AssemblyName).dll" "/Users/evanbassett/Documents/GitHub/CustomCampaignTools/Mod Staging/Mods"</PostBuildEvent>
   </PropertyGroup>

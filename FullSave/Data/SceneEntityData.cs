@@ -1,6 +1,9 @@
 using System;
 using BoneLib;
+using FullSave.ComponentSavers;
 using FullSave.Data.SimpleSerializables;
+using FullSave.Utilities;
+using Il2CppInterop.Runtime;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Pool;
@@ -17,6 +20,7 @@ public class SceneEntityData
     // Spawned Entities - Save barcode position and name
     public Dictionary<int, MarrowEntitySaveData> levelEntitySaves = [];
     public List<SpawnedEntitySave> spawnedEntitySaves = [];
+    public List<SavedComponent> globalSavedComponents;
 
     static readonly Barcode[] invalidSaves =
     [
@@ -47,7 +51,7 @@ public class SceneEntityData
         {
             // From-level entity, hash and save data
             // hash is necessary to find the same scene entity later when loading.
-            int hashCode = GetHierarchyHash(entity.transform);
+            int hashCode = HashingUtility.GetHierarchyHash(entity.transform);
 
             MarrowEntitySaveData entitySave = new(entity);
             levelEntitySaves.Add(hashCode, entitySave);
@@ -55,9 +59,9 @@ public class SceneEntityData
         else
         {
             // From spawn entity, save.
-            // Dont save spawned things that have been subsequently despawned.
+            // Dont save spawned things that have been subsequently despawned. // Ammend, DO save despawned items so we can simulate an OnSpawn event before despawning them again
             // Also probably not good to save spawnables that are under the asset spawner, only save root level spawned entities
-            if(!entity.IsDespawned && entity.transform.parent == null)
+            if(entity.transform.parent == null)
             {
                 spawnedEntitySaves.Add(new(entity));
             }
@@ -80,6 +84,11 @@ public class SceneEntityData
                 MelonLogger.Msg(e.Message);
             }
         }
+
+        foreach(SavedComponent component in globalSavedComponents)
+        {
+            component.ApplySave();
+        }
     }
 
     public void SpawnAllSpawnedEntities()
@@ -92,33 +101,18 @@ public class SceneEntityData
 
     public void RestoreLevelEntity(MarrowEntity entity)
     {
-        int hashCode = GetHierarchyHash(entity.transform);
+        int hashCode = HashingUtility.GetHierarchyHash(entity.transform);
         if(levelEntitySaves.ContainsKey(hashCode))
         {
             levelEntitySaves[hashCode].ApplyToEntity(entity);
         }
-    }
-
-    public static int GetHierarchyHash(Transform transform)
-    {
-        HashCode hash2 = new();
-
-        Transform checkingTransform = transform;
-        while(checkingTransform != null)
-        {
-            hash2.Add(checkingTransform.gameObject.name);
-            if(checkingTransform.parent != null) // I got differing hashes and I think its because of the jumbled nature of the root objects in the scene. Only check sibling index on non-root objects
-                hash2.Add(checkingTransform.GetSiblingIndex());
-            checkingTransform = checkingTransform.parent;
-        }
-
-        return hash2.ToHashCode();
     }
 }
 
 public class SpawnedEntitySave
 {
     public BarcodeSer barcode;
+    public int CrateSpawnerHash;
     public MarrowEntitySaveData saveData;
 
     public SpawnedEntitySave(MarrowEntity entity)
@@ -143,8 +137,13 @@ public class SpawnedEntitySave
 
                 saveData.ApplyToEntity(entity);
 
-                if(callback != null)
-                    callback(entity);
+                if(CrateSpawnerHash != 0)
+                {
+                    var foundSpawner = HashingUtility.FindComponentWithMatchingHash<CrateSpawner>(CrateSpawnerHash);
+                    foundSpawner?.OnPooleeSpawn(gobj); // Call the spawn event for things like decorators and ofc ultevents. Unsure about Nail decorators but ehh
+                }
+
+                callback?.Invoke(entity);
             }
         );
     }
@@ -158,12 +157,15 @@ public class MarrowEntitySaveData
     public MarrowEntityPoseSer entityPose;
     public Vector3Ser[] bodyVelocities;
     public Vector3Ser[] bodyAngularVelocities;
-
+    public List<SavedComponent> savedComponents;
 
     public MarrowEntitySaveData(MarrowEntity entity)
     {
+        isDespawned = entity.IsDespawned;
+        if(entity.IsDespawned) return; // Dont waste data on despawned things, just despawn it where it stands it doent matter
+
         name = entity.gameObject.name;
-        
+
         entityPosition = new(entity.transform, false);
 
         MarrowEntityPose readPose = new();
@@ -171,51 +173,60 @@ public class MarrowEntitySaveData
 
         entityPose = new(readPose);
 
-        isDespawned = entity.IsDespawned;
-        if(!entity.IsDespawned)
+        bool shouldApplyVelocities = false;
+        List<Vector3Ser> tempBodyVelocities = [];
+        List<Vector3Ser> tempBodyAngularVelocities = [];
+
+        foreach(MarrowBody body in entity.Bodies)
         {
-            bool shouldApplyVelocities = false;
-            List<Vector3Ser> tempBodyVelocities = [];
-            List<Vector3Ser> tempBodyAngularVelocities = [];
-
-            foreach(MarrowBody body in entity.Bodies)
+            if(body.TryGetRigidbody(out var rb))
             {
-                if(body.TryGetRigidbody(out var rb))
+                if(!rb.IsSleeping())
                 {
-                    if(!rb.IsSleeping())
-                    {
-                        shouldApplyVelocities = true;
-                    }
-                    tempBodyVelocities.Add(new(rb.velocity));
-                    tempBodyAngularVelocities.Add(new(rb.angularVelocity));
+                    shouldApplyVelocities = true;
                 }
-                else
-                {
-                    tempBodyVelocities.Add(new(Vector3.zero));
-                    tempBodyAngularVelocities.Add(new(Vector3.zero));
-                }
+                tempBodyVelocities.Add(new(rb.velocity));
+                tempBodyAngularVelocities.Add(new(rb.angularVelocity));
             }
-
-            if(shouldApplyVelocities)
+            else
             {
-                bodyVelocities = [.. tempBodyVelocities];
-                bodyAngularVelocities = [.. tempBodyAngularVelocities];
+                tempBodyVelocities.Add(new(Vector3.zero));
+                tempBodyAngularVelocities.Add(new(Vector3.zero));
+            }
+        }
+
+        if(shouldApplyVelocities)
+        {
+            bodyVelocities = [.. tempBodyVelocities];
+            bodyAngularVelocities = [.. tempBodyAngularVelocities];
+        }
+
+        // for every possible component saver, find components in children and save them
+        foreach(Type type in ComponentSaverManager.GetValidComponentTypes())
+        {
+            IComponentSaver saver = ComponentSaverManager.GetComponentSaver(type);
+            foreach(Component c in entity.gameObject.GetComponentsInChildren(Il2CppType.From(type)))
+            {
+                savedComponents.Add(new(c, saver, entity.transform));
             }
         }
     }
 
     public void ApplyToEntity(MarrowEntity entity)
     {
+        if(isDespawned)
+        {
+            entity.Despawn();
+            // Dont even trip dawg, no need to apply shit if its been despawned. Early returning right this instant...
+            return;
+        }
+
         entity.transform.position = entityPosition.position.ToVector3();
         entity.transform.rotation = entityPosition.rotation.ToQuaternion();
 
         entity.WritePose(entityPose.ToMarrowEntityPose());
 
-        if(isDespawned)
-        {
-            entity.Despawn();
-        }
-        else if(bodyVelocities != null && bodyVelocities.Length != 0 && bodyVelocities.Length == entity.Bodies.Length)
+        if(bodyVelocities != null && bodyVelocities.Length != 0 && bodyVelocities.Length == entity.Bodies.Length)
         {
             for(int i = 0; i < entity.Bodies.Length; i++)
             {
@@ -226,5 +237,43 @@ public class MarrowEntitySaveData
                 }
             }
         }
+
+        foreach(SavedComponent component in savedComponents)
+        {
+            component.ApplySave(entity);
+        }
+    }
+}
+
+public class SavedComponent
+{
+    public int componentHash;
+    public string componentType;
+    public byte[] savedState;
+
+    public SavedComponent()
+    {
+        
+    }
+
+    public SavedComponent(Component component, IComponentSaver componentSaver, Transform root = null)
+    {
+        componentHash = HashingUtility.GetComponentHash(component, root);
+        componentType = component.GetType().FullName;
+        savedState = componentSaver.SaveComponentState(component);
+    }
+
+    public void ApplySave(MarrowEntity referenceEntity = null)
+    {
+        // Evaluate Type from componentType string
+        Type realComponentType = Type.GetType(componentType);
+        // Find ComponentSaver type for handling a LOT of things
+        IComponentSaver componentSaver = ComponentSaverManager.GetComponentSaver(realComponentType);
+        if(componentSaver == null)
+        {
+            MelonLogger.Error($"Uhh couldnt find a component saver for type {componentType}");
+            return;
+        }
+        componentSaver.RestoreComponentState(referenceEntity.transform, componentHash, savedState); // i dont like this, generics pmo
     }
 }

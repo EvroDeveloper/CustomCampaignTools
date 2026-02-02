@@ -53,6 +53,7 @@ public class FullSavePoint
             { 
                 CrateSpawnerBlocker.BlockCrateSpawns = false; 
                 Player.RigManager.Teleport(playerPosition.ToVector3());
+                TeleportBlocker.BlockTeleportsForDelay();
                 playerInventoryData.ApplyToRigManagerDelayed();
                 sceneEntityData.RestoreAllLevelEntities();
                 sceneEntityData.SpawnAllSpawnedEntities();
