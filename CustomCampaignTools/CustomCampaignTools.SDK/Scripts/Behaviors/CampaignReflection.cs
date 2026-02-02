@@ -77,7 +77,7 @@ namespace CustomCampaignTools.SDK
         public string GetSavePointLevelName()
         {
 #if MELONLOADER
-            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(new Barcode(Campaign.Session.saveData.LoadedSavePoint.LevelBarcode), out var level))
+            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(Campaign.Session.saveData.LoadedSavePoint.LevelBarcode, out var level))
                 return level.Title;
             else
                 return "";
