@@ -109,7 +109,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ComponentSavers/SDK/" />
     <Folder Include="MonoBehaviours/" />
+    <Folder Include="SDK/" />
+    <Folder Include="SDK/MonoBehaviours/" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>cp "$(TargetDir)$(AssemblyName).dll" "/Users/evanbassett/Documents/GitHub/CustomCampaignTools/Mod Staging/Mods"</PostBuildEvent>

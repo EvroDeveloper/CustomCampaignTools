@@ -240,40 +240,8 @@ public class MarrowEntitySaveData
 
         foreach(SavedComponent component in savedComponents)
         {
-            component.ApplySave(entity);
+            component.ApplySave(entity.gameObject);
         }
     }
 }
 
-public class SavedComponent
-{
-    public int componentHash;
-    public string componentType;
-    public byte[] savedState;
-
-    public SavedComponent()
-    {
-        
-    }
-
-    public SavedComponent(Component component, IComponentSaver componentSaver, Transform root = null)
-    {
-        componentHash = HashingUtility.GetComponentHash(component, root);
-        componentType = component.GetType().FullName;
-        savedState = componentSaver.SaveComponentState(component);
-    }
-
-    public void ApplySave(MarrowEntity referenceEntity = null)
-    {
-        // Evaluate Type from componentType string
-        Type realComponentType = Type.GetType(componentType);
-        // Find ComponentSaver type for handling a LOT of things
-        IComponentSaver componentSaver = ComponentSaverManager.GetComponentSaver(realComponentType);
-        if(componentSaver == null)
-        {
-            MelonLogger.Error($"Uhh couldnt find a component saver for type {componentType}");
-            return;
-        }
-        componentSaver.RestoreComponentState(referenceEntity.transform, componentHash, savedState); // i dont like this, generics pmo
-    }
-}
