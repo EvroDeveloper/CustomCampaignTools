@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.SDK
 {
@@ -48,7 +49,7 @@ namespace CustomCampaignTools.SDK
         public void Save()
         {
 #if MELONLOADER
-            string barcode = SceneStreamer.Session.Level.Barcode.ID;
+            Barcode barcode = SceneStreamer.Session.Level.Barcode;
 
             if (entitySaveZone.Get() != null)
             {

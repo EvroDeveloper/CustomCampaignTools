@@ -7,6 +7,7 @@ using CustomCampaignTools.Debug;
 using CustomCampaignTools.Data;
 using CustomCampaignTools.Data.SimpleSerializables;
 using CustomCampaignTools.Patching;
+using System.Runtime.Serialization;
 
 namespace CustomCampaignTools
 {
@@ -21,7 +22,7 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public void SavePlayer(string levelBarcode, Transform transform, List<BarcodePosRot> boxBarcodes = null)
+        public void SavePlayer(Barcode levelBarcode, Transform transform, List<BarcodePosRot> boxBarcodes = null)
         {
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
@@ -31,7 +32,7 @@ namespace CustomCampaignTools
 
             if (campaign.SaveLevelAmmo && transform != null)
             {
-                AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+                AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode.ID);
 
                 ammoSave = AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave;
             }
@@ -61,8 +62,13 @@ namespace CustomCampaignTools
 
         public class SavePoint
         {
-            public string LevelBarcode;
+            public BarcodeSer LevelBarcode;
             public Vector3Ser Position;
+
+            [Obsolete("Use new Position Vector3Ser")] public float PositionX { get; private set; }
+            [Obsolete("Use new Position Vector3Ser")] public float PositionY { get; private set; }
+            [Obsolete("Use new Position Vector3Ser")] public float PositionZ { get; private set; }
+
             public float RotationAngle;
 
             public InventoryData InventoryData;
@@ -71,14 +77,25 @@ namespace CustomCampaignTools
             public List<int> DespawnedSpawners;
             public Dictionary<int, bool> ObjectEnabledSaves;
 
+            [OnDeserialized]
+            public void OnDeserialized(StreamingContext context)
+            {
+#pragma warning disable CS0618
+                if(Position == Vector3.zero && (PositionX != 0 || PositionY != 0 || PositionZ != 0))
+                {
+                    Position = new(new Vector3(PositionX, PositionY, PositionZ)); // hehe new new
+                }
+#pragma warning restore CS0618
+            }
+
             public SavePoint()
             {
 
             }
 
-            public SavePoint(string levelBarcode, Transform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
+            public SavePoint(Barcode levelBarcode, Transform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
             {
-                LevelBarcode = levelBarcode;
+                LevelBarcode = new(levelBarcode);
                 
                 Position = new(transform.position);
 
@@ -99,7 +116,7 @@ namespace CustomCampaignTools
             /// <returns></returns>
             public bool IsValid(out bool hasSpawnPoint)
             {
-                if (Position.ToVector3() == Vector3.zero)
+                if (Position == Vector3.zero)
                     hasSpawnPoint = false;
                 else
                     hasSpawnPoint = true;
@@ -121,7 +138,7 @@ namespace CustomCampaignTools
 
                 SavepointFunctions.WasLastLoadByContinue = true;
 
-                FadeLoader.Load(new Barcode(LevelBarcode), loadScene);
+                FadeLoader.Load(LevelBarcode, loadScene);
 
                 // Prepare things to happen on next load
                 AmmoInventoryPatches.OnNextAwake += (a) => Campaign.Session.saveData.LoadedSavePoint.MidLevelAmmoSave.AddToPlayer();
@@ -144,15 +161,14 @@ namespace CustomCampaignTools
 
         public struct BarcodePosRot
         {
-            public string barcode;
-
+            public BarcodeSer barcode;
             public Vector3Ser position;
             public QuaternionSer rotation;
             public Vector3Ser scale;
 
             public BarcodePosRot(Barcode barcode, Vector3 position, Quaternion rotation, Vector3 scale)
             {
-                this.barcode = barcode.ID;
+                this.barcode = new(barcode);
 
                 this.position = new(position);
                 this.rotation = new(rotation);

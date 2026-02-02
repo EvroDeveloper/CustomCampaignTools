@@ -1,31 +1,26 @@
 namespace CustomCampaignTools
 {
+    // yeah nobody using ts :sob:
     public partial class CampaignSaveData
     {
-        internal List<FloatDataPair> FloatData = [];
+        internal Dictionary<string, float> FloatData = [];
         
         public void SetValue(string key, float value)
         {
-            GetFloatDataEntry(key).Value = value;
+            if(!FloatData.ContainsKey(key))
+                FloatData.Add(key, value);
+            else
+                FloatData[key] = value;
+            
             SaveToDisk();
         }
+        
         public float GetValue(string key)
         {
-            return GetFloatDataEntry(key).Value;
-        }
-        private FloatDataPair GetFloatDataEntry(string key)
-        {
-            FloatDataPair found = null;
-            try
-            {
-                found = FloatData.First(f => f.Key == key);
-            }
-            catch
-            {
-                found = new FloatDataPair(key);
-                FloatData.Add(found);
-            }
-            return found;
+            if(!FloatData.ContainsKey(key))
+                FloatData.Add(key, 0f);
+            
+            return FloatData[key];
         }
     }
 }

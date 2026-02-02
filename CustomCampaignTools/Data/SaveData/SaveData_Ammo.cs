@@ -15,7 +15,7 @@ namespace CustomCampaignTools
 
             if (!DoesSavedAmmoExist(levelBarcode))
             {
-                LoadedAmmoSaves.Add(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave);
+                LoadedAmmoSaves.Add(AmmoSave.CreateFromPlayer(new Il2CppSLZ.Marrow.Warehouse.Barcode(levelBarcode)) - previousAmmoSave);
             }
             else
             {
@@ -25,7 +25,7 @@ namespace CustomCampaignTools
                 {
                     if (LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
                     {
-                        LoadedAmmoSaves[i] = AmmoSave.SumOfBest(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave, previousHighScore);
+                        LoadedAmmoSaves[i] = AmmoSave.SumOfBest(AmmoSave.CreateFromPlayer(new Il2CppSLZ.Marrow.Warehouse.Barcode(levelBarcode)) - previousAmmoSave, previousHighScore);
                     }
                 }
             }
@@ -79,7 +79,7 @@ namespace CustomCampaignTools
             // Fill default ammo saves
             foreach (CampaignLevel level in campaign.mainLevels)
             {
-                LoadedAmmoSaves.Add(new AmmoSave(level.BarcodeString, 0, 0, 0));
+                LoadedAmmoSaves.Add(new AmmoSave(level, 0, 0, 0));
             }
         }
 

@@ -96,11 +96,5 @@ namespace CustomCampaignTools
         }
 
         #endregion
-
-        public class FloatDataPair(string key)
-        {
-            public string Key = key;
-            public float Value = 0f;
-        }
     }
 }

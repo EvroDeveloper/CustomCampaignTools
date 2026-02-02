@@ -19,6 +19,11 @@ namespace CustomCampaignTools.Games
             currentGameConfiguration.GameSpecificPatches();
         }
 
+        public static void OnLateInitialize()
+        {
+            currentGameConfiguration.OnLateInitialize();
+        }
+
         public static void ManglePlayerMenu()
         {
             currentGameConfiguration.playerMenuMangler.MangleMenu();

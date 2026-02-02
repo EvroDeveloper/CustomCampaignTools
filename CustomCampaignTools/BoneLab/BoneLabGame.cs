@@ -3,6 +3,7 @@ using CustomCampaignTools.Debug;
 using CustomCampaignTools.Games.BoneLab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Bonelab;
+using CustomCampaignTools.Bonemenu;
 
 namespace CustomCampaignTools.Games
 {
@@ -38,6 +39,11 @@ namespace CustomCampaignTools.Games
         public override void GameSpecificPatches()
         {
             GashaponPatches.ManualPatch();
+        }
+
+        public override void OnLateInitialize()
+        {
+            BoneMenuCreator.CreateBoneMenu();
         }
 
         public override void OnBootstrapSceneLoaded()

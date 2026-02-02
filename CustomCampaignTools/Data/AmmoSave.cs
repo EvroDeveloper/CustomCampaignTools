@@ -1,13 +1,15 @@
 using System;
+using CustomCampaignTools.Data.SimpleSerializables;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
+using Il2CppSLZ.Marrow.Warehouse;
 using UnityEngine;
 
 namespace CustomCampaignTools.Data;
     
 public struct AmmoSave
 {
-    public string LevelBarcode { get; set; }
+    public BarcodeSer LevelBarcode { get; set; }
     public int LightAmmo { get; set; }
     public int MediumAmmo { get; set; }
     public int HeavyAmmo { get; set; }
@@ -29,9 +31,9 @@ public struct AmmoSave
         HeavyAmmo = heavy;
     }
 
-    public AmmoSave(string barcode, int light, int medium, int heavy)
+    public AmmoSave(Barcode barcode, int light, int medium, int heavy)
     {
-        LevelBarcode = barcode;
+        LevelBarcode = new(barcode);
         LightAmmo = light;
         MediumAmmo = medium;
         HeavyAmmo = heavy;
@@ -44,16 +46,16 @@ public struct AmmoSave
         AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, HeavyAmmo);
     }
 
-    public static AmmoSave CreateFromPlayer(string levelBarcodeOverride = null)
+    public static AmmoSave CreateFromPlayer(Barcode levelBarcodeOverride = null)
     {
-        string levelBarcode = SceneStreamer.Session.Level.Barcode.ID;
-        if(string.IsNullOrEmpty(levelBarcodeOverride))
+        var levelBarcode = SceneStreamer.Session.Level.Barcode;
+        if(levelBarcodeOverride != null)
         {
             levelBarcode = levelBarcodeOverride;
         }
         return new AmmoSave()
         {
-            LevelBarcode = levelBarcode,
+            LevelBarcode = new(levelBarcode),
             LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light"),
             MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium"),
             HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy"),

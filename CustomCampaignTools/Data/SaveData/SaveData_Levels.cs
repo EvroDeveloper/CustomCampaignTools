@@ -1,3 +1,5 @@
+using CustomCampaignTools.Data.SimpleSerializables;
+
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData

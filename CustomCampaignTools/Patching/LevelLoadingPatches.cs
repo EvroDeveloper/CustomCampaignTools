@@ -59,7 +59,7 @@ namespace CustomCampaignTools.Patching
                     {
                         OnNextSceneLoaded += () =>
                         {
-                            destinationCampaign.saveData.SavePlayer(level.Barcode.ID, null);
+                            destinationCampaign.saveData.SavePlayer(level.Barcode, null);
                             if(destinationCampaign.SaveLevelInventory && destinationCampaign.saveData.InventorySaves.ContainsKey(level.Barcode.ID))
                             {
                                 destinationCampaign.saveData.InventorySaves[level.Barcode.ID].ApplyToRigManagerDelayed();

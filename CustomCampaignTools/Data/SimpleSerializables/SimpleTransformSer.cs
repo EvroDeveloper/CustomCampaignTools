@@ -25,6 +25,6 @@ public class SimpleTransformSer
 
     public SimpleTransform ToSimpleTransform()
     {
-        return new SimpleTransform(position.ToVector3(), rotation.ToQuaternion());
+        return new SimpleTransform(position, rotation.ToQuaternion());
     }
 }

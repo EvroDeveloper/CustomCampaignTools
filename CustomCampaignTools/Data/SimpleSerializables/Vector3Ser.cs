@@ -23,4 +23,9 @@ public struct Vector3Ser
     {
         return new Vector3(x, y, z);
     }
+
+    public static implicit operator Vector3(Vector3Ser vector3)
+    {
+        return vector3.ToVector3();
+    }
 }

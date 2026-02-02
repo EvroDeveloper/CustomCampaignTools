@@ -1,4 +1,3 @@
-using System;
 using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Utilities;
@@ -34,7 +33,7 @@ public class MarrowEntityPoseSer
             normalBodyPose[i] = bodyPoses[i].ToSimpleTransform();
         }
 
-        pose.bodyPoses = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<SimpleTransform>(normalBodyPose);
+        pose.bodyPoses = new(normalBodyPose);
         return pose;
     }
 }

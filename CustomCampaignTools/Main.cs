@@ -21,7 +21,7 @@ namespace CustomCampaignTools
         public override void OnLateInitializeMelon()
         {
             // Create Bonemenu
-            BoneMenuCreator.CreateBoneMenu();
+            GameManager.OnLateInitialize();
 
             Campaign.OnInitialize();
 

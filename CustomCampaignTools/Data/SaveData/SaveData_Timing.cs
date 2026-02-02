@@ -78,7 +78,7 @@ namespace CustomCampaignTools
         {
             TrialTime trial = GetTrialTimeData(trialKey);
             if (trial == null) return 0;
-            return trial.PreviousTimes[trial.PreviousTimes.Count - 1];
+            return trial.LatestTime;
         }
 
         internal TrialTime GetTrialTimeData(string trialKey)
@@ -90,21 +90,29 @@ namespace CustomCampaignTools
     public class TrialTime
     {
         public string TrialKey;
+        public float BestTime = -1;
+        public float AverageTime = 0;
+        public float LatestTime = 0;
+        public int TotalAttempts = 0;
 
-        [JsonIgnore]
-        public float BestTime { get; private set; }
+        [Obsolete("Too much data, replace with attempt average calculation")]
+        public List<float> PreviousTimes { get; private set; } // Dont use this, we can do everything we need with Average and Attempts Count
 
-        [JsonIgnore]
-        public float AverageTime { get; private set; }
-        public List<float> PreviousTimes = [];
 
         [OnDeserialized]
         public void OnDeserialize(StreamingContext context)
         {
-            if (PreviousTimes == null || PreviousTimes.Count == 0)
+            // Continue to use PreviousTimes to fix new fields. 
+            CalculateFieldsFromLegacy();
+        }
+
+        private void CalculateFieldsFromLegacy()
+        {
+#pragma warning disable CS0618 // yes mr compiler i am aware that i am using obsolete code its called "backwards compatibility" ever heard of it?
+            if (PreviousTimes == null) return;
+            if (PreviousTimes.Count == 0)
             {
-                BestTime = -1;
-                AverageTime = 0;
+                PreviousTimes = null;
                 return;
             }
             float best = PreviousTimes[0];
@@ -117,32 +125,28 @@ namespace CustomCampaignTools
             }
             BestTime = best;
             AverageTime = total / PreviousTimes.Count;
+            PreviousTimes = null;
+#pragma warning restore CS0618
         }
 
-        public void UpdateAverageTime()
+        public void UpdateAverageTime(float time)
         {
-            if (PreviousTimes == null || PreviousTimes.Count == 0)
-            {
-                AverageTime = 0;
-                return;
-            }
-            float total = 0;
-            foreach (float time in PreviousTimes)
-            {
-                total += time;
-            }
-            AverageTime = total / PreviousTimes.Count;
+            // Given the Average Time, and number of attempts, calculate a new average
+            float totalTimes = AverageTime * TotalAttempts;
+            totalTimes += time;
+            TotalAttempts++;
+            AverageTime = totalTimes / TotalAttempts; // This code to me feels like the equivalent of that mr incredible typing at the computer meme gif
         }
 
         public bool AddTime(float time)
         {
-            PreviousTimes.Add(time);
+            LatestTime = time;
             if (time < BestTime || BestTime < 0)
             {
                 BestTime = time;
                 return true;
             }
-            UpdateAverageTime();
+            UpdateAverageTime(time);
                 
             return false;
         }

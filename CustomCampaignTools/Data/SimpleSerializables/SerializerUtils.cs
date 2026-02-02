@@ -6,10 +6,10 @@ namespace CustomCampaignTools.Data;
 
 public static class SerializerUtils
 {
-    private static JsonSerializerSettings _settings = new JsonSerializerSettings
+    private static readonly JsonSerializerSettings _settings = new()
     {
         ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+        PreserveReferencesHandling = PreserveReferencesHandling.Objects, // Theoretically i shoudnt need this. Might break loading saves but whatever im already doing that to an extent
         Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             CampaignLogger.Error($"Error found when serializing path {args.ErrorContext.Path} of Save Data. This property will be reset");

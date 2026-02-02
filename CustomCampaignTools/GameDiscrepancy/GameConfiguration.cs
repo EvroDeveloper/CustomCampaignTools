@@ -6,14 +6,10 @@ namespace CustomCampaignTools.Games
         public virtual string mainMenuBarcode { get; }
         public virtual IMenuMangler playerMenuMangler { get; }
 
-        public virtual void GameSpecificPatches()
-        {
-            
-        }
+        public virtual void GameSpecificPatches() { }
 
-        public virtual void OnBootstrapSceneLoaded()
-        {
+        public virtual void OnBootstrapSceneLoaded() { }
 
-        }
+        public virtual void OnLateInitialize() { }
     }
 }

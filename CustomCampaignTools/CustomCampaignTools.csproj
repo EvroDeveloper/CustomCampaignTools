@@ -109,7 +109,6 @@
       <HintPath>/Users/evanbassett/Downloads/MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Resources\CampaignIcon.png" />
   </ItemGroup>
