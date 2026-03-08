@@ -1,4 +1,6 @@
+using BoneLib;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.SDK;
 using CustomCampaignTools.Timing;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
@@ -98,32 +100,89 @@ namespace CustomCampaignTools.Patching
     }
 
     //[HarmonyPatch(typeof(AssetSpawner._SpawnAsync_d__15))]
+    [HarmonyPatch(typeof(StreamSession))]
     public static class RigReplacerPatches
     {
         //[HarmonyPatch(nameof(AssetSpawner._SpawnAsync_d__15.MoveNext))]
         //[HarmonyPrefix]
-        public static void OnSpawnableSpawned(AssetSpawner._SpawnAsync_d__15 __instance)
-        {
-            if(!Campaign.SessionActive) return;
+        // public static void OnSpawnableSpawned(AssetSpawner._SpawnAsync_d__15 __instance)
+        // {
+        //     if(!Campaign.SessionActive) return;
 
-            if (__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.UIEventSystem.Barcode && Campaign.Session.GameplayRigOverride.IsValid())
+        //     if (__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.UIEventSystem.Barcode && Campaign.Session.GameplayRigOverride.IsValid())
+        //     {
+        //         __instance.spawnable = new Spawnable()
+        //         {
+        //             crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride),
+        //             policyData = __instance.spawnable.policyData
+        //         };
+        //         CampaignLogger.Msg("Swapped UI Event System to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
+        //     }
+        //     else if(__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.DefaultPlayerRig.Barcode && Campaign.Session.RigManagerOverride.IsValid())
+        //     {
+        //         __instance.spawnable = new Spawnable()
+        //         {
+        //             crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride),
+        //             policyData = __instance.spawnable.policyData
+        //         };
+        //         CampaignLogger.Msg("Swapped RigManager to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
+        //     }
+        // }
+
+        [HarmonyPatch(nameof(StreamSession.RegisterPlayerMarker))]
+        [HarmonyPrefix]
+        public static bool OnPlayerMarkerRegistered(StreamSession __instance, PlayerMarker playerMarker)
+        {
+            SpawnableCrateReference rigManSpawn = MarrowGame.marrowSettings.DefaultPlayerRig;
+            SpawnableCrateReference gameplayRigSpawn = MarrowGame.marrowSettings.UIEventSystem;
+
+            bool shouldCancelOriginalCall = false;
+
+            if(!Campaign.SessionActive)
             {
-                __instance.spawnable = new Spawnable()
+                if(Campaign.Session.RigManagerOverride.TryGetCrate(out _))
                 {
-                    crateRef = new SpawnableCrateReference(Campaign.Session.GameplayRigOverride),
-                    policyData = __instance.spawnable.policyData
-                };
-                CampaignLogger.Msg("Swapped UI Event System to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
+                    rigManSpawn = Campaign.Session.RigManagerOverride;
+                    shouldCancelOriginalCall = true;
+                }
+                if(Campaign.Session.GameplayRigOverride.TryGetCrate(out _))
+                {
+                    gameplayRigSpawn = Campaign.Session.GameplayRigOverride;
+                    shouldCancelOriginalCall = true;
+                }
             }
-            else if(__instance.spawnable.crateRef.Barcode == MarrowGame.marrowSettings.DefaultPlayerRig.Barcode && Campaign.Session.RigManagerOverride.IsValid())
+    
+            if(playerMarker.TryGetComponent<CampaignPlayerMarkerOverride>(out var overrider))
             {
-                __instance.spawnable = new Spawnable()
+                if(overrider.RigManagerOverride.TryGetCrate(out _))
                 {
-                    crateRef = new SpawnableCrateReference(Campaign.Session.RigManagerOverride),
-                    policyData = __instance.spawnable.policyData
-                };
-                CampaignLogger.Msg("Swapped RigManager to spawnable: " + __instance.spawnable.crateRef.Crate.Title);
+                    rigManSpawn = Campaign.Session.RigManagerOverride;
+                    shouldCancelOriginalCall = true;
+                }
+                if(overrider.GameplayRigOverride.TryGetCrate(out _))
+                {
+                    gameplayRigSpawn = Campaign.Session.GameplayRigOverride;
+                    shouldCancelOriginalCall = true;
+                }
             }
+
+            if(shouldCancelOriginalCall)
+            {
+                HelperMethods.SpawnCrate(
+                    rigManSpawn, 
+                    playerMarker.transform.position, 
+                    playerMarker.transform.rotation,
+                    spawnAction: playerMarker.OnPlayerSpawned, 
+                    despawnAction: playerMarker.OnPlayerDespawn);
+                
+                HelperMethods.SpawnCrate(
+                    gameplayRigSpawn,
+                    playerMarker.transform.position,
+                    playerMarker.transform.rotation
+                );
+            }
+
+            return !shouldCancelOriginalCall;
         }
     }
 }

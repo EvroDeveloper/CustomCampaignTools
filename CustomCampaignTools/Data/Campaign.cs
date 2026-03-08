@@ -73,8 +73,8 @@ namespace CustomCampaignTools
 
         public List<string> CampaignUnlockCrates = [];
 
-        public Barcode RigManagerOverride;
-        public Barcode GameplayRigOverride;
+        public SpawnableCrateReference RigManagerOverride;
+        public SpawnableCrateReference GameplayRigOverride;
         public bool DEVMODE { get; private set; } = false;
 
         public CampaignLevel[] AllLevels
@@ -175,8 +175,8 @@ namespace CustomCampaignTools
                     }
                 }
 
-                campaign.RigManagerOverride = new Barcode(data.RigManagerOverride);
-                campaign.GameplayRigOverride = new Barcode(data.GameplayRigOverride);
+                campaign.RigManagerOverride = new(data.RigManagerOverride);
+                campaign.GameplayRigOverride = new(data.GameplayRigOverride);
 
                 campaign.DEVMODE = data.DevBuild;
 

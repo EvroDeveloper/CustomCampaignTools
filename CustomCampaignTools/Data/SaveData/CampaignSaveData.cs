@@ -60,8 +60,11 @@ namespace CustomCampaignTools
         {
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
+
+            string savePath = (overwritePath != string.Empty) ? overwritePath : GetSavePath(campaign);
             
-            SerializerUtils.SaveObjectToFile(this, (overwritePath != string.Empty) ? overwritePath : GetSavePath(campaign));
+            CampaignLogger.Msg(campaign, "Saving SaveData to Disk at path: " + savePath);
+            SerializerUtils.SaveObjectToFile(this, savePath);
         }
 
         /// <summary>
@@ -69,6 +72,7 @@ namespace CustomCampaignTools
         /// </summary>
         internal static CampaignSaveData LoadFromDisk(Campaign c)
         {
+            CampaignLogger.Msg(c, "Loading SaveData from Disk");
             if (!Directory.Exists(SaveFolder))
                 Directory.CreateDirectory(SaveFolder);
 
@@ -76,13 +80,16 @@ namespace CustomCampaignTools
 
             if (!File.Exists(savePathToUse))
             {
+                CampaignLogger.Msg(c, "Could not find save at new save path. Checking Legacy save path");
                 if (File.Exists(GetLegacySavePath(c)))
                 {
+                    CampaignLogger.Msg(c, "Found save at legacy save path. Loading from there");
                     savePathToUse = GetLegacySavePath(c);
                 }
                 else
                 {
                     // Create a blank save, none exists in either save path
+                    CampaignLogger.Msg(c, "Could not find save at either save path. Creating blank save.");
                     CampaignSaveData newSave = new(c);
                     
                     newSave.SaveToDisk();
@@ -90,6 +97,7 @@ namespace CustomCampaignTools
                 }
             }
 
+            CampaignLogger.Msg(c, "Deserializing SaveData from path " + savePathToUse);
             CampaignSaveData saveData = SerializerUtils.LoadObjectFromFile<CampaignSaveData>(savePathToUse);
             saveData.campaign = c;
             return saveData;

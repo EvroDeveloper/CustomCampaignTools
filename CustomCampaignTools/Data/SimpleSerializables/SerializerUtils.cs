@@ -31,11 +31,13 @@ public static class SerializerUtils
 
     public static T DeserializeObject<T>(string json)
     {
+        CampaignLogger.Msg($"DeserializeObject<{typeof(T).Name}>");
         return JsonConvert.DeserializeObject<T>(json, _settings);
     }
 
     public static T LoadObjectFromFile<T>(string path)
     {
+        CampaignLogger.Msg($"Deserializing object of type {typeof(T).Name} at path: " + path);
         string json = File.ReadAllText(path);
         return DeserializeObject<T>(json);
     }
