@@ -172,7 +172,7 @@ namespace CustomCampaignTools.SDK
         public void DisplayLevelTime()
         {
             int time = Campaign.Session.saveData.GetLevelTime(targetLevelBarcode);
-            if(_alwaysUpdate && Campaign.lastLoadedCampaignLevel == targetLevelBarcode) time += LevelTiming.GetMainTime();
+            if(_alwaysUpdate && Campaign.lastLoadedCampaignLevel.BarcodeString == targetLevelBarcode) time += LevelTiming.GetMainTime();
             DisplayTimeSpan(time);
         }
 

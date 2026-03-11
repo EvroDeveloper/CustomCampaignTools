@@ -1,3 +1,4 @@
+using CustomCampaignTools.Data.SimpleSerializables;
 using System;
 using System.Collections.Generic;
 
@@ -73,7 +74,7 @@ namespace CustomCampaignTools
 
     public class SerializedLevelSetup
     {
-        public string levelBarcode;
+        public BarcodeSer levelBarcode;
         public string levelName;
     }
 

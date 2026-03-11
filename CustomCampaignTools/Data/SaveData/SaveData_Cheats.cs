@@ -1,10 +1,18 @@
+using Newtonsoft.Json;
+
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal bool DevToolsUnlocked = false;
-        internal bool AvatarUnlocked = false;
-        internal bool SkipIntro = false;
+        [JsonProperty]
+        public bool DevToolsUnlocked = false;
+        [JsonProperty]
+        public bool AvatarUnlocked = false;
+        [JsonProperty]
+        public bool ManualBodylogToggle = false;
+
+        [JsonProperty]
+        public bool SkipIntro = false;
 
         public void UnlockDevTools()
         {
@@ -15,6 +23,12 @@ namespace CustomCampaignTools
         public void UnlockAvatar()
         {
             AvatarUnlocked = true;
+            SaveToDisk();
+        }
+
+        public void SetManualBodylogToggle(bool value)
+        {
+            ManualBodylogToggle = value;
             SaveToDisk();
         }
     }

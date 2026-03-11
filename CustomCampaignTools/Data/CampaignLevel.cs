@@ -19,6 +19,8 @@ namespace CustomCampaignTools
         public Campaign campaign;
 
         public Barcode Barcode;
+        public string BarcodeString => Barcode.ID;
+
         public string Title
         {
             get{
@@ -26,23 +28,29 @@ namespace CustomCampaignTools
                 return _overrideName;
             }
         }
-
-        public string BarcodeString => Barcode.ID;
-
         private readonly string _overrideName = "";
 
         public CampaignLevelType type;
 
         public LevelCrate Crate
         {
-            get {
-                if(_crate != null) return _crate;
+            get
+            {
+                if (_crate != null) return _crate;
                 MarrowGame.assetWarehouse.TryGetCrate(Barcode, out _crate);
                 return _crate;
             }
         }
-
         private LevelCrate _crate;
+
+        public bool Redacted
+        {
+            get
+            {
+                if (Crate != null) return Crate.Redacted;
+                return true;
+            }
+        }
 
         public bool Unlocked
         {
@@ -57,10 +65,16 @@ namespace CustomCampaignTools
             _overrideName = name;
             this.type = type;
         }
+        public CampaignLevel(Barcode barcode, string name, CampaignLevelType type)
+        {
+            Barcode = barcode;
+            _overrideName = name;
+            this.type = type;
+        }
 
         public CampaignLevel(SerializedLevelSetup levelSetup, CampaignLevelType type)
         {
-            Barcode = new Barcode(levelSetup.levelBarcode);
+            Barcode = levelSetup.levelBarcode;
             _overrideName = levelSetup.levelName;
             this.type = type;
         }

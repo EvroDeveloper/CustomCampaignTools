@@ -74,12 +74,24 @@ namespace CustomCampaignTools.Bonemenu
                 }
             }
 
+            if(c.avatarRestrictor == null || c.saveData.AvatarUnlocked)
+            {
+                campaignPage.CreateBool("Enable Bodylog", Color.white, c.saveData.ManualBodylogToggle, c.saveData.SetManualBodylogToggle);
+            }
+
             if (c.DEVMODE)
             {
                 var DebugPage = campaignPage.CreatePage("Debug", Color.red);
 
                 DebugPage.CreateBool("Restrict Dev Tools", Color.white, c.RestrictDevTools, (b) => { c.RestrictDevTools = b; });
                 DebugPage.CreateFunction("Unlock Avatar", Color.white, c.saveData.UnlockAvatar);
+                DebugPage.CreateFunction("Unlock All Levels", Color.white, () =>
+                {
+                    foreach (var level in c.AllLevels)
+                    {
+                        c.saveData.UnlockLevel(level.BarcodeString);
+                    }
+                });
             }
         }
     }

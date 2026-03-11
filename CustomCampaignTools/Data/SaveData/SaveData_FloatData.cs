@@ -1,9 +1,12 @@
+using Newtonsoft.Json;
+
 namespace CustomCampaignTools
 {
     // yeah nobody using ts :sob:
     public partial class CampaignSaveData
     {
-        internal Dictionary<string, float> FloatData = [];
+        [JsonProperty]
+        public Dictionary<string, float> FloatData = [];
         
         public void SetValue(string key, float value)
         {

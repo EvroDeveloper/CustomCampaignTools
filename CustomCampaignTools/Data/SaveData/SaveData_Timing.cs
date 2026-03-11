@@ -6,7 +6,9 @@ namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
+        [JsonProperty]
         public List<LevelTime> LevelTimes = [];
+        [JsonProperty]
         public List<TrialTime> TrialTimes = [];
 
         public int GetLevelTime(string levelBarcode)

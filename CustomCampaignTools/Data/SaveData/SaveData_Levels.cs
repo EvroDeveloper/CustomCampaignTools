@@ -1,10 +1,12 @@
 using CustomCampaignTools.Data.SimpleSerializables;
+using Newtonsoft.Json;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal List<string> UnlockedLevels = [];
+        [JsonProperty]
+        public List<string> UnlockedLevels = [];
 
         public void UnlockLevel(string barcode)
         {

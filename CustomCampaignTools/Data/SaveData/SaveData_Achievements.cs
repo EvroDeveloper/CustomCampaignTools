@@ -1,12 +1,14 @@
 using BoneLib.Notifications;
 using CustomCampaignTools.Bonemenu;
 using Il2CppSLZ.Marrow.Audio;
+using Newtonsoft.Json;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal List<string> UnlockedAchievements = [];
+        [JsonProperty]
+        public List<string> UnlockedAchievements = [];
         
         public bool UnlockAchievement(string key)
         {

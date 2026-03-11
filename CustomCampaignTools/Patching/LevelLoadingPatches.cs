@@ -23,16 +23,16 @@ namespace CustomCampaignTools.Patching
         [HarmonyPrefix]
         public static bool LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
         {
-            bool loadingIntoCampaign = CampaignUtilities.IsCampaignLevel(level.Barcode.ID, out var destinationCampaign, out CampaignLevelType levelType);
+            bool loadingIntoCampaign = CampaignUtilities.TryGetFromLevel(level.Barcode, out var destinationCampaign);
 
             SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
             SavepointFunctions.WasLastLoadByContinue = false;
 
             if(Campaign.SessionActive && destinationCampaign == Campaign.Session)
             {
-                if(Campaign.Session.TypeOfLevel(level.Barcode.ID) == CampaignLevelType.MainLevel && Campaign.Session.TypeOfLevel(SceneStreamer.Session.Level.Barcode.ID) == CampaignLevelType.MainLevel)
+                if(Campaign.Session.GetLevel(level.Barcode).type == CampaignLevelType.MainLevel && Campaign.Session.GetLevel(SceneStreamer.Session.Level.Barcode).type == CampaignLevelType.MainLevel)
                 {
-                    if(Campaign.Session.GetLevelIndex(level.Barcode.ID) == Campaign.Session.GetLevelIndex(SceneStreamer.Session.Level.Barcode.ID) + 1)
+                    if(Campaign.Session.GetMainLevelIndex(level.Barcode) == Campaign.Session.GetMainLevelIndex(SceneStreamer.Session.Level.Barcode) + 1)
                     {
                         Campaign.Session.saveData.SaveInventoryForLevel(level.Barcode.ID);
                     }
@@ -55,13 +55,13 @@ namespace CustomCampaignTools.Patching
                     LevelTiming.OnCampaignLevelLoaded(destinationCampaign, level.Barcode.ID);
                 };
 
-                if(levelType == CampaignLevelType.MainLevel)
+                if(destinationCampaign.GetLevel(level.Barcode).type == CampaignLevelType.MainLevel)
                 {
                     if (!SavepointFunctions.CurrentLevelLoadedByContinue)
                     {
                         OnNextSceneLoaded += () =>
                         {
-                            destinationCampaign.saveData.SavePlayer(level.Barcode, null);
+                            destinationCampaign.saveData.SavePlayer(level.Barcode, SimpleTransform.Identity);
                             if(destinationCampaign.SaveLevelInventory && destinationCampaign.saveData.InventorySaves.ContainsKey(level.Barcode.ID))
                             {
                                 destinationCampaign.saveData.InventorySaves[level.Barcode.ID].ApplyToRigManagerDelayed();

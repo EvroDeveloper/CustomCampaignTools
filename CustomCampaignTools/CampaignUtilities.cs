@@ -13,13 +13,15 @@ namespace CustomCampaignTools
     {
         public static List<Campaign> LoadedCampaigns = [];
 
+        private static Dictionary<string, Campaign> levelToCampaignRegistry = [];
+
         internal static void AddCampaign(Campaign campaign)
         {
             CampaignLogger.Msg("Adding Campaign: " + campaign.Name);
             bool loaded = false;
             foreach (var c in LoadedCampaigns)
             {
-                if (c.Name == campaign.Name)
+                if (c.PalletBarcode == campaign.PalletBarcode)
                 {
                     CampaignLogger.Msg("Campaign Already Found, Replacing");
                     LoadedCampaigns.Remove(c);
@@ -29,7 +31,14 @@ namespace CustomCampaignTools
                     break;
                 }
             }
-            if(!loaded) LoadedCampaigns.Add(campaign);
+            if (!loaded) 
+            { 
+                LoadedCampaigns.Add(campaign);
+            }
+            foreach (CampaignLevel c in campaign.AllLevels)
+            {
+                levelToCampaignRegistry[c.Barcode.ID] = campaign;
+            }
             _menuCampaigns = null;
             CampaignBoneMenu.CreateCampaignPage(campaign);
         }
@@ -44,10 +53,6 @@ namespace CustomCampaignTools
         }
         private static List<Campaign> _menuCampaigns;
 
-        public static Campaign GetFromName(string name)
-        {
-            return LoadedCampaigns.FirstOrDefault(x => x.Name == name);
-        }
 
         public static Campaign GetFromPallet(Barcode pallet)
         {
@@ -55,28 +60,42 @@ namespace CustomCampaignTools
             return LoadedCampaigns.FirstOrDefault(x => x.PalletBarcode == pallet);
         }
 
-        public static Campaign GetFromLevel(string barcode)
+        public static Campaign GetFromPallet(PalletReference pallet) => GetFromPallet(pallet.Barcode);
+
+        public static bool TryGetFromLevel(Barcode barcode, out Campaign campaign)
         {
-            return LoadedCampaigns.FirstOrDefault(x => x.AllLevels.Select(l => l.Barcode.ID).Contains(barcode));
+            return levelToCampaignRegistry.TryGetValue(barcode.ID, out campaign);
         }
 
-        public static Campaign GetFromLevel(Barcode barcode) => GetFromLevel(barcode.ID);
-
-        public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode.ID);
-
-        public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode.ID);
-
-        public static bool IsCampaignLevel(string levelBarcode)
+        public static bool TryGetFromLevel(Barcode barcode, out Campaign campaign, out CampaignLevel campaignLevel)
         {
-            return GetFromLevel(levelBarcode) != null;
+            if(levelToCampaignRegistry.TryGetValue(barcode.ID, out campaign))
+            {
+                campaignLevel = campaign.GetLevel(barcode);
+                return true;
+            }
+            campaign = null;
+            campaignLevel = null;
+            return false;
         }
 
-        public static bool IsCampaignLevel(string levelBarcode, out Campaign campaign, out CampaignLevelType levelType)
+        public static Campaign GetFromLevel(Barcode barcode)
+        {
+            if (!levelToCampaignRegistry.ContainsKey(barcode.ID)) return null;
+            return levelToCampaignRegistry[barcode.ID];
+        }
+
+        public static Campaign GetFromLevel(LevelCrateReference level) => GetFromLevel(level.Barcode);
+
+        public static Campaign GetFromLevel() => GetFromLevel(SceneStreamer.Session.Level.Barcode);
+
+
+        public static bool IsCampaignLevel(Barcode levelBarcode, out Campaign campaign, out CampaignLevelType levelType)
         {
             campaign = GetFromLevel(levelBarcode);
 
             if (campaign != null)
-                levelType = campaign.TypeOfLevel(levelBarcode);
+                levelType = campaign.GetLevel(levelBarcode).type;
 
             else levelType = CampaignLevelType.None;
 

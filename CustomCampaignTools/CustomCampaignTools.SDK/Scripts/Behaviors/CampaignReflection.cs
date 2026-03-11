@@ -49,7 +49,7 @@ namespace CustomCampaignTools.SDK
         public int GetAmmoFromLevel(string barcode)
         {
 #if MELONLOADER
-            return Campaign.Session.saveData.GetSavedAmmo(barcode).GetCombinedTotal();
+            return Campaign.Session.saveData.GetSavedAmmo(new Barcode(barcode)).GetCombinedTotal();
 #else
             return 0;
 #endif

@@ -62,7 +62,7 @@ namespace CustomCampaignTools
 
             GameManager.OnLevelLoaded(info);
 
-            LevelLoadingPatches.OnNextSceneLoaded.Invoke();
+            SafeActions.InvokeActionSafe(LevelLoadingPatches.OnNextSceneLoaded);
             LevelLoadingPatches.OnNextSceneLoaded = () => {};
         }
 
@@ -70,8 +70,9 @@ namespace CustomCampaignTools
         {
             if (Campaign.SessionActive)
             {
-                Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
-                LevelTiming.OnCampaignLevelUnloaded(Campaign.Session, Campaign.lastLoadedCampaignLevel);
+                if (Campaign.lastLoadedCampaignLevel == null) return;
+                Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel.Barcode);
+                LevelTiming.OnCampaignLevelUnloaded(Campaign.Session, Campaign.lastLoadedCampaignLevel.BarcodeString);
             }
         }
 

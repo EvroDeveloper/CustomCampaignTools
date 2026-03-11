@@ -12,7 +12,13 @@ public static class SerializerUtils
         PreserveReferencesHandling = PreserveReferencesHandling.Objects, // Theoretically i shoudnt need this. Might break loading saves but whatever im already doing that to an extent
         Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
-            CampaignLogger.Error($"Error found when serializing path {args.ErrorContext.Path} of Save Data. This property will be reset");
+            CampaignLogger.Error(
+                $"JSON serialization error.\n" +
+                $"Path: {args.ErrorContext.Path}\n" +
+                $"Member: {args.ErrorContext.Member}\n" +
+                $"Object: {args.CurrentObject}\n" +
+                $"Error: {args.ErrorContext.Error}"
+            );
             args.ErrorContext.Handled = true;
         }
     };

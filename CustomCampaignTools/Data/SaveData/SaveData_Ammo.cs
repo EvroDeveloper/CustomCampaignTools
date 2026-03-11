@@ -1,21 +1,24 @@
 using CustomCampaignTools.Data;
+using Il2CppSLZ.Marrow.Warehouse;
+using Newtonsoft.Json;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal List<AmmoSave> LoadedAmmoSaves = [];
+        [JsonProperty]
+        public List<AmmoSave> LoadedAmmoSaves = [];
 
-        public void SaveAmmoForLevel(string levelBarcode)
+        public void SaveAmmoForLevel(Barcode levelBarcode)
         {
             if (!campaign.SaveLevelAmmo) return;
-            if (string.IsNullOrEmpty(levelBarcode)) return;
+            if (string.IsNullOrEmpty(levelBarcode.ID) || !levelBarcode.IsValid()) return;
 
             AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
             if (!DoesSavedAmmoExist(levelBarcode))
             {
-                LoadedAmmoSaves.Add(AmmoSave.CreateFromPlayer(new Il2CppSLZ.Marrow.Warehouse.Barcode(levelBarcode)) - previousAmmoSave);
+                LoadedAmmoSaves.Add(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave);
             }
             else
             {
@@ -25,7 +28,7 @@ namespace CustomCampaignTools
                 {
                     if (LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
                     {
-                        LoadedAmmoSaves[i] = AmmoSave.SumOfBest(AmmoSave.CreateFromPlayer(new Il2CppSLZ.Marrow.Warehouse.Barcode(levelBarcode)) - previousAmmoSave, previousHighScore);
+                        LoadedAmmoSaves[i] = AmmoSave.SumOfBest(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave, previousHighScore);
                     }
                 }
             }
@@ -33,17 +36,17 @@ namespace CustomCampaignTools
             campaign.saveData.SaveToDisk();
         }
 
-        public AmmoSave GetPreviousLevelsAmmoSave(string levelBarcode)
+        public AmmoSave GetPreviousLevelsAmmoSave(Barcode levelBarcode)
         {
-            int levelIndex = campaign.GetLevelIndex(levelBarcode);
+            int levelIndex = campaign.GetMainLevelIndex(levelBarcode);
 
             AmmoSave previousLevelsAmmoSave = new AmmoSave();
 
             for (int i = 0; i < levelIndex; i++)
             {
-                previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.mainLevels[i]).LightAmmo;
-                previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.mainLevels[i]).MediumAmmo;
-                previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.mainLevels[i]).HeavyAmmo;
+                previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.MainLevels[i]).LightAmmo;
+                previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.MainLevels[i]).MediumAmmo;
+                previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.MainLevels[i]).HeavyAmmo;
             }
 
             return previousLevelsAmmoSave;
@@ -51,15 +54,15 @@ namespace CustomCampaignTools
 
         public AmmoSave GetSavedAmmo(CampaignLevel level)
         {
-            return GetSavedAmmo(level.BarcodeString);
+            return GetSavedAmmo(level.Barcode);
         }
 
-        public AmmoSave GetSavedAmmo(string levelBarcode)
+        public AmmoSave GetSavedAmmo(Barcode levelBarcode)
         {
             return LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
         }
 
-        public bool DoesSavedAmmoExist(string levelBarcode)
+        public bool DoesSavedAmmoExist(Barcode levelBarcode)
         {
             if (LoadedAmmoSaves == null)
                 return false;
@@ -77,7 +80,7 @@ namespace CustomCampaignTools
         {
             LoadedAmmoSaves.Clear();
             // Fill default ammo saves
-            foreach (CampaignLevel level in campaign.mainLevels)
+            foreach (CampaignLevel level in campaign.MainLevels)
             {
                 LoadedAmmoSaves.Add(new AmmoSave(level, 0, 0, 0));
             }

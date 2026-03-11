@@ -1,9 +1,11 @@
+using Newtonsoft.Json;
 using System;
 
 namespace CustomCampaignTools.Data.SaveData;
 
 public partial class CampaignSaveData
 {
+    [JsonProperty]
     public Dictionary<string, int> SavedStats = [];
 
     public int ReadStat(string stat)

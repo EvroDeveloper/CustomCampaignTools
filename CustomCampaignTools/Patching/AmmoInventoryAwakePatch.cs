@@ -14,20 +14,20 @@ namespace CustomCampaignTools
         [HarmonyPostfix]
         public static void AwakePostfix(AmmoInventory __instance)
         {
-            var levelBarcode = SceneStreamer.Session.Level.Barcode.ID;
+            var levelBarcode = SceneStreamer.Session.Level.Barcode;
 
             if (!CampaignUtilities.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
 
             if (levelType != CampaignLevelType.MainLevel) return;
 
-            int levelIndex = campaign.GetLevelIndex(levelBarcode);
+            int levelIndex = campaign.GetMainLevelIndex(levelBarcode);
 
             AmmoInventory.Instance.ClearAmmo();
 
             // Accumulate ammo saves from previous levels
             for (int i = 0; i < levelIndex; i++)
             {
-                campaign.saveData.GetSavedAmmo(campaign.GetLevelBarcodeByIndex(i)).AddToPlayer();
+                campaign.saveData.GetSavedAmmo(campaign.MainLevels[i].Barcode).AddToPlayer();
             }
 
             OnNextAwake.Invoke(__instance);

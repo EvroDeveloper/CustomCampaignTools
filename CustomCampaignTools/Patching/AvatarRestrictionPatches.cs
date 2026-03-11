@@ -19,7 +19,7 @@ namespace CustomCampaignTools.Patching
         {
             if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
 
-            if (Campaign.Session.IsBodylogRestricted)
+            if (Campaign.Session.IsBodylogRestricted || Campaign.Session.saveData.ManualBodylogToggle == false)
             {
                 __instance.gameObject.SetActive(false);
             }

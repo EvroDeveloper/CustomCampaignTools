@@ -12,6 +12,7 @@ using Il2CppCysharp.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
 using Il2CppTMPro;
+using Il2CppSLZ.Marrow.Utilities;
 
 
 namespace CustomCampaignTools.Patching
@@ -41,15 +42,25 @@ namespace CustomCampaignTools.Patching
                 {
                     GameObject obj = __instance.items[i];
 
-                    TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
-                    if (text == null) continue;
-
                     int levelIndex = startingIndex + i;
-                    LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
-                    CampaignLevel cLevel = Campaign.Session.AllLevels.FirstOrDefault((c) => c.Barcode == __instance._levelCrates[levelIndex].Barcode);
-                    if (cLevel == null) continue;
+                    if(levelIndex < __instance._levelCrates.Count)
+                    {
+                        obj.SetActive(true);
 
-                    text.text = cLevel.Title;
+                        LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
+                        CampaignLevel cLevel = Campaign.Session.GetLevel(targetCrateAtButton.Barcode);
+
+                        if (cLevel == null) continue;
+
+                        TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+                        if (text == null) continue;
+
+                        text.text = cLevel.Title;
+                    }
+                    else
+                    {
+                        obj.SetActive(false);
+                    }
                 } 
             }
         }
@@ -58,17 +69,10 @@ namespace CustomCampaignTools.Patching
         {
             if(SwipezActive) return;
 
+            List<LevelCrate> panelCratesOverwrite = [];
             if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign)
             {
-                __instance._levelCrates.Clear();
-                CampaignLevel[] unlockedLevels = Campaign.Session.GetUnlockedLevels();
-                foreach (CampaignLevel c in unlockedLevels)
-                {
-                    if(!c.Crate.Redacted)
-                        __instance._levelCrates.Add(c.Crate);
-                }
-                __instance._totalScenes = __instance._levelCrates.Count;
-                __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
+                panelCratesOverwrite = Campaign.Session.GetUnlockedLevels().ToCrates();
             }
             else
             {
@@ -82,24 +86,24 @@ namespace CustomCampaignTools.Patching
                 // Stupid List Fuckery i hate il2cpp
                 List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
 
-                List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.Barcode.ID.StartsWith("SLZ"))];
-                List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.Barcode.ID.StartsWith("SLZ") && !CampaignUtilities.IsCampaignLevel(crate.Barcode.ID))];
+                List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.IsInMarrowGame())];
+                List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.IsInMarrowGame() && !CampaignUtilities.TryGetFromLevel(crate.Barcode, out _))];
 
-                List<LevelCrate> CampaignCrates = [];
+                List<CampaignLevel> CampaignCrates = [];
                 foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
                 {
                     if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
-                    CampaignCrates.AddRange(c.GetUnlockedLevels().ToCrates());
+                    CampaignCrates.AddRange(c.GetUnlockedLevels());
                 }
 
-                List<LevelCrate> outputCrates = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
-                if (prioritizedCampaign != null) outputCrates.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
-
-                __instance._levelCrates.Clear();
-                foreach (LevelCrate c in outputCrates) __instance._levelCrates.Add(c);
-                __instance._totalScenes = outputCrates.Count;
-                __instance._numberOfPages = (outputCrates.Count / __instance.items.Length) + 1;
+                panelCratesOverwrite = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
+                if (prioritizedCampaign != null) panelCratesOverwrite.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
             }
+
+            __instance._levelCrates.Clear();
+            foreach (LevelCrate c in panelCratesOverwrite) __instance._levelCrates.Add(c);
+            __instance._totalScenes = __instance._levelCrates.Count;
+            __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
         }
     }
 

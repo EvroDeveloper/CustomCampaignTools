@@ -1,11 +1,13 @@
 using BoneLib;
 using CustomCampaignTools.Data;
+using Newtonsoft.Json;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
-        internal Dictionary<string, InventoryData> InventorySaves = [];
+        [JsonProperty]
+        public Dictionary<string, InventoryData> InventorySaves = [];
 
         public void SaveInventoryForLevel(string nextLevelBarcode)
         {

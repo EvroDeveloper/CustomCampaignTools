@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.Utilities;
 
 namespace CustomCampaignTools.SDK
 {
@@ -80,11 +81,11 @@ namespace CustomCampaignTools.SDK
                     if (entity._poolee.SpawnableCrate == null) continue;
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get(), Entities);
+                Campaign.Session.saveData.SavePlayer(barcode, new SimpleTransform(playerSpawnPoint.Get()), Entities);
             }
             else
             {
-                Campaign.Session.saveData.SavePlayer(barcode, playerSpawnPoint.Get());
+                Campaign.Session.saveData.SavePlayer(barcode, new SimpleTransform(playerSpawnPoint.Get()));
             }
 #endif
         }

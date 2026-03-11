@@ -1,18 +1,21 @@
-using UnityEngine;
 using BoneLib;
-using Il2CppSLZ.Marrow.Warehouse;
-using CustomCampaignTools.SDK;
 using CustomCampaignTools.Bonemenu;
-using CustomCampaignTools.Debug;
 using CustomCampaignTools.Data;
 using CustomCampaignTools.Data.SimpleSerializables;
+using CustomCampaignTools.Debug;
 using CustomCampaignTools.Patching;
+using CustomCampaignTools.SDK;
+using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow.Warehouse;
+using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using UnityEngine;
 
 namespace CustomCampaignTools
 {
     public partial class CampaignSaveData
     {
+        [JsonProperty]
         public SavePoint LoadedSavePoint = new();
 
         public void ClearSavePoint()
@@ -22,7 +25,7 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        public void SavePlayer(Barcode levelBarcode, Transform transform, List<BarcodePosRot> boxBarcodes = null)
+        public void SavePlayer(Barcode levelBarcode, SimpleTransform transform, List<BarcodePosRot> boxBarcodes = null)
         {
             InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
@@ -30,9 +33,9 @@ namespace CustomCampaignTools
 
             AmmoSave ammoSave = new();
 
-            if (campaign.SaveLevelAmmo && transform != null)
+            if (campaign.SaveLevelAmmo)
             {
-                AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode.ID);
+                AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
 
                 ammoSave = AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave;
             }
@@ -93,13 +96,13 @@ namespace CustomCampaignTools
 
             }
 
-            public SavePoint(Barcode levelBarcode, Transform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
+            public SavePoint(Barcode levelBarcode, SimpleTransform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
             {
                 LevelBarcode = new(levelBarcode);
                 
                 Position = new(transform.position);
 
-                RotationAngle = transform.eulerAngles.y;
+                RotationAngle = transform.rotation.eulerAngles.y;
 
                 InventoryData = inventoryData;
                 MidLevelAmmoSave = ammoSave;
