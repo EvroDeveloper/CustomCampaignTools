@@ -1,7 +1,7 @@
 using BoneLib;
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Data;
-using CustomCampaignTools.Data.SimpleSerializables;
+using SimpleSerializables.Types;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.SDK;
@@ -133,6 +133,11 @@ namespace CustomCampaignTools
             public void LoadContinue(Campaign campaign)
             {
                 LoadContinue(campaign.LoadScene);
+            }
+
+            public void LoadContinue(LevelCrateReference loadScene)
+            {
+                LoadContinue(loadScene.Barcode);
             }
 
             public void LoadContinue(Barcode loadScene)

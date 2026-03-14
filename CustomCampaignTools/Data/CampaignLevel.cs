@@ -93,6 +93,7 @@ namespace CustomCampaignTools
 
         public static implicit operator Barcode(CampaignLevel c) => c.Barcode;
         public static implicit operator LevelCrate(CampaignLevel c) => c.Crate;
+        public static implicit operator LevelCrateReference(CampaignLevel c) => new LevelCrateReference(c.Barcode);
     }
 
     public static class CampaignLevelListManipulation

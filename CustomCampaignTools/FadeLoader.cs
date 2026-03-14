@@ -11,6 +11,11 @@ namespace CustomCampaignTools
     {
         public static readonly string LoadFadeBarcode = "c1534c5a-dac0-44a1-b656-6c235646584c";
 
+        public static void Load(LevelCrateReference level, LevelCrateReference loadScene)
+        {
+            Load(level.Barcode, loadScene.Barcode);
+        }
+
         public static void Load(Barcode level, Barcode loadScene)
         {
             MelonCoroutines.Start(FadeCoroutine(level, loadScene));

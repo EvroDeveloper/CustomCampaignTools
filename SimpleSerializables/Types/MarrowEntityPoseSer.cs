@@ -1,8 +1,7 @@
-using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Utilities;
 
-namespace CustomCampaignTools.Data.SimpleSerializables;
+namespace SimpleSerializables.Types;
 
 public class MarrowEntityPoseSer
 {
@@ -27,7 +26,6 @@ public class MarrowEntityPoseSer
         {
             if(bodyPoses[i] == null)
             {
-                CampaignLogger.Error($"Body Pose {i} was null. Skipping...");
                 normalBodyPose[i] = new SimpleTransform();
             }
             normalBodyPose[i] = bodyPoses[i].ToSimpleTransform();

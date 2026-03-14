@@ -3,7 +3,7 @@ using System.Text.Json;
 using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools.Data.SimpleSerializables;
+namespace SimpleSerializables.Types;
 
 [JsonConverter(typeof(BarcodeSerConverter))]
 public class BarcodeSer
@@ -20,7 +20,7 @@ public class BarcodeSer
     public BarcodeSer(string barcode)
     {
         if(barcode == string.Empty || barcode == null)
-            barcode = "null.empty.barcode"; // geh
+            barcode = Barcode.EMPTY;
         ID = barcode;
     }
 

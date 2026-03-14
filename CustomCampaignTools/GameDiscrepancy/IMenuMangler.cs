@@ -1,4 +1,4 @@
-namespace CustomCampaignTools.Games
+namespace CustomCampaignTools.GameSupport
 {
     public interface IMenuMangler
     {

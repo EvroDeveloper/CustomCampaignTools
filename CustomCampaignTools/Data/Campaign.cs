@@ -2,7 +2,7 @@ using BoneLib;
 using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
-using CustomCampaignTools.Games.BoneLab;
+using CustomCampaignTools.GameSupport.BoneLab;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace CustomCampaignTools
@@ -41,7 +42,7 @@ namespace CustomCampaignTools
         public CampaignLevel[] AllLevels { get; private set; }
         private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
 
-        public Barcode LoadScene;
+        public LevelCrateReference LoadScene;
         public AudioClip LoadSceneMusic
         {
             get
@@ -77,8 +78,11 @@ namespace CustomCampaignTools
 
         public List<string> CampaignUnlockCrates = [];
 
+// EXPERIMENTAL FEATURES
         public SpawnableCrateReference RigManagerOverride;
         public SpawnableCrateReference GameplayRigOverride;
+        public Assembly CampaignSupportAssembly;
+
         public bool DEVMODE { get; private set; } = false;
 
         public CampaignSaveData saveData;
@@ -97,12 +101,12 @@ namespace CustomCampaignTools
             try
             {
                 campaign.Name = data.Name;
-                campaign.PalletBarcode = new Barcode(data.PalletBarcode);
+                campaign.PalletBarcode = data.PalletBarcode;
 
-                if (data.InitialLevel.levelBarcode == "null.empty.barcode") campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+                if (data.InitialLevel.levelBarcode == Barcode.EMPTY) campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
-                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == "null.empty.barcode") campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
+                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == Barcode.EMPTY) campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
                 else campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
 
                 campaign.MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
@@ -113,14 +117,13 @@ namespace CustomCampaignTools
                     campaign.barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
                 }
 
-                if (data.LoadScene == "null.empty.barcode") campaign.LoadScene = new Barcode(CommonBarcodes.Maps.LoadMod);
-                else campaign.LoadScene = new Barcode(data.LoadScene);
-                
+                campaign.LoadScene = data.LoadScene.IsValid() ? data.LoadScene : new LevelCrateReference(CommonBarcodes.Maps.LoadMod);
+
                 campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
-                if (data.LoadSceneMusic != null && data.LoadSceneMusic != "null.empty.barcode")
+                if (data.LoadSceneMusic != null && data.LoadSceneMusic != Barcode.EMPTY)
                 {
-                    MarrowGame.assetWarehouse.TryGetDataCard(new Barcode(data.LoadSceneMusic), out campaign._loadMusicDatacard);
+                    data.LoadSceneMusic.ToScannableReference().TryGetDataCard(out campaign._loadMusicDatacard);
                     campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
                     {
                         campaign._loadSceneMusic = a;
@@ -138,9 +141,9 @@ namespace CustomCampaignTools
                 campaign.LockLevelsUntilEntered = data.UnlockableLevels;
 
                 if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
-                    campaign.avatarRestrictor = new WhitelistAvatarRestrictor(data.WhitelistedAvatars);
+                    campaign.avatarRestrictor = new WhitelistAvatarRestrictor([.. data.WhitelistedAvatars]);
                 else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
-                    campaign.avatarRestrictor = new DefaultAvatarRestrictor(new Barcode(data.CampaignAvatar), new Barcode(data.BaseGameFallbackAvatar));
+                    campaign.avatarRestrictor = new DefaultAvatarRestrictor(data.CampaignAvatar, data.BaseGameFallbackAvatar);
                 else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
                     campaign.avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
                 
@@ -156,11 +159,12 @@ namespace CustomCampaignTools
                 campaign.LockInCampaign = data.LockInCampaign;
 
                 if(data.CampaignUnlockCrates != null)
-                    campaign.CampaignUnlockCrates = data.CampaignUnlockCrates;
+                    campaign.CampaignUnlockCrates = [.. data.CampaignUnlockCrates];
 
                 if(data.AchievementUnlockSound != null && data.AchievementUnlockSound != "null.empty.barcode")
                 {
-                    MarrowGame.assetWarehouse.TryGetDataCard(new Barcode(data.AchievementUnlockSound), out campaign._achievementUnlockSoundDatacard);
+                    MonoDiscReference unlockSoundReference = data.AchievementUnlockSound;
+                    if(unlockSoundReference.TryGetDataCard(out campaign._achievementUnlockSoundDatacard))
                     campaign._achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
                     {
                         campaign._achievementUnlockSound = a;
@@ -176,13 +180,14 @@ namespace CustomCampaignTools
                     }
                 }
 
+                if(data.HideCratesFromGachapon != null)
+                    GashaponHider.AddCratesToHide([.. data.HideCratesFromGachapon]);
+
                 campaign.RigManagerOverride = new(data.RigManagerOverride);
                 campaign.GameplayRigOverride = new(data.GameplayRigOverride);
+                campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly();
 
                 campaign.DEVMODE = data.DevBuild;
-
-                if(data.HideCratesFromGachapon != null)
-                    GashaponHider.AddCratesToHide(data.HideCratesFromGachapon);
 
                 CampaignUtilities.AddCampaign(campaign);
             }
@@ -215,7 +220,7 @@ namespace CustomCampaignTools
             };
 
             CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
-            campaignValueHolder.PalletBarcode = pallet.Barcode.ID;
+            campaignValueHolder.PalletBarcode = new(pallet.Barcode);
             return RegisterCampaign(campaignValueHolder);
         }
 
@@ -227,7 +232,7 @@ namespace CustomCampaignTools
             }
             //Campaign.Session = this;
             
-            FadeLoader.Load(InitialLevel.Barcode, LoadScene);
+            FadeLoader.Load(InitialLevel.Barcode, LoadScene.Barcode);
         }
 
         public static void Exit()

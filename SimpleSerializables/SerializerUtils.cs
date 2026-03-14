@@ -1,8 +1,8 @@
 using System;
-using CustomCampaignTools.Debug;
 using Newtonsoft.Json;
+using UnityEngine;
 
-namespace CustomCampaignTools.Data;
+namespace SimpleSerializables.Utils;
 
 public static class SerializerUtils
 {
@@ -12,13 +12,6 @@ public static class SerializerUtils
         PreserveReferencesHandling = PreserveReferencesHandling.Objects, // Theoretically i shoudnt need this. Might break loading saves but whatever im already doing that to an extent
         Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
-            CampaignLogger.Error(
-                $"JSON serialization error.\n" +
-                $"Path: {args.ErrorContext.Path}\n" +
-                $"Member: {args.ErrorContext.Member}\n" +
-                $"Object: {args.CurrentObject}\n" +
-                $"Error: {args.ErrorContext.Error}"
-            );
             args.ErrorContext.Handled = true;
         }
     };
@@ -37,13 +30,11 @@ public static class SerializerUtils
 
     public static T DeserializeObject<T>(string json)
     {
-        CampaignLogger.Msg($"DeserializeObject<{typeof(T).Name}>");
         return JsonConvert.DeserializeObject<T>(json, _settings);
     }
 
     public static T LoadObjectFromFile<T>(string path)
     {
-        CampaignLogger.Msg($"Deserializing object of type {typeof(T).Name} at path: " + path);
         string json = File.ReadAllText(path);
         return DeserializeObject<T>(json);
     }

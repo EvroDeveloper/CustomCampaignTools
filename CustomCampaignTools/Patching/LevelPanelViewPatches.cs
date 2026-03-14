@@ -143,7 +143,7 @@ namespace CustomCampaignTools.Patching
                 {
                     if(level.Crate && !level.Crate.Redacted)
                     {
-                        container.AddEntry(level.Title, () => FadeLoader.Load(level.Barcode, c.LoadScene));
+                        container.AddEntry(level.Title, () => FadeLoader.Load(level, c.LoadScene));
                     }
                 }
             }

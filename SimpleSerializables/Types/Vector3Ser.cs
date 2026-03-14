@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace CustomCampaignTools.Data.SimpleSerializables;
+namespace SimpleSerializables.Types;
 
 public struct Vector3Ser
 {

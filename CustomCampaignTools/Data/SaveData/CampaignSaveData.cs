@@ -1,4 +1,4 @@
-using CustomCampaignTools.Data;
+using SimpleSerializables.Utils;
 using CustomCampaignTools.Debug;
 using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.SaveData;

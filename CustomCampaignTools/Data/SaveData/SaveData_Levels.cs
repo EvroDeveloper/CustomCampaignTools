@@ -1,4 +1,3 @@
-using CustomCampaignTools.Data.SimpleSerializables;
 using Newtonsoft.Json;
 
 namespace CustomCampaignTools

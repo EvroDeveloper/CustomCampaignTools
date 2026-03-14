@@ -1,7 +1,7 @@
 ﻿using BoneLib;
 using CustomCampaignTools.Bonemenu;
-using CustomCampaignTools.Games;
-using CustomCampaignTools.Games.BoneLab;
+using CustomCampaignTools.GameSupport;
+using CustomCampaignTools.GameSupport.BoneLab;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
 using MelonLoader;

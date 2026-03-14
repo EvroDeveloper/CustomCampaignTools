@@ -2,7 +2,7 @@ using System;
 using Il2CppSLZ.Marrow.Utilities;
 using UnityEngine;
 
-namespace CustomCampaignTools.Data.SimpleSerializables;
+namespace SimpleSerializables.Types;
 
 public class SimpleTransformSer
 {

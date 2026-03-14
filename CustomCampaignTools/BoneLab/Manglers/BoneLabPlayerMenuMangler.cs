@@ -6,7 +6,7 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomCampaignTools.Games.BoneLab
+namespace CustomCampaignTools.GameSupport.BoneLab
 {
     public class BoneLabPlayerMenuMangler : IMenuMangler
     {

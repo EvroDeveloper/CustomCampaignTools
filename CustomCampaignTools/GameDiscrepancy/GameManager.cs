@@ -1,7 +1,7 @@
 using BoneLib;
 using MelonLoader;
 
-namespace CustomCampaignTools.Games
+namespace CustomCampaignTools.GameSupport
 {
     public static class GameManager
     {

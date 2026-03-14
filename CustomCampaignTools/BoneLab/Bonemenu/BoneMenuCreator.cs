@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.BoneMenu;
 using CustomCampaignTools.Data;
-using CustomCampaignTools.Data.SimpleSerializables;
 using CustomCampaignTools.Debug;
 using UnityEngine;
 

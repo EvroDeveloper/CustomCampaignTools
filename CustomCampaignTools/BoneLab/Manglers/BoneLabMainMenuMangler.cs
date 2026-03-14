@@ -2,7 +2,7 @@ using BoneLib;
 using Il2CppSLZ.Bonelab;
 using Il2CppTMPro;
 using Il2CppUltEvents;
-using CustomCampaignTools.Games;
+using CustomCampaignTools.GameSupport;
 using MelonLoader;
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomCampaignTools.Games.BoneLab
+namespace CustomCampaignTools.GameSupport.BoneLab
 {
     public class BoneLabMainMenuMangler : IMenuMangler
     {

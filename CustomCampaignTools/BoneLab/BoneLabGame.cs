@@ -1,11 +1,11 @@
 using BoneLib;
 using CustomCampaignTools.Debug;
-using CustomCampaignTools.Games.BoneLab;
+using CustomCampaignTools.GameSupport.BoneLab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Bonelab;
 using CustomCampaignTools.Bonemenu;
 
-namespace CustomCampaignTools.Games
+namespace CustomCampaignTools.GameSupport
 {
     public class BoneLabGameConfiguration : GameConfiguration
     {

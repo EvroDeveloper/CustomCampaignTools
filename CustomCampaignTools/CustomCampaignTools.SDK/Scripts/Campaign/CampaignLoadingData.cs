@@ -1,6 +1,7 @@
-using CustomCampaignTools.Data.SimpleSerializables;
-using System;
-using System.Collections.Generic;
+using Il2CppSLZ.Marrow.Warehouse;
+using Newtonsoft.Json;
+using SimpleSerializables.Types;
+using System.Reflection;
 
 namespace CustomCampaignTools
 {
@@ -8,36 +9,37 @@ namespace CustomCampaignTools
     {
         public int Version { get; set; } = 1;
         public string Name { get; set; }
-        public string PalletBarcode { get; set; }
+        public BarcodeSer PalletBarcode { get; set; }
         public SerializedLevelSetup IntroLevel { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
         public List<SerializedLevelSetup> MainLevels { get; set; }
         public List<SerializedLevelSetup> ExtraLevels { get; set; }
-        public string LoadScene { get; set; }
-        public string LoadSceneMusic { get; set; }
+        public ScannableRefSer<LevelCrateReference> LoadScene { get; set; }
+        public ScannableRefSer<MonoDiscReference> LoadSceneMusic { get; set; }
         public bool UnlockableLevels { get; set; }
         public bool ShowInMenu { get; set; }
         public bool PrioritizeInLevelPanel { get; set; }
         public bool RestrictDevTools { get; set; }
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
-        public string CampaignAvatar { get; set; }
-        public string BaseGameFallbackAvatar { get; set; }
-        public List<string> WhitelistedAvatars { get; set; }
+        public BarcodeSer CampaignAvatar { get; set; }
+        public BarcodeSer BaseGameFallbackAvatar { get; set; }
+        public List<BarcodeSer> WhitelistedAvatars { get; set; }
         public AvatarStatRanges AvatarStatRanges { get; set; }
         public bool SaveLevelWeapons { get; set; }
         public List<string> InventorySaveLimit { get; set; }
         public bool SaveLevelAmmo { get; set; }
         public bool UpdateSaveOnLevelEnter { get; set; }
-        public string AchievementUnlockSound { get; set; }
+        public ScannableRefSer<MonoDiscReference> AchievementUnlockSound { get; set; }
         public List<AchievementData> Achievements { get; set; }
         public bool LockInCampaign { get; set; }
-        public List<string> CampaignUnlockCrates { get; set; }
-        public List<string> HideCratesFromGachapon { get; set; }
+        public List<BarcodeSer> CampaignUnlockCrates { get; set; }
+        public List<BarcodeSer> HideCratesFromGachapon { get; set; }
         public string RigManagerOverride { get; set; }
         public string GameplayRigOverride { get; set; }
+        public AssemblySer CampaignSupportAssembly { get; set; }
         public bool DevBuild { get; set; } = false;
 
-// i just made some BULLSHITTTTT
+        // i just made some BULLSHITTTTT
 #if UNITY_EDITOR
         public static CampaignLoadingData CopyFrom(CampaignSettings campaignSettings)
         {
@@ -48,8 +50,8 @@ namespace CustomCampaignTools
                 InitialLevel = campaignSettings.MainMenu.Serialize(),
                 MainLevels = SerializedLevelSetup.CopyFrom(campaignSettings.MainLevels),
                 ExtraLevels = SerializedLevelSetup.CopyFrom(campaignSettings.ExtraLevels),
-                LoadScene = campaignSettings.LoadScene.Barcode.ID,
-                LoadSceneMusic = campaignSettings.LoadSceneMusic.Barcode.ID,
+                LoadScene = new BarcodeSer(campaignSettings.LoadScene.Barcode),
+                LoadSceneMusic = new BarcodeSer(campaignSettings.LoadSceneMusic.Barcode),
                 UnlockableLevels = campaignSettings.UnlockableLevels,
                 ShowInMenu = campaignSettings.ShowCampaignInMenu,
                 PrioritizeInLevelPanel = campaignSettings.PrioritizeInLevelPanel,
@@ -74,8 +76,13 @@ namespace CustomCampaignTools
 
     public class SerializedLevelSetup
     {
-        public BarcodeSer levelBarcode;
+        public ScannableRefSer<LevelCrateReference> levelBarcode;
         public string levelName;
+
+        public bool IsValid()
+        {
+            return levelBarcode.IsValid();
+        }
     }
 
     [Flags]
@@ -98,5 +105,32 @@ namespace CustomCampaignTools
         
         public float armRangeLow;
         public float armRangeHigh;
+    }
+
+    public class AssemblySer
+    {
+        public byte[] assemblyBytes;
+
+        [JsonIgnore]
+        private Assembly _assembly;
+
+        public Assembly LoadAssembly()
+        {
+            if (!IsValid) return null;
+            if(_assembly == null)
+            {
+                _assembly = Assembly.Load(assemblyBytes);
+            }
+            return _assembly;
+        }
+
+        public bool IsValid
+        {
+            get
+            {
+                if (assemblyBytes == null || assemblyBytes.Length == 0) return false;
+                return true;
+            }
+        }
     }
 }

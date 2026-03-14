@@ -41,6 +41,9 @@
     <EmbeddedResource Include="Resources\CampaignIcon.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SimpleSerializables\**\*.cs" Link="CustomCampaignTools.SDK\Scripts\Libraries\SimpleSerializables\%(RecursiveDir)%(Filename)%(Extension)" Exclude="..\SimpleSerializables\obj\**;..\SimpleSerializables\bin\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
     </Reference>

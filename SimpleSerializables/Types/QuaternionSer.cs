@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace CustomCampaignTools.Data.SimpleSerializables;
+namespace SimpleSerializables.Types;
 
 public struct QuaternionSer
 {

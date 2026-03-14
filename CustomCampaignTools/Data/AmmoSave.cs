@@ -1,5 +1,5 @@
 using System;
-using CustomCampaignTools.Data.SimpleSerializables;
+using SimpleSerializables.Types;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Warehouse;

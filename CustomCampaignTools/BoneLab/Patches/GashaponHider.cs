@@ -3,15 +3,15 @@ using Il2CppSLZ.Marrow.Warehouse;
 using HarmonyLib;
 using System.Collections.Generic;
 
-namespace CustomCampaignTools.Games.BoneLab
+namespace CustomCampaignTools.GameSupport.BoneLab
 {
     public static class GashaponHider
     {
         public static HashSet<Crate> HiddenCrates = new HashSet<Crate>();
 
-        public static void AddCratesToHide(List<string> crateBarcodes)
+        public static void AddCratesToHide(List<Barcode> crateBarcodes)
         {
-            foreach (string barcode in crateBarcodes)
+            foreach (Barcode barcode in crateBarcodes)
             {
                 if (AssetWarehouse.Instance.TryGetCrate(new Barcode(barcode), out Crate crate))
                 {
