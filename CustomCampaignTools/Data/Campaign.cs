@@ -103,6 +103,8 @@ namespace CustomCampaignTools
                 campaign.Name = data.Name;
                 campaign.PalletBarcode = data.PalletBarcode;
 
+                campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
+
                 if (data.InitialLevel.levelBarcode == Barcode.EMPTY) campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
                 else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
 
@@ -119,9 +121,7 @@ namespace CustomCampaignTools
 
                 campaign.LoadScene = data.LoadScene.IsValid() ? data.LoadScene : new LevelCrateReference(CommonBarcodes.Maps.LoadMod);
 
-                campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
-
-                if (data.LoadSceneMusic != null && data.LoadSceneMusic != Barcode.EMPTY)
+                if (data.LoadSceneMusic.IsValid())
                 {
                     data.LoadSceneMusic.ToScannableReference().TryGetDataCard(out campaign._loadMusicDatacard);
                     campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
@@ -161,10 +161,9 @@ namespace CustomCampaignTools
                 if(data.CampaignUnlockCrates != null)
                     campaign.CampaignUnlockCrates = [.. data.CampaignUnlockCrates];
 
-                if(data.AchievementUnlockSound != null && data.AchievementUnlockSound != "null.empty.barcode")
+                if(data.AchievementUnlockSound.IsValid())
                 {
-                    MonoDiscReference unlockSoundReference = data.AchievementUnlockSound;
-                    if(unlockSoundReference.TryGetDataCard(out campaign._achievementUnlockSoundDatacard))
+                    if(data.AchievementUnlockSound.ToScannableReference().TryGetDataCard(out campaign._achievementUnlockSoundDatacard))
                     campaign._achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
                     {
                         campaign._achievementUnlockSound = a;
@@ -193,7 +192,7 @@ namespace CustomCampaignTools
             }
             catch (Exception ex)
             {
-                CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex}");
+                CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
             }
 
             return campaign;

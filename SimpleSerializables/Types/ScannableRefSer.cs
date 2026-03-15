@@ -16,6 +16,7 @@ namespace SimpleSerializables.Types
 
         private T _scannableReference;
 
+        public ScannableRefSer() { barcode = Barcode.EmptyBarcode(); }
         public ScannableRefSer(string barcode)
         {
             this.barcode = new(barcode);
@@ -31,10 +32,6 @@ namespace SimpleSerializables.Types
             this.barcode = reference.Barcode;
         }
 
-        public bool IsValid()
-        {
-            return ToScannableReference().TryGetScannable(out _);
-        }
 
         public T ToScannableReference()
         {
@@ -54,6 +51,12 @@ namespace SimpleSerializables.Types
         public static implicit operator T(ScannableRefSer<T> b) => b.ToScannableReference();
         public static implicit operator Barcode(ScannableRefSer<T> b) => b.barcode;
         public static implicit operator string(ScannableRefSer<T> b) => b.barcode.ID;
+        public bool IsValid()
+        {
+            if (!barcode.IsValid()) return false;
+            return ToScannableReference().TryGetScannable(out _);
+        }
+
     }
 
     public class ScannableRefSerConverter : JsonConverter

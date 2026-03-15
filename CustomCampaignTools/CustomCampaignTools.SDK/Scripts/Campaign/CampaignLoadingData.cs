@@ -21,9 +21,9 @@ namespace CustomCampaignTools
         public bool PrioritizeInLevelPanel { get; set; }
         public bool RestrictDevTools { get; set; }
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
-        public BarcodeSer CampaignAvatar { get; set; }
-        public BarcodeSer BaseGameFallbackAvatar { get; set; }
-        public List<BarcodeSer> WhitelistedAvatars { get; set; }
+        public ScannableRefSer<AvatarCrateReference> CampaignAvatar { get; set; }
+        public ScannableRefSer<AvatarCrateReference> BaseGameFallbackAvatar { get; set; }
+        public List<ScannableRefSer<AvatarCrateReference>> WhitelistedAvatars { get; set; }
         public AvatarStatRanges AvatarStatRanges { get; set; }
         public bool SaveLevelWeapons { get; set; }
         public List<string> InventorySaveLimit { get; set; }

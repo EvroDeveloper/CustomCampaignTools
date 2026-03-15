@@ -8,15 +8,15 @@ namespace CustomCampaignTools
 {
     public class DefaultAvatarRestrictor : IAvatarRestrictor
     {
-        public DefaultAvatarRestrictor(Barcode defaultCampaignAvatar, Barcode fallbackAvatar)
+        public DefaultAvatarRestrictor(AvatarCrateReference defaultCampaignAvatar, AvatarCrateReference fallbackAvatar)
         {
             this.defaultCampaignAvatar = defaultCampaignAvatar;
             this.fallbackAvatar = fallbackAvatar;
         }
         
 
-        public Barcode defaultCampaignAvatar;
-        public Barcode fallbackAvatar;
+        public AvatarCrateReference defaultCampaignAvatar;
+        public AvatarCrateReference fallbackAvatar;
 
         public Barcode _cachedAvatar;
         public Barcode CampaignAvatar
@@ -25,10 +25,10 @@ namespace CustomCampaignTools
             {
                 if(!_cachedAvatar.IsValid() || _cachedAvatar == null)
                 {
-                    if (MarrowGame.assetWarehouse.HasCrate(defaultCampaignAvatar))
-                        _cachedAvatar = defaultCampaignAvatar;
+                    if (defaultCampaignAvatar.TryGetCrate(out _))
+                        _cachedAvatar = defaultCampaignAvatar.Barcode;
                     else
-                        _cachedAvatar = fallbackAvatar;
+                        _cachedAvatar = fallbackAvatar.Barcode;
                 }
                 return _cachedAvatar;
             }
