@@ -1,12 +1,7 @@
 using BoneLib;
 using CustomCampaignTools.AvatarRestriction;
-using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
-using CustomCampaignTools.GameSupport.BoneLab;
-using Il2CppSLZ.Marrow;
-using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
-using Il2CppSystem.Numerics;
 using MelonLoader;
 using Newtonsoft.Json;
 using System;
@@ -24,6 +19,7 @@ namespace CustomCampaignTools
         public string Name;
         public Barcode PalletBarcode;
 
+#region Levels
         public CampaignLevel IntroLevel { get; private set; }
         public CampaignLevel MenuLevel { get; private set; }
 
@@ -42,6 +38,7 @@ namespace CustomCampaignTools
         public CampaignLevel[] AllLevels { get; private set; }
         private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
 
+#region Load Scene
         public LevelCrateReference LoadScene;
         public AudioClip LoadSceneMusic
         {
@@ -52,6 +49,9 @@ namespace CustomCampaignTools
         }
         private MonoDisc _loadMusicDatacard;
         private AudioClip _loadSceneMusic;
+#endregion // Load Scene
+
+#endregion // Levels
 
         public bool ShowInMenu;
         public bool PrioritizeInLevelPanel = true;
@@ -61,8 +61,9 @@ namespace CustomCampaignTools
         public IAvatarRestrictor avatarRestrictor;
 
         public bool SaveLevelInventory;
-        public List<string> InventorySaveLimit = [];
+        public List<SpawnableCrateReference> InventorySaveLimit = [];
         public bool SaveLevelAmmo;
+        public bool CreateSaveOnLevelEnter = false;
         public AudioClip AchievementUnlockSound
         {
             get
@@ -77,6 +78,7 @@ namespace CustomCampaignTools
         public bool LockLevelsUntilEntered;
 
         public List<string> CampaignUnlockCrates = [];
+        public List<SpawnableCrateReference> HiddenCrates = [];
 
 // EXPERIMENTAL FEATURES
         public SpawnableCrateReference RigManagerOverride;
@@ -94,7 +96,7 @@ namespace CustomCampaignTools
 
         private static bool _sessionLocked;
 
-
+#region Campaign Registration
         internal static Campaign RegisterCampaign(CampaignLoadingData data)
         {
             Campaign campaign = new();
@@ -103,13 +105,34 @@ namespace CustomCampaignTools
                 campaign.Name = data.Name;
                 campaign.PalletBarcode = data.PalletBarcode;
 
+                RegisterCampaignLevels();
+                RegisterMenuStuff();
+                RegisterCheatRestrictions();
+                RegisterLevelSavings();
+                RegisterAchievements();
+                RegisterCrateBullshit();
+                RegisterExperimentalFeatures();
+
+                campaign.DEVMODE = data.DevBuild;
+
                 campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
-                if (data.InitialLevel.levelBarcode == Barcode.EMPTY) campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
-                else campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
+                CampaignUtilities.AddCampaign(campaign);
+            }
+            catch (Exception ex)
+            {
+                CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
+            }
 
-                if (data.IntroLevel == null || data.IntroLevel.levelBarcode == Barcode.EMPTY) campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
-                else campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
+            return campaign;
+
+            void RegisterCampaignLevels()
+            {
+                if (data.InitialLevel.IsValid()) campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
+                else campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+
+                if (data.IntroLevel.IsValid()) campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
+                else campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
 
                 campaign.MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
                 campaign.ExtraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
@@ -130,16 +153,18 @@ namespace CustomCampaignTools
                         campaign._loadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     }));
                 }
+            }
 
+            void RegisterMenuStuff()
+            {
                 campaign.ShowInMenu = data.ShowInMenu;
                 
-                if (data.Version == 0)
-                    campaign.PrioritizeInLevelPanel = true;
-                else
-                    campaign.PrioritizeInLevelPanel = data.PrioritizeInLevelPanel;
-
+                campaign.PrioritizeInLevelPanel = data.PrioritizeInLevelPanel;
                 campaign.LockLevelsUntilEntered = data.UnlockableLevels;
+            }
 
+            void RegisterCheatRestrictions()
+            {
                 if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
                     campaign.avatarRestrictor = new WhitelistAvatarRestrictor([.. data.WhitelistedAvatars]);
                 else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
@@ -150,16 +175,33 @@ namespace CustomCampaignTools
                 campaign.IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
 
                 campaign.RestrictDevTools = data.RestrictDevTools;
-
-                campaign.SaveLevelInventory = data.SaveLevelWeapons;
-                campaign.InventorySaveLimit = data.InventorySaveLimit;
-                campaign.SaveLevelAmmo = data.SaveLevelAmmo;
-                campaign.Achievements = data.Achievements;
-
                 campaign.LockInCampaign = data.LockInCampaign;
+            }
 
+            void RegisterLevelSavings()
+            { 
+                campaign.SaveLevelInventory = data.SaveLevelWeapons;
+                campaign.InventorySaveLimit = [.. data.InventorySaveLimit];
+                campaign.SaveLevelAmmo = data.SaveLevelAmmo;
+                campaign.CreateSaveOnLevelEnter = data.UpdateSaveOnLevelEnter;
+            }
+
+            void RegisterCrateBullshit()
+            {
                 if(data.CampaignUnlockCrates != null)
                     campaign.CampaignUnlockCrates = [.. data.CampaignUnlockCrates];
+
+                if(data.HideCratesFromGachapon != null)
+                    campaign.HiddenCrates = [.. data.HideCratesFromGachapon];
+            }
+
+            void RegisterAchievements()
+            {
+                campaign.Achievements = data.Achievements ?? [];
+                foreach (AchievementData ach in campaign.Achievements)
+                {
+                    ach.Init();
+                }
 
                 if(data.AchievementUnlockSound.IsValid())
                 {
@@ -170,32 +212,17 @@ namespace CustomCampaignTools
                         campaign._achievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     }));
                 }
-
-                if (campaign.Achievements != null)
-                {
-                    foreach (AchievementData ach in campaign.Achievements)
-                    {
-                        ach.Init();
-                    }
-                }
-
-                if(data.HideCratesFromGachapon != null)
-                    GashaponHider.AddCratesToHide([.. data.HideCratesFromGachapon]);
-
-                campaign.RigManagerOverride = new(data.RigManagerOverride);
-                campaign.GameplayRigOverride = new(data.GameplayRigOverride);
-                campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly();
-
-                campaign.DEVMODE = data.DevBuild;
-
-                CampaignUtilities.AddCampaign(campaign);
             }
-            catch (Exception ex)
+
+            void RegisterExperimentalFeatures()
             {
-                CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
+                campaign.RigManagerOverride = data.RigManagerOverride;
+                campaign.GameplayRigOverride = data.GameplayRigOverride;
+                campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly((a) =>
+                {
+                    RegisterTypeInIl2Cpp.RegisterAssembly(a);
+                });
             }
-
-            return campaign;
         }
 
         public static Campaign RegisterCampaignFromPallet(Pallet pallet)
@@ -222,14 +249,14 @@ namespace CustomCampaignTools
             campaignValueHolder.PalletBarcode = new(pallet.Barcode);
             return RegisterCampaign(campaignValueHolder);
         }
-
+#endregion
+        
         public void Enter()
         {
             if(LockInCampaign)
             {
                 _sessionLocked = true;
             }
-            //Campaign.Session = this;
             
             FadeLoader.Load(InitialLevel.Barcode, LoadScene.Barcode);
         }
@@ -247,7 +274,10 @@ namespace CustomCampaignTools
 
         public CampaignLevel GetLevel(Barcode levelBarcode)
         {
-            return barcodeToCampaignLevelRegistry[levelBarcode.ID];
+            if(barcodeToCampaignLevelRegistry.ContainsKey(levelBarcode.ID))
+                return barcodeToCampaignLevelRegistry[levelBarcode.ID];
+            else
+                return null;
         }
 
         public CampaignLevel[] GetUnlockedLevels(bool includeRedacted = false)
@@ -292,8 +322,8 @@ namespace CustomCampaignTools
 
             if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
             {
-                popUpMenu.crate_SpawnGun = new GenericCrateReference(new Barcode("null.empty.barcode"));
-                popUpMenu.crate_Nimbus = new GenericCrateReference(new Barcode("null.empty.barcode"));
+                popUpMenu.crate_SpawnGun = new GenericCrateReference(Barcode.EmptyBarcode());
+                popUpMenu.crate_Nimbus = new GenericCrateReference(Barcode.EmptyBarcode());
             }
         }
     }

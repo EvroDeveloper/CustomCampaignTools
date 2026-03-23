@@ -6,6 +6,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
+using System.IO;
 
 namespace CustomCampaignTools
 {

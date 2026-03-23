@@ -1,11 +1,12 @@
+﻿using CustomCampaignTools.GameSupport;
 using BoneLib;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.GameSupport.BoneLab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Bonelab;
-using CustomCampaignTools.Bonemenu;
+using UnityEngine;
 
-namespace CustomCampaignTools.GameSupport
+namespace CustomCampaignTools.BonelabSupport
 {
     public class BoneLabGameConfiguration : GameConfiguration
     {
@@ -36,14 +37,15 @@ namespace CustomCampaignTools.GameSupport
             }
         }
 
-        public override void GameSpecificPatches()
-        {
-            GashaponPatches.ManualPatch();
-        }
-
         public override void OnLateInitialize()
         {
             BoneMenuCreator.CreateBoneMenu();
+            BoneLabMainMenuMangler.LoadSpriteFromEmbeddedResource("CampaignIcon.png", SupportAssembly, new Vector2(0.5f, 0.5f));
+        }
+
+        public override void RefreshCampaignMenu(Campaign campaign)
+        {
+            CampaignBoneMenu.CreateOrRefreshCampaignPage(campaign);
         }
 
         public override void OnBootstrapSceneLoaded()

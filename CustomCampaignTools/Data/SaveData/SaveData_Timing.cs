@@ -1,6 +1,8 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System;
 
 namespace CustomCampaignTools
 {

@@ -1,5 +1,5 @@
-using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.GameSupport;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.TinyJSON;
@@ -40,7 +40,7 @@ namespace CustomCampaignTools
                 levelToCampaignRegistry[c.Barcode.ID] = campaign;
             }
             _menuCampaigns = null;
-            CampaignBoneMenu.CreateCampaignPage(campaign);
+            GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
         }
 
         public static List<Campaign> CampaignsToShowInMenu

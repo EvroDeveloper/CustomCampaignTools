@@ -1,5 +1,4 @@
 using BoneLib;
-using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.Data;
 using SimpleSerializables.Types;
 using CustomCampaignTools.Debug;
@@ -10,6 +9,9 @@ using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using UnityEngine;
+using CustomCampaignTools.GameSupport;
+using System.Collections.Generic;
+using System;
 
 namespace CustomCampaignTools
 {
@@ -21,7 +23,7 @@ namespace CustomCampaignTools
         public void ClearSavePoint()
         {
             LoadedSavePoint = new SavePoint();
-            CampaignBoneMenu.RefreshCampaignPage(campaign);
+            GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
             SaveToDisk();
         }
 
@@ -57,10 +59,10 @@ namespace CustomCampaignTools
 
             LoadedSavePoint = new SavePoint(levelBarcode, transform, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
 
-            CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {levelBarcode}");
+            CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {levelBarcode.ID}");
 
             SaveToDisk();
-            CampaignBoneMenu.RefreshCampaignPage(campaign);
+            GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
         }
 
         public class SavePoint

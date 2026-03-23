@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BoneLib;
 using CustomCampaignTools.Data;
 using Newtonsoft.Json;

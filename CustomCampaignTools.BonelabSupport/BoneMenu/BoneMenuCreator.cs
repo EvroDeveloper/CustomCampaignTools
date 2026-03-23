@@ -10,7 +10,7 @@ using CustomCampaignTools.Data;
 using CustomCampaignTools.Debug;
 using UnityEngine;
 
-namespace CustomCampaignTools.Bonemenu
+namespace CustomCampaignTools.BonelabSupport
 {
     public static class BoneMenuCreator
     {

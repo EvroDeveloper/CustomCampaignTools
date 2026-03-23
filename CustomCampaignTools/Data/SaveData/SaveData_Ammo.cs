@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using CustomCampaignTools.Data;
 using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
@@ -78,6 +80,7 @@ namespace CustomCampaignTools
 
         public void ClearAmmoSave()
         {
+            LoadedAmmoSaves ??= [];
             LoadedAmmoSaves.Clear();
             // Fill default ammo saves
             foreach (CampaignLevel level in campaign.MainLevels)

@@ -2,6 +2,7 @@ using UnityEngine;
 using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
+using System;
 
 namespace CustomCampaignTools.SDK
 {

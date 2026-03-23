@@ -1,10 +1,9 @@
 ﻿using BoneLib;
-using CustomCampaignTools.Bonemenu;
 using CustomCampaignTools.GameSupport;
-using CustomCampaignTools.GameSupport.BoneLab;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
 using MelonLoader;
+using System;
 using System.Reflection;
 using UnityEngine;
 
@@ -12,8 +11,10 @@ namespace CustomCampaignTools
 {
     internal class Main : MelonMod
     {
+        public static Assembly ModAssembly;
         public override void OnInitializeMelon()
         {
+            ModAssembly = MelonAssembly.Assembly;
             GameManager.InitializeGameConfiguration();
             ArgumentHandler.HandleArguments(Environment.GetCommandLineArgs());
         }
@@ -29,17 +30,11 @@ namespace CustomCampaignTools
             Hooking.OnLevelUnloaded += LevelUnloaded;
             Hooking.OnUIRigCreated += OnUIRigCreated;
 
-            string resourceName = "CampaignIcon.png";
             Assembly assembly = MelonAssembly.Assembly;
 
-            BoneLabMainMenuMangler.LoadSpriteFromEmbeddedResource(resourceName, assembly, new Vector2(0.5f, 0.5f));
-
-            foreach (MelonMod registeredMelon in MelonMod.RegisteredMelons)
+            if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
             {
-                if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
-                {
-                    PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
-                }
+                PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
             }
         }
 

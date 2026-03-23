@@ -1,5 +1,6 @@
+using System.Collections.Generic;
 using BoneLib.Notifications;
-using CustomCampaignTools.Bonemenu;
+using CustomCampaignTools.GameSupport;
 using Il2CppSLZ.Marrow.Audio;
 using Newtonsoft.Json;
 
@@ -48,7 +49,7 @@ namespace CustomCampaignTools
 
                 UnlockedAchievements.Add(key);
                 SaveToDisk();
-                CampaignBoneMenu.RefreshCampaignPage(campaign);
+                GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
                 return true;
             }
             return false;

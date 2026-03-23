@@ -7,6 +7,10 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <BONELAB_DIR>/Users/evanbassett/Downloads/BONELAB</BONELAB_DIR>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>..\..\..\..\..\..\..\SteamLibrary\steamapps\common\BONELAB\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>

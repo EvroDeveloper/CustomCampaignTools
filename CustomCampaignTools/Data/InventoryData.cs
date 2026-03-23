@@ -49,7 +49,7 @@ namespace CustomCampaignTools.Data
             return GetFromRigmanager(rm, []);
         }
 
-        public static InventoryData GetFromRigmanager(RigManager rm, List<string> itemFilter)
+        public static InventoryData GetFromRigmanager(RigManager rm, List<SpawnableCrateReference> itemFilter)
         {
             InventoryData output = new();
             foreach (var bodySlot in rm.inventory.bodySlots)
@@ -57,9 +57,21 @@ namespace CustomCampaignTools.Data
                 if (bodySlot.inventorySlotReceiver == null) continue;
 
                 var item = InventoryItem.GetFromBodyslot(bodySlot);
-
                 if (item.Barcode == string.Empty) continue;
-                if (itemFilter.Count != 0 && !itemFilter.Contains(item.Barcode)) continue;
+
+                if(itemFilter.Count != 0)
+                {
+                    bool isItemAllowed = false;
+                    foreach(SpawnableCrateReference crateReference in itemFilter)
+                    {
+                        if(crateReference.Barcode.ID == item.Barcode)
+                        {
+                            isItemAllowed = true;
+                            break;
+                        }
+                    }
+                    if(!isItemAllowed) continue;
+                }
 
                 output.InventoryItems.Add(item);
             }

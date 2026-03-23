@@ -1,11 +1,20 @@
-﻿using Il2CppSLZ.Bonelab;
+﻿#if MELONLOADER
+using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
 using Il2CppUltEvents;
-using UnityEngine;
 using BoneLib;
-using MelonLoader;
 using Il2CppSLZ.Marrow;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
+using MelonLoader;
+#else
+using SLZ.Bonelab;
+using SLZ.Marrow.Warehouse;
+using TMPro;
+using UltEvents;
+using SLZ.Marrow;
+#endif
+using UnityEngine;
 
 namespace CustomCampaignTools.LabWorks
 {
@@ -22,11 +31,10 @@ namespace CustomCampaignTools.LabWorks
         public void SetLootsFromParent(GameObject parent) => _loots = parent.GetComponentsInChildren<CrateSpawner>();
 
 #if MELONLOADER
-		private List<Rigidbody> _lootBodies = [];
+		public List<Rigidbody> _lootBodies = [];
 
-		private int _multiplier;
-		private int _itemPrice;
-        private int _trueItemPrice => _itemPrice;
+		public int _multiplier;
+		public int _itemPrice;
 
 		private int _lightBullets;
 		private int _mediumBullets;
@@ -36,10 +44,10 @@ namespace CustomCampaignTools.LabWorks
 		private bool _opened;
 		private bool _unlocked;
 
-		private TMP_Text _bulletBalanceTextmesh;
-		private TMP_Text _refundTextmesh;
+		public Il2CppReferenceField<TMP_Text> _bulletBalanceTextmesh;
+		public Il2CppReferenceField<TMP_Text> _refundTextmesh;
 
-		private AmmoReciever reciever;
+		public Il2CppReferenceField<AmmoReciever> reciever;
 
 		private string lightRefundSpawnable;
 		private string mediumRefundSpawnable;
@@ -49,30 +57,32 @@ namespace CustomCampaignTools.LabWorks
 		private AudioClip _unlockedClip;
 		private AudioClip _lockedClip;
 
-		private Transform giveChangeTransform;
+		public Il2CppReferenceField<Transform> giveChangeTransform;
 
-		private UltEventHolder OnAmountRose;
-		private UltEventHolder OnAmountDropped;
-		private UltEventHolder OnItemBought;
+		public Il2CppReferenceField<UltEventHolder> OnAmountRose;
+		public Il2CppReferenceField<UltEventHolder> OnAmountDropped;
+		public Il2CppReferenceField<UltEventHolder> OnItemBought;
+#else
+		public TMP_Text _bulletBalanceTextmesh;
+		public TMP_Text _refundTextmesh;
+		public AmmoReciever reciever;
+
+		public Transform giveChangeTransform;
+		public UltEventHolder OnAmountRose;
+		public UltEventHolder OnAmountDropped;
+		public UltEventHolder OnItemBought;
 #endif
 
         public void StartFields(
             GameObject lootParent,
             int itemPrice,
             int multiplier,
-            TMP_Text _bulletBalanceTextmesh,
-            TMP_Text _refundTextmesh,
-            AmmoReciever reciever,
             string lightRefundSpawnable,
             string mediumRefundSpawnable,
             string heavyRefundSpawnable,
             AudioClip openedClip,
             AudioClip unlockedClip,
-            AudioClip lockedClip,
-            Transform giveChangeTransform,
-            UltEventHolder AmountRoseEvent,
-            UltEventHolder AmountDroppedEvent,
-            UltEventHolder ItemBoughtEvent)
+            AudioClip lockedClip)
         {
 #if MELONLOADER
 			SetLootsFromParent(lootParent);
@@ -83,20 +93,12 @@ namespace CustomCampaignTools.LabWorks
 			}
 			this._itemPrice = itemPrice;
 			this._multiplier = multiplier;
-			this._bulletBalanceTextmesh = _bulletBalanceTextmesh;
-			this._refundTextmesh = _refundTextmesh;
-			this.reciever = reciever;
 			this.lightRefundSpawnable = lightRefundSpawnable;
 			this.mediumRefundSpawnable = mediumRefundSpawnable;
 			this.heavyRefundSpawnable = heavyRefundSpawnable;
 			this._openedClip = openedClip;
 			this._unlockedClip = unlockedClip;
 			this._lockedClip = lockedClip;
-			this.giveChangeTransform = giveChangeTransform;
-
-			this.OnAmountRose = AmountRoseEvent;
-			this.OnAmountDropped = AmountDroppedEvent;
-			this.OnItemBought = ItemBoughtEvent;
 
 			SafeStart();
 #endif
@@ -105,15 +107,15 @@ namespace CustomCampaignTools.LabWorks
 #if MELONLOADER
 		private void SafeStart()
 		{
-			reciever.OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g));
+			reciever.Get().OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g));
 			UpdateTMP();
 		}
 
 		private void UpdateTMP()
 		{
-			_refundTextmesh.text = $"{_totalBullets}";
-			int max = Mathf.Max(0, (_trueItemPrice - _totalBullets));
-			_bulletBalanceTextmesh.text = _opened ? "0" : $"{max}";
+			_refundTextmesh.Get().text = $"{_totalBullets}";
+			int max = Mathf.Max(0, (_itemPrice - _totalBullets));
+			_bulletBalanceTextmesh.Get().text = _opened ? "0" : $"{max}";
 		}
 #endif
 
@@ -131,23 +133,27 @@ namespace CustomCampaignTools.LabWorks
         public void GiveChange()
         {
 #if MELONLOADER
+			if(giveChangeTransform.Get() == null)
+			{
+				throw new NullReferenceException("Object reference \"giveChangeTransform\" not set to instance of an object");
+			}
             if(_lightBullets > 0)
             {
-                HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+                HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
 				{
 					gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _lightBullets;
 				});
             }
             if(_mediumBullets > 0)
             {
-                HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+                HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
                 {
                     gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _mediumBullets;
                 });
             }
             if(_heavyBullets > 0)
             {
-                HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.position, giveChangeTransform.rotation, Vector3.one, spawnAction: (gobj) =>
+                HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
                 {
                     gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _heavyBullets;
                 });
@@ -157,8 +163,8 @@ namespace CustomCampaignTools.LabWorks
             _mediumBullets = 0;
             _heavyBullets = 0;
 
-			if(!_opened && OnAmountDropped != null)
-				OnAmountDropped.Invoke();
+			if(!_opened && OnAmountDropped.Get() != null)
+				OnAmountDropped.Get().Invoke();
 
 			UpdateTMP();
 #endif
@@ -169,12 +175,12 @@ namespace CustomCampaignTools.LabWorks
 #if MELONLOADER
 			// If the inserted bullets is less than the item price
 			// (Unable to buy)
-			if(_totalBullets < _trueItemPrice)
+			if(_totalBullets < _itemPrice)
 			{
 				return;
 			}
 
-			int ammoToRemove = _trueItemPrice;
+			int ammoToRemove = _itemPrice;
 			
 			ammoToRemove = CleanupLight(ammoToRemove);
 			ammoToRemove = CleanupMedium(ammoToRemove);
@@ -185,8 +191,8 @@ namespace CustomCampaignTools.LabWorks
 
 			_opened = true;
 
-			if(OnItemBought != null)
-				OnItemBought.Invoke();
+			if(OnItemBought.Get() != null)
+				OnItemBought.Get().Invoke();
 
 			//if(_openedClip != null)
 			//	Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
@@ -254,7 +260,7 @@ namespace CustomCampaignTools.LabWorks
 
 			AmmoInventory.Instance.RemoveCartridge(magazine.magazineState.cartridgeData, bulletsToAdd);
 
-			if(_totalBullets >= _trueItemPrice && !_unlocked && !_opened)
+			if(_totalBullets >= _itemPrice && !_unlocked && !_opened)
 			{
 				_unlocked = true;
 			}
@@ -284,9 +290,9 @@ namespace CustomCampaignTools.LabWorks
             else if(type == 2)
                 _heavyBullets += addedBullets;
 
-			if(prevTotal < _trueItemPrice && _totalBullets >= _trueItemPrice && OnAmountRose != null)
+			if(prevTotal < _itemPrice && _totalBullets >= _itemPrice && OnAmountRose.Get() != null)
 			{
-				OnAmountRose.Invoke();
+				OnAmountRose.Get().Invoke();
 			}
 
             UpdateTMP();

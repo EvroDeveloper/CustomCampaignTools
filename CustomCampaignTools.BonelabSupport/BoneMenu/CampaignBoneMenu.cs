@@ -6,13 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomCampaignTools.Bonemenu
+namespace CustomCampaignTools.BonelabSupport
 {
     internal class CampaignBoneMenu
     {
         public static Dictionary<Campaign, Page> campaignMenus = [];
 
-        public static void CreateCampaignPage(Campaign c)
+
+        public static void CreateOrRefreshCampaignPage(Campaign c)
         {
             if (!campaignMenus.ContainsKey(c))
             {

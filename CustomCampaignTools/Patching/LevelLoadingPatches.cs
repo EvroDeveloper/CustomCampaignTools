@@ -1,3 +1,4 @@
+using System;
 using BoneLib;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.SDK;
@@ -5,8 +6,6 @@ using CustomCampaignTools.Timing;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
-using Il2CppSLZ.Marrow.Data;
-using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -136,7 +135,7 @@ namespace CustomCampaignTools.Patching
 
             bool shouldCancelOriginalCall = false;
 
-            if(!Campaign.SessionActive)
+            if(Campaign.SessionActive)
             {
                 if(Campaign.Session.RigManagerOverride.TryGetCrate(out _))
                 {

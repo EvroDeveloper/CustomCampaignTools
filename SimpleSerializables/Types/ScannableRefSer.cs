@@ -1,4 +1,8 @@
-﻿using Il2CppSLZ.Marrow.Warehouse;
+﻿#if MELONLOADER
+using Il2CppSLZ.Marrow.Warehouse;
+#else
+using SLZ.Marrow.Warehouse;
+#endif
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -56,15 +60,49 @@ namespace SimpleSerializables.Types
             if (!barcode.IsValid()) return false;
             return ToScannableReference().TryGetScannable(out _);
         }
+    }
 
+    [JsonConverter(typeof(ScannableRefSerConverter))]
+    public class CrateRefSer<T> : ScannableRefSer<T> where T : ScannableReference
+    {
+        public CrateRefSer() : base() {}
+    }
+
+    [JsonConverter(typeof(ScannableRefSerConverter))]
+    public class SpawnableCrateRefSer : CrateRefSer<SpawnableCrateReference>
+    {
+        public SpawnableCrateRefSer() : base() {}
+    }
+
+    [JsonConverter(typeof(ScannableRefSerConverter))]
+    public class AvatarCrateRefSer : CrateRefSer<AvatarCrateReference>
+    {
+        public AvatarCrateRefSer() : base() {}
+    }
+
+    public class LevelCrateRefSer : CrateRefSer<LevelCrateReference>
+    {
+        public LevelCrateRefSer() : base() {}
+    }
+
+    [JsonConverter(typeof(ScannableRefSerConverter))]
+    public class DataCardRefSer<T> : ScannableRefSer<T> where T : ScannableReference
+    {
+        public DataCardRefSer() : base() {}
+    }
+
+    [JsonConverter(typeof(ScannableRefSerConverter))]
+    public class MonoDiscRefSer : DataCardRefSer<MonoDiscReference>
+    {
+        public MonoDiscRefSer() : base() {}
     }
 
     public class ScannableRefSerConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType.IsGenericType &&
-                objectType.GetGenericTypeDefinition() == typeof(ScannableRefSer<>);
+            if(objectType.IsAssignableTo(typeof(ScannableRefSer<>))) return true;
+            return false;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

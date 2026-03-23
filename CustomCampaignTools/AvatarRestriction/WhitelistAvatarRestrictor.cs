@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BoneLib.Notifications;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;

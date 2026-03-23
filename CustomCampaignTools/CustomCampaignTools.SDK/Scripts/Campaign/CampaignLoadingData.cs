@@ -1,43 +1,61 @@
+#if MELONLOADER
 using Il2CppSLZ.Marrow.Warehouse;
+using CustomCampaignTools.Debug;
+#else
+using SLZ.Marrow.Warehouse;
+using CustomCampaignTools.SDK;
+#endif
 using Newtonsoft.Json;
 using SimpleSerializables.Types;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using UnityEngine;
 
 namespace CustomCampaignTools
 {
     internal class CampaignLoadingData
     {
-        public int Version { get; set; } = 1;
+        public int Version { get; set; } = 0; // Default version to 0 if Version doesnt exist in Json
+#region 1.0.0
         public string Name { get; set; }
-        public BarcodeSer PalletBarcode { get; set; }
-        public SerializedLevelSetup IntroLevel { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
         public List<SerializedLevelSetup> MainLevels { get; set; }
         public List<SerializedLevelSetup> ExtraLevels { get; set; }
-        public ScannableRefSer<LevelCrateReference> LoadScene { get; set; }
-        public ScannableRefSer<MonoDiscReference> LoadSceneMusic { get; set; }
+        public LevelCrateRefSer LoadScene { get; set; }
+        public MonoDiscRefSer LoadSceneMusic { get; set; }
         public bool UnlockableLevels { get; set; }
         public bool ShowInMenu { get; set; }
-        public bool PrioritizeInLevelPanel { get; set; }
         public bool RestrictDevTools { get; set; }
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
-        public ScannableRefSer<AvatarCrateReference> CampaignAvatar { get; set; }
-        public ScannableRefSer<AvatarCrateReference> BaseGameFallbackAvatar { get; set; }
-        public List<ScannableRefSer<AvatarCrateReference>> WhitelistedAvatars { get; set; }
-        public AvatarStatRanges AvatarStatRanges { get; set; }
-        public bool SaveLevelWeapons { get; set; }
-        public List<string> InventorySaveLimit { get; set; }
-        public bool SaveLevelAmmo { get; set; }
-        public bool UpdateSaveOnLevelEnter { get; set; }
-        public ScannableRefSer<MonoDiscReference> AchievementUnlockSound { get; set; }
-        public List<AchievementData> Achievements { get; set; }
-        public bool LockInCampaign { get; set; }
-        public List<BarcodeSer> CampaignUnlockCrates { get; set; }
-        public List<BarcodeSer> HideCratesFromGachapon { get; set; }
-        public string RigManagerOverride { get; set; }
-        public string GameplayRigOverride { get; set; }
-        public AssemblySer CampaignSupportAssembly { get; set; }
+        public AvatarCrateRefSer CampaignAvatar { get; set; } = new AvatarCrateRefSer();
+        public AvatarCrateRefSer BaseGameFallbackAvatar { get; set; } = new AvatarCrateRefSer();
+        public List<AvatarCrateRefSer> WhitelistedAvatars { get; set; } = [];
+        public bool SaveLevelWeapons { get; set; } = false;
+        public List<SpawnableCrateRefSer> InventorySaveLimit { get; set; } = [];
+        public bool SaveLevelAmmo { get; set; } = true;
+        public List<AchievementData> Achievements { get; set; } = [];
+        public bool LockInCampaign { get; set; } = false;
+        public List<SpawnableCrateRefSer> CampaignUnlockCrates { get; set; } = [];
+#endregion
+
+#region 1.1.0
+        public BarcodeSer PalletBarcode { get; set; } // Set by Campaign Registerer
+        public SerializedLevelSetup IntroLevel { get; set; }
+        public bool PrioritizeInLevelPanel { get; set; } = true;
+        public MonoDiscRefSer AchievementUnlockSound { get; set; } = new MonoDiscRefSer();
+        public List<SpawnableCrateRefSer> HideCratesFromGachapon { get; set; } = [];
         public bool DevBuild { get; set; } = false;
+#endregion
+
+#region 1.2.0
+        public AvatarStatRanges AvatarStatRanges { get; set; }
+        public bool UpdateSaveOnLevelEnter { get; set; } = true;
+        public SpawnableCrateRefSer RigManagerOverride { get; set; } = new SpawnableCrateRefSer();
+        public SpawnableCrateRefSer GameplayRigOverride { get; set; } = new SpawnableCrateRefSer();
+        public AssemblySer CampaignSupportAssembly { get; set; } = new AssemblySer();
+#endregion
 
         // i just made some BULLSHITTTTT
 #if UNITY_EDITOR
@@ -45,29 +63,35 @@ namespace CustomCampaignTools
         {
             return new CampaignLoadingData()
             {
+                Version = 2;
                 Name = campaignSettings.Name,
                 IntroLevel = campaignSettings.IntroLevel.Serialize(),
                 InitialLevel = campaignSettings.MainMenu.Serialize(),
                 MainLevels = SerializedLevelSetup.CopyFrom(campaignSettings.MainLevels),
                 ExtraLevels = SerializedLevelSetup.CopyFrom(campaignSettings.ExtraLevels),
-                LoadScene = new BarcodeSer(campaignSettings.LoadScene.Barcode),
-                LoadSceneMusic = new BarcodeSer(campaignSettings.LoadSceneMusic.Barcode),
+                LoadScene = new ScannableRefSer<LevelCrateReference>(campaignSettings.LoadScene.Barcode),
+                LoadSceneMusic = new ScannableRefSer<MonoDiscReference>(campaignSettings.LoadSceneMusic.Barcode),
                 UnlockableLevels = campaignSettings.UnlockableLevels,
                 ShowInMenu = campaignSettings.ShowCampaignInMenu,
                 PrioritizeInLevelPanel = campaignSettings.PrioritizeInLevelPanel,
                 RestrictDevTools = campaignSettings.RestrictDevTools,
                 AvatarRestrictionType = campaignSettings.AvatarRestriction,
                 WhitelistedAvatars = CampaignSettings.CrateArrayToBarcodes(campaignSettings.WhitelistedAvatars),
-                CampaignAvatar = campaignSettings.CampaignAvatar.Barcode.ID,
-                BaseGameFallbackAvatar = campaignSettings.BaseGameFallbackAvatar.Barcode.ID,
+                CampaignAvatar = new ScannableRefSer<AvatarCrateReference>(campaignSettings.CampaignAvatar),
+                BaseGameFallbackAvatar = new ScannableRefSer<AvatarCrateReference>(campaignSettings.BaseGameFallbackAvatar),
+                AvatarStatRanges = new AvatarStatRanges(campaignSettings.AvatarHeightRange, campaignSettings.AvatarMassRange, campaignSettings.AvatarArmRange),
                 SaveLevelWeapons = campaignSettings.SaveInventoryBetweenLevels,
                 InventorySaveLimit = CampaignSettings.CrateArrayToBarcodes(campaignSettings.SaveInventoryFilter),
                 SaveLevelAmmo = campaignSettings.SaveAmmoBetweenLevels,
-                AchievementUnlockSound = campaignSettings.AchievementUnlockSound.Barcode.ID,
+                UpdateSaveOnLevelEnter = campaignSettings.UpdateSaveOnLevelEnter,
+                AchievementUnlockSound = new MonoDiscRefSer(campaignSettings.AchievementUnlockSound),
                 Achievements = SerializableAchievement.ConvertToData(campaignSettings.Achievements),
                 LockInCampaign = campaignSettings.LockPlayerInCampaign,
                 CampaignUnlockCrates = CampaignSettings.CrateArrayToBarcodes(campaignSettings.CampaignUnlockCrates),
                 HideCratesFromGachapon = CampaignSettings.CrateArrayToBarcodes(campaignSettings.HideCratesFromGachapon),
+                RigManagerOverride = new(campaignSettings.RigManagerOverride),
+                GameplayRigOverride = new(campaignSettings.GameplayRigOverride),
+                CampaignSupportAssembly = new(campaignSettings.CampaignSupportAssembly),
                 DevBuild = campaignSettings.DevBuild,
             };
         }
@@ -76,13 +100,25 @@ namespace CustomCampaignTools
 
     public class SerializedLevelSetup
     {
-        public ScannableRefSer<LevelCrateReference> levelBarcode;
+        public LevelCrateRefSer levelBarcode;
         public string levelName;
 
         public bool IsValid()
         {
             return levelBarcode.IsValid();
         }
+
+#if UNITY_EDITOR
+        public static List<SerializedLevelSetup> CopyFrom(LevelSetup[] levelSetups)
+        {
+            List<SerializedLevelSetup> list = new();
+            foreach (var level in levelSetups)
+            {
+                list.Add(level.Serialize());
+            }
+            return list;
+        }
+#endif
     }
 
     [Flags]
@@ -105,6 +141,96 @@ namespace CustomCampaignTools
         
         public float armRangeLow;
         public float armRangeHigh;
+
+        public AvatarStatRanges() { }
+
+        public AvatarStatRanges(Vector2 heightRange, Vector2 massRange, Vector2 armRange)
+        {
+            heightRangeLow = heightRange.x;
+            heightRangeHigh = heightRange.y;
+
+            massRangeLow = massRange.x;
+            massRangeHigh = massRange.y;
+
+            armRangeLow = armRange.x;
+            armRangeHigh = armRange.y;
+        }
+    }
+
+
+    public struct AchievementData
+    {
+        public string Key { get; set; }
+        public bool Hidden { get; set; }
+        public byte[] IconBytes { get; set; }
+        public string IconGUID { get; set; }
+#if MELONLOADER
+        private MarrowAssetT<Texture2D> _iconAsset;
+        
+        public MarrowAssetT<Texture2D> IconAsset
+        {
+            get
+            {
+                if(_iconAsset == null)
+                {
+                    _iconAsset = new MarrowAssetT<Texture2D>(IconGUID);
+                }
+                return _iconAsset;
+            }
+        }
+#endif
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+#if MELONLOADER
+        public Texture2D cachedTexture;
+        public Sprite cachedSprite;
+
+        public void Init()
+        {
+            LoadIcon();
+        }
+
+        public void LoadIcon()
+        {
+            if (IconBytes.Length == 0) return;
+
+            var loadingTexture = new Texture2D(2, 2);
+
+            if (IconBytes.Length != 0)
+            {
+                if (loadingTexture.LoadImage(IconBytes, false))
+                {
+                    OnIconLoaded(loadingTexture);
+                }
+                else
+                {
+                    CampaignLogger.Error("Failed to load texture from embedded resource.");
+                    return;
+                }
+            }
+            else if (IconGUID != "")
+            {
+                IconAsset.LoadAsset((Il2CppSystem.Action<Texture2D>)OnIconLoaded);
+            }
+            else
+            {
+                CampaignLogger.Error("No valid icon data found for achievement: " + Key);
+                return;
+            }
+        }
+
+        private void OnIconLoaded(Texture2D loadedTexture)
+        {
+            cachedTexture = loadedTexture;
+
+            cachedTexture = cachedTexture.ProperResize(336, 336);
+            cachedTexture.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+            cachedSprite = Sprite.Create(cachedTexture, new Rect(0, 0, cachedTexture.width, cachedTexture.height), new Vector2(0.5f, 0.5f));
+            cachedSprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        }
+#endif
     }
 
     public class AssemblySer
@@ -114,12 +240,27 @@ namespace CustomCampaignTools
         [JsonIgnore]
         private Assembly _assembly;
 
-        public Assembly LoadAssembly()
+        public AssemblySer() { }
+
+        public AssemblySer(TextAsset assemblyTextAsset)
+        {
+            assemblyBytes = assemblyTextAsset.bytes;
+        }
+
+        public Assembly LoadAssembly(Action<Assembly> callback)
         {
             if (!IsValid) return null;
             if(_assembly == null)
             {
-                _assembly = Assembly.Load(assemblyBytes);
+                try
+                {
+                    _assembly = Assembly.Load(assemblyBytes);
+                    callback.Invoke(_assembly);
+                }
+                catch (Exception ex)
+                {
+                    CampaignLogger.Error($"Unable to load Assembly: {ex}");
+                }
             }
             return _assembly;
         }
