@@ -165,7 +165,7 @@ namespace CustomCampaignTools
 
             public Vector3 GetForwardVector()
             {
-                return Quaternion.Euler(0, RotationAngle, 0) * new Vector3(0, 0, 1);
+                return Quaternion.AngleAxis(RotationAngle, Vector3.up) * Vector3.forward;
             }
         }
 

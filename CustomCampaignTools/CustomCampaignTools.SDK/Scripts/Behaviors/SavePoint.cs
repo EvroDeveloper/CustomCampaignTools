@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow.Pool;
 
 namespace CustomCampaignTools.SDK
 {
@@ -55,6 +56,7 @@ namespace CustomCampaignTools.SDK
             if (entitySaveZone.Get() != null)
             {
                 HashSet<MarrowEntity> boxVolEntities = [];
+                HashSet<Poolee> pooleeSet = []; // Prevent double saving of separate entities referencing the same poolee. Ex - Gun and Mag both saving as the Gun
 
                 BoxCollider collider = entitySaveZone.Get();
 
@@ -64,17 +66,22 @@ namespace CustomCampaignTools.SDK
                     if (tracker.TryGetComponent(out Tracker t))
                     {
                         if (t.Entity == null) continue;
+                        if (t.Entity._poolee == null) continue;
+                        if (t.Entity._poolee.SpawnableCrate == null) continue;
+
                         try
                         {
-                            if (t.Entity._poolee.SpawnableCrate.Barcode.ID == "SLZ.BONELAB.Core.Spawnable.RigManagerBlank") continue;
+                            if(pooleeSet.Contains(t.Entity._poolee)) continue;
+                            pooleeSet.Add(t.Entity._poolee);
+
+                            if (t.Entity._poolee.SpawnableCrate.Barcode.ID == MarrowGame.marrowSettings.DefaultPlayerRig.Barcode.ID) continue;
+                            boxVolEntities.Add(t.Entity);
                         }
                         catch { }
-
-                        boxVolEntities.Add(t.Entity);
                     }
                 }
 
-                List<CampaignSaveData.BarcodePosRot> Entities = new List<CampaignSaveData.BarcodePosRot>();
+                List<CampaignSaveData.BarcodePosRot> Entities = [];
                 foreach (MarrowEntity entity in boxVolEntities)
                 {
                     if (entity._poolee == null) continue;

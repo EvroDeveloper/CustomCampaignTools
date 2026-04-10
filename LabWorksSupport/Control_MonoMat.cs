@@ -1,19 +1,22 @@
 ﻿#if MELONLOADER
+using BoneLib;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Audio;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
 using Il2CppUltEvents;
-using BoneLib;
-using Il2CppSLZ.Marrow;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 using MelonLoader;
 #else
 using SLZ.Bonelab;
+using SLZ.Marrow;
 using SLZ.Marrow.Warehouse;
 using TMPro;
 using UltEvents;
-using SLZ.Marrow;
 #endif
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CustomCampaignTools.LabWorks
@@ -108,6 +111,12 @@ namespace CustomCampaignTools.LabWorks
 		private void SafeStart()
 		{
 			reciever.Get().OnInserted += (Il2CppSystem.Action<Magazine>)((g) => InsertMagazine(g));
+			foreach(CrateSpawner loot in _loots)
+			{
+				UltEvent<CrateSpawner, GameObject> lootOnSpawn = loot.onSpawnEvent.Cast<UltEvent<CrateSpawner, GameObject>>();
+				Action<CrateSpawner, GameObject> dingusSpawny = new Action<CrateSpawner, GameObject>(OnLootSpawned);
+				UltEvent<CrateSpawner, GameObject>.AddDynamicCall(ref lootOnSpawn, dingusSpawny);
+			}
 			UpdateTMP();
 		}
 
@@ -194,8 +203,8 @@ namespace CustomCampaignTools.LabWorks
 			if(OnItemBought.Get() != null)
 				OnItemBought.Get().Invoke();
 
-			//if(_openedClip != null)
-			//	Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
+			if(_openedClip != null)
+				Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
 
 			UpdateTMP();
 #endif

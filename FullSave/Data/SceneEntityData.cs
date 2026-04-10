@@ -1,7 +1,6 @@
 using System;
 using BoneLib;
 using FullSave.ComponentSavers;
-using FullSave.Data.SimpleSerializables;
 using FullSave.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppSLZ.Marrow;
@@ -10,6 +9,7 @@ using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
+using SimpleSerializables.Types;
 using UnityEngine;
 
 namespace FullSave.Data;

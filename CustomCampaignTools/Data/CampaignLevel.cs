@@ -88,7 +88,7 @@ namespace CustomCampaignTools
 
         public bool IsValid()
         {
-            return AssetWarehouse.Instance.TryGetCrate(Barcode, out _);
+            return AssetWarehouse.Instance.HasCrate<LevelCrate>(Barcode);
         }
 
         public static implicit operator Barcode(CampaignLevel c) => c.Barcode;

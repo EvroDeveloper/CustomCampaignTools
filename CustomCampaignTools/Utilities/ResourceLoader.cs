@@ -33,11 +33,18 @@ public static class ResourceLoader
         byte[] imgBytes =  GetBytes(assembly, resourceName, loosePath);
 
         Texture2D texture = new Texture2D(2, 2);
-        if (!texture.LoadImage(imgBytes))
-        {
-            return null;
-        }
+        if (!texture.LoadImage(imgBytes)) return null;
         texture.hideFlags = HideFlags.DontUnloadUnusedAsset;
         return texture;
+    }
+
+    public static Sprite GetSprite(Assembly assembly, string resourceName, Vector2 pivot, float pixelsPerUnit, bool loosePath = false)
+    {
+        Texture2D spriteTex = GetTexture(assembly, resourceName, loosePath);
+
+        Sprite sprite = Sprite.Create(spriteTex, new Rect(0, 0, spriteTex.width, spriteTex.height), pivot, pixelsPerUnit);
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+        return sprite;
     }
 }

@@ -36,6 +36,12 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <BONELAB_DIR>/Users/evanbassett/Downloads/BONELAB</BONELAB_DIR>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\SimpleSerializables\**\*.cs" Link="Data\Dingus\SimpleSerializables\%(RecursiveDir)%(Filename)%(Extension)" Exclude="..\SimpleSerializables\obj\**;..\SimpleSerializables\bin\**" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
@@ -45,9 +51,6 @@
     </Reference>
     <Reference Include="BoneLib">
       <HintPath>$(BONELAB_DIR)\Mods\BoneLib.dll</HintPath>
-    </Reference>
-    <Reference Include="BrowsingPlus">
-      <HintPath>H:\Downloads\notnotnotswipez-BrowsingPlus-1.0.0\Mods\BrowsingPlus.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>

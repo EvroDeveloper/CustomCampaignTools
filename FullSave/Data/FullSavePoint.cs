@@ -1,10 +1,10 @@
 using System;
 using BoneLib;
-using FullSave.Data.SimpleSerializables;
 using FullSave.Utilities;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Newtonsoft.Json;
+using SimpleSerializables.Types;
 
 namespace FullSave.Data;
 

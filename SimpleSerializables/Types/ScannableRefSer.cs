@@ -1,4 +1,5 @@
 ﻿#if MELONLOADER
+using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 #else
 using SLZ.Marrow.Warehouse;
@@ -18,7 +19,7 @@ namespace SimpleSerializables.Types
     {
         public Barcode barcode;
 
-        private T _scannableReference;
+        protected T _scannableReference;
 
         public ScannableRefSer() { barcode = Barcode.EmptyBarcode(); }
         public ScannableRefSer(string barcode)
@@ -36,8 +37,7 @@ namespace SimpleSerializables.Types
             this.barcode = reference.Barcode;
         }
 
-
-        public T ToScannableReference()
+        public virtual T ToScannableReference()
         {
             if(_scannableReference == null)
             {
@@ -45,6 +45,17 @@ namespace SimpleSerializables.Types
                 _scannableReference.Barcode = this.barcode;
             }
             return _scannableReference;
+        }
+
+        public bool IsValid()
+        {
+            if (!barcode.IsValid()) return false;
+            return IsPresentInWarehouse();
+        }
+
+        public bool IsPresentInWarehouse()
+        {
+            return MarrowGame.assetWarehouse.HasScannable(barcode);
         }
 
         public override string ToString()
@@ -55,11 +66,6 @@ namespace SimpleSerializables.Types
         public static implicit operator T(ScannableRefSer<T> b) => b.ToScannableReference();
         public static implicit operator Barcode(ScannableRefSer<T> b) => b.barcode;
         public static implicit operator string(ScannableRefSer<T> b) => b.barcode.ID;
-        public bool IsValid()
-        {
-            if (!barcode.IsValid()) return false;
-            return ToScannableReference().TryGetScannable(out _);
-        }
     }
 
     [JsonConverter(typeof(ScannableRefSerConverter))]
@@ -72,17 +78,35 @@ namespace SimpleSerializables.Types
     public class SpawnableCrateRefSer : CrateRefSer<SpawnableCrateReference>
     {
         public SpawnableCrateRefSer() : base() {}
+
+        public override SpawnableCrateReference ToScannableReference()
+        {
+            _scannableReference ??= new SpawnableCrateReference(barcode);
+            return _scannableReference;
+        }
     }
 
     [JsonConverter(typeof(ScannableRefSerConverter))]
     public class AvatarCrateRefSer : CrateRefSer<AvatarCrateReference>
     {
         public AvatarCrateRefSer() : base() {}
+
+        public override AvatarCrateReference ToScannableReference()
+        {
+            _scannableReference ??= new AvatarCrateReference(barcode);
+            return _scannableReference;
+        }
     }
 
     public class LevelCrateRefSer : CrateRefSer<LevelCrateReference>
     {
         public LevelCrateRefSer() : base() {}
+
+        public override LevelCrateReference ToScannableReference()
+        {
+            _scannableReference ??= new LevelCrateReference(barcode);
+            return _scannableReference;
+        }
     }
 
     [JsonConverter(typeof(ScannableRefSerConverter))]
@@ -95,6 +119,12 @@ namespace SimpleSerializables.Types
     public class MonoDiscRefSer : DataCardRefSer<MonoDiscReference>
     {
         public MonoDiscRefSer() : base() {}
+
+        public override MonoDiscReference ToScannableReference()
+        {
+            _scannableReference ??= new MonoDiscReference(barcode);
+            return _scannableReference;
+        }
     }
 
     public class ScannableRefSerConverter : JsonConverter

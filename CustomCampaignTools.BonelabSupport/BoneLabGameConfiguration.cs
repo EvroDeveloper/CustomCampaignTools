@@ -5,6 +5,7 @@ using CustomCampaignTools.GameSupport.BoneLab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Bonelab;
 using UnityEngine;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools.BonelabSupport
 {
@@ -40,7 +41,7 @@ namespace CustomCampaignTools.BonelabSupport
         public override void OnLateInitialize()
         {
             BoneMenuCreator.CreateBoneMenu();
-            BoneLabMainMenuMangler.LoadSpriteFromEmbeddedResource("CampaignIcon.png", SupportAssembly, new Vector2(0.5f, 0.5f));
+            BoneLabMainMenuMangler.CampaignSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
         }
 
         public override void RefreshCampaignMenu(Campaign campaign)

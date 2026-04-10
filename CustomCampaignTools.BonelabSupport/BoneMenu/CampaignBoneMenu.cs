@@ -5,13 +5,13 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CustomCampaignTools.BonelabSupport.Patches;
 
 namespace CustomCampaignTools.BonelabSupport
 {
     internal class CampaignBoneMenu
     {
         public static Dictionary<Campaign, Page> campaignMenus = [];
-
 
         public static void CreateOrRefreshCampaignPage(Campaign c)
         {
@@ -77,7 +77,12 @@ namespace CustomCampaignTools.BonelabSupport
 
             if(c.avatarRestrictor == null || c.saveData.AvatarUnlocked)
             {
-                campaignPage.CreateBool("Enable Bodylog", Color.white, c.saveData.ManualBodylogToggle, c.saveData.SetManualBodylogToggle);
+                campaignPage.CreateBool("Enable Bodylog", Color.white, c.saveData.ManualBodylogToggle, b => {
+                    c.saveData.SetManualBodylogToggle(b);
+
+                    if(Campaign.Session == c)
+                        BodylogToggler.ForceSetBodylog(b);
+                });
             }
 
             if (c.DEVMODE)

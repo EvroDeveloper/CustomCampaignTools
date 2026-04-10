@@ -1,6 +1,8 @@
 using BoneLib;
 using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.Utilities;
+using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using Newtonsoft.Json;
@@ -35,23 +37,24 @@ namespace CustomCampaignTools
         }
         public CampaignLevel[] MainLevels { get; private set; }
         public CampaignLevel[] ExtraLevels { get; private set; }
-        public CampaignLevel[] AllLevels { get; private set; }
-        private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
-
-#region Load Scene
-        public LevelCrateReference LoadScene;
-        public AudioClip LoadSceneMusic
+        public CampaignLevel[] AllLevels
         {
             get
             {
-                return _loadSceneMusic;
+                _allLevels ??= [.. MainLevels, .. ExtraLevels, MenuLevel, IntroLevel];
+                return _allLevels;
             }
         }
-        private MonoDisc _loadMusicDatacard;
-        private AudioClip _loadSceneMusic;
-#endregion // Load Scene
+        private CampaignLevel[] _allLevels;
+        private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
 
-#endregion // Levels
+#region Load Scene
+        public LevelCrateReference LoadScene = new LevelCrateReference(CommonBarcodes.Maps.LoadMod);
+        public AudioClip LoadSceneMusic { get; private set; }
+        private MonoDisc _loadMusicDatacard;
+        #endregion // Load Scene
+
+        #endregion // Levels
 
         public bool ShowInMenu;
         public bool PrioritizeInLevelPanel = true;
@@ -93,7 +96,6 @@ namespace CustomCampaignTools
         public static CampaignLevel lastLoadedCampaignLevel;
         public static bool SessionActive { get => Session != null; }
         public static bool SessionLocked { get => SessionActive && _sessionLocked; }
-
         private static bool _sessionLocked;
 
 #region Campaign Registration
@@ -102,6 +104,9 @@ namespace CustomCampaignTools
             Campaign campaign = new();
             try
             {
+#if DEBUG
+                NullReferenceCheck();
+#endif
                 campaign.Name = data.Name;
                 campaign.PalletBarcode = data.PalletBarcode;
 
@@ -126,6 +131,25 @@ namespace CustomCampaignTools
 
             return campaign;
 
+#if DEBUG
+            void NullReferenceCheck()
+            {
+                string[] nullFields = CampaignDebugger.GetAllNullFieldsInObject(data);
+                if(nullFields.Length == 0)
+                {
+                    CampaignLogger.Msg(campaign, "No null fields in loading data.");
+                }
+                else
+                {
+                    CampaignLogger.Error(campaign, "The following fields are null in the loading data: ");
+                    foreach(string nullBruh in nullFields)
+                    {
+                        CampaignLogger.Error(nullBruh);
+                    }
+                }
+            }
+#endif
+
             void RegisterCampaignLevels()
             {
                 if (data.InitialLevel.IsValid()) campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
@@ -136,22 +160,31 @@ namespace CustomCampaignTools
 
                 campaign.MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
                 campaign.ExtraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
-                campaign.AllLevels = [.. campaign.MainLevels, .. campaign.ExtraLevels, campaign.MenuLevel, campaign.IntroLevel];
                 foreach(CampaignLevel level in campaign.AllLevels)
                 {
                     campaign.barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
                 }
 
-                campaign.LoadScene = data.LoadScene.IsValid() ? data.LoadScene : new LevelCrateReference(CommonBarcodes.Maps.LoadMod);
+                if (data.LoadScene.IsValid())
+                {
+                    campaign.LoadScene = data.LoadScene;
+                }
 
                 if (data.LoadSceneMusic.IsValid())
                 {
-                    data.LoadSceneMusic.ToScannableReference().TryGetDataCard(out campaign._loadMusicDatacard);
-                    campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+                    if(data.LoadSceneMusic.ToScannableReference() == null) CampaignLogger.Msg("What the fuck are we doing here");
+                    if(data.LoadSceneMusic.ToScannableReference().TryGetDataCard(out campaign._loadMusicDatacard))
                     {
-                        campaign._loadSceneMusic = a;
-                        campaign._loadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
-                    }));
+                        campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+                        {
+                            campaign.LoadSceneMusic = a;
+                            campaign.LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                        }));
+                    }
+                }
+                else
+                {
+                    CampaignLogger.Msg("Invalid Load Scene Music");
                 }
             }
 
@@ -218,9 +251,10 @@ namespace CustomCampaignTools
             {
                 campaign.RigManagerOverride = data.RigManagerOverride;
                 campaign.GameplayRigOverride = data.GameplayRigOverride;
-                campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly((a) =>
+                campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly((a) => 
                 {
-                    RegisterTypeInIl2Cpp.RegisterAssembly(a);
+                    AssemblyUtils.RegisterAssemblyMonoBehaviours(a);
+                    AssemblyUtils.HarmonyPatchAssembly(a, $"{data.Name}.supportassembly.patches");
                 });
             }
         }
@@ -233,7 +267,7 @@ namespace CustomCampaignTools
                 return null;
             }
 
-            string campaignJsonPath = Path.Combine(Path.GetDirectoryName(manifest.PalletPath), "campaign.json.bundle");
+            string campaignJsonPath = Path.Combine(Path.GetDirectoryName(manifest.PalletPath), CampaignConstants.CampaignJsonFileName);
             if (!File.Exists(campaignJsonPath)) return null;
             CampaignLogger.Msg("Json FOUND for Pallet " + pallet.Title);
 
@@ -325,6 +359,15 @@ namespace CustomCampaignTools
                 popUpMenu.crate_SpawnGun = new GenericCrateReference(Barcode.EmptyBarcode());
                 popUpMenu.crate_Nimbus = new GenericCrateReference(Barcode.EmptyBarcode());
             }
+#if false
+            if(!Session.avatarRestrictor.IsAvatarMenuAllowed())
+            {
+                Player.UIRig.popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) =>
+                {
+                    popUpMenu.RemoveAvatarsMenu();
+                });
+            }
+#endif
         }
     }
 }

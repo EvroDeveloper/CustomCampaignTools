@@ -1,6 +1,5 @@
 using BoneLib.Notifications;
 using HarmonyLib;
-using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.UI;
@@ -10,22 +9,6 @@ using System.Linq;
 
 namespace CustomCampaignTools.Patching
 {
-    [HarmonyPatch(typeof(PullCordDevice))]
-    public static class BodylogEnablePatches
-    {
-        [HarmonyPatch(nameof(PullCordDevice.OnEnable))]
-        [HarmonyPostfix]
-        public static void OnBodyLogEnabled(PullCordDevice __instance)
-        {
-            if (!Campaign.SessionActive || Campaign.Session.saveData.AvatarUnlocked) return;
-
-            if (Campaign.Session.IsBodylogRestricted || Campaign.Session.saveData.ManualBodylogToggle == false)
-            {
-                __instance.gameObject.SetActive(false);
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(AvatarsPanelView))]
     public static class AvatarPanelEnable
     {

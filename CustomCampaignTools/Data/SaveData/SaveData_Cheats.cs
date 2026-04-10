@@ -9,7 +9,7 @@ namespace CustomCampaignTools
         [JsonProperty]
         public bool AvatarUnlocked = false;
         [JsonProperty]
-        public bool ManualBodylogToggle = false;
+        public bool ManualBodylogToggle = true;
 
         [JsonProperty]
         public bool SkipIntro = false;

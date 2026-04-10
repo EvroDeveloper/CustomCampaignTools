@@ -7,13 +7,15 @@ namespace CustomCampaignTools.Debug
         private static readonly MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
 
 #if DEBUG
-        const bool EnableDebug = true;
+        const bool EnableLogging = true;
 #else
-        const bool EnableDebug = false;
+        const bool EnableLogging = false;
 #endif
+        private static bool VerboseLogging = true;
+
         public static void Msg(object message, bool force = false)
         {
-            if (!EnableDebug && !force) return;
+            if (!EnableLogging && !force) return;
             loggerInstance.Msg($"[CampaignLogger] {message}");
         }
 
@@ -24,7 +26,24 @@ namespace CustomCampaignTools.Debug
                 Msg(message, force);
                 return;
             }
-            if (!EnableDebug && !campaign.DEVMODE && !force) return;
+            if (!EnableLogging && !campaign.DEVMODE && !force) return;
+            loggerInstance.Msg($"[CampaignLogger - {campaign.Name}] {message}");
+        }
+
+        public static void MsgVerbose(object message)
+        {
+            if (!VerboseLogging) return;
+            loggerInstance.Msg($"[CampaignLogger] {message}");
+        }
+
+        public static void MsgVerbose(Campaign campaign, object message)
+        {
+            if(campaign == null)
+            {
+                Msg(message);
+                return;
+            }
+            if (!VerboseLogging) return;
             loggerInstance.Msg($"[CampaignLogger - {campaign.Name}] {message}");
         }
 
