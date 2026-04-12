@@ -1,8 +1,8 @@
 ﻿using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using HarmonyLib;
-using CustomCampaignTools.Data;
 using System;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools
 {

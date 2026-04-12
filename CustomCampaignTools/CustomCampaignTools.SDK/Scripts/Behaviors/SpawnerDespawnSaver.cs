@@ -3,13 +3,13 @@ using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.Marrow.AI;
 using Il2CppSLZ.Marrow.Pool;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 #else
 using SLZ.Marrow.Warehouse;
 using UltEvents;
 #endif
 using System;
 using UnityEngine;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

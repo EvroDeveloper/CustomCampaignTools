@@ -1,54 +1,52 @@
 using UnityEngine;
 
+namespace CustomCampaignTools.Timing;
 
-namespace CustomCampaignTools.Timing
+public class Timer
 {
-    public class Timer
+    private float startTime;
+
+    private bool running = false;
+    private float accumulatedTime = 0f;
+
+    private int pauseCount = 0;
+
+    public void StartTimer()
     {
-        private float startTime;
+        startTime = Time.time;
+        running = true;
+        pauseCount = 0;
+    }
 
-        private bool running = false;
-        private float accumulatedTime = 0f;
+    public void ResetTimer()
+    {
+        startTime = Time.time;
+    }
 
-        private int pauseCount = 0;
-
-        public void StartTimer()
+    public void PauseTimer()
+    {
+        if (running)
         {
-            startTime = UnityEngine.Time.time;
-            running = true;
-            pauseCount = 0;
+            running = false;
+            accumulatedTime += Time.time - startTime;
         }
+        pauseCount++;
+    }
 
-        public void ResetTimer()
-        {
-            startTime = UnityEngine.Time.time;
-        }
+    public void ResumeTimer()
+    {
+        if (running) return;
 
-        public void PauseTimer()
-        {
-            if (running)
-            {
-                running = false;
-                accumulatedTime += Time.time - startTime;
-            }
-            pauseCount++;
-        }
+        pauseCount--;
+        if (pauseCount > 0) return;
+        
+        startTime = Time.time;
+        running = true;
+    }
 
-        public void ResumeTimer()
-        {
-            if (running) return;
-
-            pauseCount--;
-            if (pauseCount > 0) return;
-            
-            startTime = Time.time;
-            running = true;
-        }
-
-        public float GetTimeSinceStart()
-        {
-            if (!running) return accumulatedTime;
-            return accumulatedTime + (Time.time - startTime);
-        }
+    public float GetTimeSinceStart()
+    {
+        if (!running) return accumulatedTime;
+        return accumulatedTime + (Time.time - startTime);
     }
 }

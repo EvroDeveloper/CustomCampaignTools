@@ -1,19 +1,16 @@
 #if MELONLOADER
 using MelonLoader;
 using Il2CppSLZ.Marrow.Interaction;
-using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow.Pool;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using Il2CppInterop.Runtime.Attributes;
 #endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Il2CppSLZ.Marrow.Warehouse;
-using Il2CppSLZ.Marrow.Utilities;
-using Il2CppSLZ.Marrow.Pool;
 
 namespace CustomCampaignTools.SDK
 {

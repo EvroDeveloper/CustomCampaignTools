@@ -1,184 +1,104 @@
 using System;
 using HarmonyLib;
 using Il2CppSLZ.Bonelab;
-using BrowsingPlus.OverrideImplements;
 using Il2CppSLZ.Marrow.Warehouse;
 using System.Collections.Generic;
 
 
 using System.Linq;
-using BrowsingPlus.PanelUI;
 using Il2CppCysharp.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
 using Il2CppTMPro;
 using Il2CppSLZ.Marrow.Utilities;
+using CustomCampaignTools.Utilities;
 
+namespace CustomCampaignTools.Patching;
 
-namespace CustomCampaignTools.Patching
+[HarmonyPatch(typeof(LevelsPanelView))]
+public static class LevelsPanelPatches
 {
-    #region SLZ Level Panel
-
-    [HarmonyPatch(typeof(LevelsPanelView))]
-    public static class LevelsPanelPatches
+    public static bool SwipezActive = false;
+    [HarmonyPatch(nameof(LevelsPanelView.CalculateSceneList))]
+    [HarmonyPostfix]
+    public static void CalculateSceneListPostfix(LevelsPanelView __instance)
     {
-        public static bool SwipezActive = false;
-        [HarmonyPatch(nameof(LevelsPanelView.CalculateSceneList))]
-        [HarmonyPostfix]
-        public static void CalculateSceneListPostfix(LevelsPanelView __instance)
-        {
-            ForceLevelList(__instance);
-        }
+        ForceLevelList(__instance);
+    }
 
-        [HarmonyPatch(nameof(LevelsPanelView.UpdatePageItems))]
-        [HarmonyPostfix]
-        public static void UpdatePageItemsPostfix(LevelsPanelView __instance, int pageIdx, int maxItems)
+    [HarmonyPatch(nameof(LevelsPanelView.UpdatePageItems))]
+    [HarmonyPostfix]
+    public static void UpdatePageItemsPostfix(LevelsPanelView __instance, int pageIdx, int maxItems)
+    {
+        if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign || (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel))
         {
-            if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign || (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel))
+            int startingIndex = maxItems * pageIdx;
+
+            for (int i = 0; i < maxItems; i++)
             {
-                int startingIndex = maxItems * pageIdx;
+                GameObject obj = __instance.items[i];
 
-                for (int i = 0; i < maxItems; i++)
+                int levelIndex = startingIndex + i;
+                if(levelIndex < __instance._levelCrates.Count)
                 {
-                    GameObject obj = __instance.items[i];
+                    obj.SetActive(true);
 
-                    int levelIndex = startingIndex + i;
-                    if(levelIndex < __instance._levelCrates.Count)
-                    {
-                        obj.SetActive(true);
+                    LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
+                    CampaignLevel cLevel = Campaign.Session.GetLevel(targetCrateAtButton.Barcode);
 
-                        LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
-                        CampaignLevel cLevel = Campaign.Session.GetLevel(targetCrateAtButton.Barcode);
+                    if (cLevel == null) continue;
 
-                        if (cLevel == null) continue;
+                    TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+                    if (text == null) continue;
 
-                        TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
-                        if (text == null) continue;
-
-                        text.text = cLevel.Title;
-                    }
-                    else
-                    {
-                        obj.SetActive(false);
-                    }
-                } 
-            }
-        }
-
-        public static void ForceLevelList(LevelsPanelView __instance)
-        {
-            if(SwipezActive) return;
-
-            List<LevelCrate> panelCratesOverwrite = [];
-            if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign)
-            {
-                panelCratesOverwrite = Campaign.Session.GetUnlockedLevels().ToCrates();
-            }
-            else
-            {
-                // Sort Campaigns to be right after SLZ levels, and put them in the right order. Need to move this over to the previous function as well, just putting session campaign first.
-                Campaign prioritizedCampaign = null;
-                if (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel)
-                {
-                    prioritizedCampaign = Campaign.Session;
+                    text.text = cLevel.Title;
                 }
-
-                // Stupid List Fuckery i hate il2cpp
-                List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
-
-                List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.IsInMarrowGame())];
-                List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.IsInMarrowGame() && !CampaignUtilities.TryGetFromLevel(crate.Barcode, out _))];
-
-                List<CampaignLevel> CampaignCrates = [];
-                foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
+                else
                 {
-                    if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
-                    CampaignCrates.AddRange(c.GetUnlockedLevels());
+                    obj.SetActive(false);
                 }
-
-                panelCratesOverwrite = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
-                if (prioritizedCampaign != null) panelCratesOverwrite.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
-            }
-
-            __instance._levelCrates.Clear();
-            foreach (LevelCrate c in panelCratesOverwrite) __instance._levelCrates.Add(c);
-            __instance._totalScenes = __instance._levelCrates.Count;
-            __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
+            } 
         }
     }
 
-    #endregion
-
-    #region Swipez Extended Panel
-
-    //[HarmonyPatch(typeof(LevelPanelOverride))]
-    public static class SwipezPanelPatches
+    public static void ForceLevelList(LevelsPanelView __instance)
     {
-        private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = [];
+        if(SwipezActive) return;
 
-        public static void ManualPatch()
+        List<LevelCrate> panelCratesOverwrite = [];
+        if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign)
         {
-            var harmony = new HarmonyLib.Harmony("swipez.panel.populate");
+            panelCratesOverwrite = Campaign.Session.GetUnlockedLevels().ToCrates();
+        }
+        else
+        {
+            // Sort Campaigns to be right after SLZ levels, and put them in the right order. Need to move this over to the previous function as well, just putting session campaign first.
+            Campaign prioritizedCampaign = null;
+            if (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel)
+            {
+                prioritizedCampaign = Campaign.Session;
+            }
 
-            harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.PopulateMenus)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuPopulationOverride"));
-            harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.OnInitialized)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuInitContainerOverride"));
-            LevelsPanelPatches.SwipezActive = true;
+            // Stupid List Fuckery i hate il2cpp
+            List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
+
+            List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.IsInMarrowGame())];
+            List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.IsInMarrowGame() && !CampaignUtilities.TryGetFromLevel(crate.Barcode, out _))];
+
+            List<CampaignLevel> CampaignCrates = [];
+            foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
+            {
+                if (prioritizedCampaign != null && prioritizedCampaign == c) continue;
+                CampaignCrates.AddRange(c.GetUnlockedLevels());
+            }
+
+            panelCratesOverwrite = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
+            if (prioritizedCampaign != null) panelCratesOverwrite.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
         }
 
-        //[HarmonyPatch(nameof(LevelPanelOverride.PopulateMenus))]
-        //[HarmonyPostfix]
-        public static void MenuPopulationOverride(LevelPanelOverride __instance)
-        {
-            PanelContainer campaignContainer = __instance.GetOrMakeCampaignContainer("Campaigns");
-            campaignContainer.Clear();
-            campaignToContainerOpen.Clear();
-
-            foreach(Campaign c in CampaignUtilities.CampaignsToShowInMenu)
-            {
-                PanelContainer container = campaignContainer.MakeContainer(c.Name);
-
-                campaignToContainerOpen.Add(c, container);
-
-                foreach(CampaignLevel level in c.GetUnlockedLevels())
-                {
-                    if(level.Crate && !level.Crate.Redacted)
-                    {
-                        container.AddEntry(level.Title, () => FadeLoader.Load(level, c.LoadScene));
-                    }
-                }
-            }
-        }
-
-        private static Dictionary<LevelPanelOverride, PanelContainer> mainToCampaignContainer = [];
-
-        public static PanelContainer GetOrMakeCampaignContainer(this LevelPanelOverride container, string name)
-        {
-            if(!mainToCampaignContainer.ContainsKey(container))
-            {
-                mainToCampaignContainer.Add(container, container.mainContainer.MakeContainer(name));
-            }
-            return mainToCampaignContainer[container];
-        }
-
-        public static void MenuInitContainerOverride(LevelPanelOverride __instance)
-        {
-            if (!Campaign.SessionActive) return;
-
-            if(campaignToContainerOpen.ContainsKey(Campaign.Session))
-            {
-                __instance.OpenContainer(campaignToContainerOpen[Campaign.Session]);
-            }
-
-            if(Campaign.SessionLocked)
-            {
-                campaignToContainerOpen[Campaign.Session].parent = null;
-            }
-            else
-            {
-                campaignToContainerOpen[Campaign.Session].parent = __instance.mainContainer;
-            }
-        }
+        __instance._levelCrates.Clear();
+        foreach (LevelCrate c in panelCratesOverwrite) __instance._levelCrates.Add(c);
+        __instance._totalScenes = __instance._levelCrates.Count;
+        __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
     }
-
-    #endregion
 }

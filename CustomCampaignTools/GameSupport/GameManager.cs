@@ -4,51 +4,50 @@ using BoneLib;
 using CustomCampaignTools.Utilities;
 using MelonLoader;
 
-namespace CustomCampaignTools.GameSupport
+namespace CustomCampaignTools.GameSupport;
+
+public static class GameManager
 {
-    public static class GameManager
+    public static GameConfiguration currentGameConfiguration;
+
+    public static void InitializeGameConfiguration()
     {
-        public static GameConfiguration currentGameConfiguration;
+        string supportLibraryLoadPath;
+        if (MelonUtils.CurrentGameAttribute.Name == "BONELAB")
+            supportLibraryLoadPath = "CustomCampaignTools.GameSupport.Libraries.BonelabSupport.dll";
+        else if (MelonUtils.CurrentGameAttribute.Name == "BONEWORKS")
+            supportLibraryLoadPath = "CustomCampaignTools.GameSupport.Libraries.BoneworksSupport.dll";
+        else
+            return;
+        
+        Assembly gameSupport = AssemblyUtils.LoadEmbeddedAssembly(Main.ModAssembly, supportLibraryLoadPath);
+        Type gameConfigurationType = AssemblyUtils.FindTypeInAssembly<GameConfiguration>(gameSupport);
 
-        public static void InitializeGameConfiguration()
+        currentGameConfiguration = (GameConfiguration)Activator.CreateInstance(gameConfigurationType);
+        currentGameConfiguration.SupportAssembly = gameSupport;
+        AssemblyUtils.HarmonyPatchAssembly(gameSupport, "customcampaigntools.supportlibrary.patches"); // bullshit random string that means nothing to me
+    }
+
+    public static void OnLateInitialize()
+    {
+        currentGameConfiguration.OnLateInitialize();
+    }
+
+    public static void ManglePlayerMenu()
+    {
+        currentGameConfiguration.playerMenuMangler.MangleMenu();
+    }
+
+    public static void OnLevelLoaded(LevelInfo info)
+    {
+        if (info.barcode == currentGameConfiguration.mainMenuBarcode)
         {
-            string supportLibraryLoadPath;
-            if (MelonUtils.CurrentGameAttribute.Name == "BONELAB")
-                supportLibraryLoadPath = "CustomCampaignTools.GameSupport.Libraries.BonelabSupport.dll";
-            else if (MelonUtils.CurrentGameAttribute.Name == "BONEWORKS")
-                supportLibraryLoadPath = "CustomCampaignTools.GameSupport.Libraries.BoneworksSupport.dll";
-            else
-                return;
-            
-            Assembly gameSupport = AssemblyUtils.LoadEmbeddedAssembly(Main.ModAssembly, supportLibraryLoadPath);
-            Type gameConfigurationType = AssemblyUtils.FindTypeInAssembly<GameConfiguration>(gameSupport);
-
-            currentGameConfiguration = (GameConfiguration)Activator.CreateInstance(gameConfigurationType);
-            currentGameConfiguration.SupportAssembly = gameSupport;
-            AssemblyUtils.HarmonyPatchAssembly(gameSupport, "customcampaigntools.supportlibrary.patches"); // bullshit random string that means nothing to me
+            currentGameConfiguration.mainMenuMangler.MangleMenu();
         }
+    }
 
-        public static void OnLateInitialize()
-        {
-            currentGameConfiguration.OnLateInitialize();
-        }
-
-        public static void ManglePlayerMenu()
-        {
-            currentGameConfiguration.playerMenuMangler.MangleMenu();
-        }
-
-        public static void OnLevelLoaded(LevelInfo info)
-        {
-            if (info.barcode == currentGameConfiguration.mainMenuBarcode)
-            {
-                currentGameConfiguration.mainMenuMangler.MangleMenu();
-            }
-        }
-
-        internal static void OnBootstrapSceneLoaded()
-        {
-            currentGameConfiguration.OnBootstrapSceneLoaded();
-        }
+    internal static void OnBootstrapSceneLoaded()
+    {
+        currentGameConfiguration.OnBootstrapSceneLoaded();
     }
 }

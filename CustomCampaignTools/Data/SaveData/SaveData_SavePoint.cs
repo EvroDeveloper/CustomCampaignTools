@@ -12,6 +12,7 @@ using UnityEngine;
 using CustomCampaignTools.GameSupport;
 using System.Collections.Generic;
 using System;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools
 {

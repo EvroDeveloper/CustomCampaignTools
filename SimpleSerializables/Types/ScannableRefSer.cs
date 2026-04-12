@@ -32,7 +32,7 @@ namespace SimpleSerializables.Types
             this.barcode = barcode;
         }
 
-        public ScannableRefSer(ScannableReference reference)
+        public ScannableRefSer(T reference)
         {
             this.barcode = reference.Barcode;
         }
@@ -72,12 +72,18 @@ namespace SimpleSerializables.Types
     public class CrateRefSer<T> : ScannableRefSer<T> where T : ScannableReference
     {
         public CrateRefSer() : base() {}
+        public CrateRefSer(string barcode) : base(barcode) {}
+        public CrateRefSer(Barcode barcode) : base(barcode) {}
+        public CrateRefSer(T crateReference) : base(crateReference) {}
     }
 
     [JsonConverter(typeof(ScannableRefSerConverter))]
     public class SpawnableCrateRefSer : CrateRefSer<SpawnableCrateReference>
     {
         public SpawnableCrateRefSer() : base() {}
+        public SpawnableCrateRefSer(string barcode) : base(barcode) {}
+        public SpawnableCrateRefSer(Barcode barcode) : base(barcode) {}
+        public SpawnableCrateRefSer(SpawnableCrateReference crateReference) : base(crateReference) {} 
 
         public override SpawnableCrateReference ToScannableReference()
         {
@@ -90,6 +96,9 @@ namespace SimpleSerializables.Types
     public class AvatarCrateRefSer : CrateRefSer<AvatarCrateReference>
     {
         public AvatarCrateRefSer() : base() {}
+        public AvatarCrateRefSer(string barcode) : base(barcode) {}
+        public AvatarCrateRefSer(Barcode barcode) : base(barcode) {}
+        public AvatarCrateRefSer(AvatarCrateReference crateReference) : base(crateReference) {} 
 
         public override AvatarCrateReference ToScannableReference()
         {
@@ -101,6 +110,9 @@ namespace SimpleSerializables.Types
     public class LevelCrateRefSer : CrateRefSer<LevelCrateReference>
     {
         public LevelCrateRefSer() : base() {}
+        public LevelCrateRefSer(string barcode) : base(barcode) {}
+        public LevelCrateRefSer(Barcode barcode) : base(barcode) {}
+        public LevelCrateRefSer(LevelCrateReference crateReference) : base(crateReference) {}
 
         public override LevelCrateReference ToScannableReference()
         {
@@ -113,12 +125,18 @@ namespace SimpleSerializables.Types
     public class DataCardRefSer<T> : ScannableRefSer<T> where T : ScannableReference
     {
         public DataCardRefSer() : base() {}
+        public DataCardRefSer(string barcode) : base(barcode) {}
+        public DataCardRefSer(Barcode barcode) : base(barcode) {}
+        public DataCardRefSer(T crateReference) : base(crateReference) {}
     }
 
     [JsonConverter(typeof(ScannableRefSerConverter))]
     public class MonoDiscRefSer : DataCardRefSer<MonoDiscReference>
     {
         public MonoDiscRefSer() : base() {}
+        public MonoDiscRefSer(string barcode) : base(barcode) {}
+        public MonoDiscRefSer(Barcode barcode) : base(barcode) {}
+        public MonoDiscRefSer(MonoDiscReference crateReference) : base(crateReference) {}
 
         public override MonoDiscReference ToScannableReference()
         {

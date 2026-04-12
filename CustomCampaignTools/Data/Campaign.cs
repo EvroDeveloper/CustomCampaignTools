@@ -49,7 +49,7 @@ namespace CustomCampaignTools
         private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
 
 #region Load Scene
-        public LevelCrateReference LoadScene = new LevelCrateReference(CommonBarcodes.Maps.LoadMod);
+        public LevelCrateReference LoadScene = new LevelCrateReference(Barcode.EmptyBarcode());
         public AudioClip LoadSceneMusic { get; private set; }
         private MonoDisc _loadMusicDatacard;
         #endregion // Load Scene

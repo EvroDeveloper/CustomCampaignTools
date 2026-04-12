@@ -1,5 +1,9 @@
-using System;
+#if MELONLOADER
 using Il2CppSLZ.Marrow.Utilities;
+#else
+using SLZ.Marrow.Utilities;
+#endif
+using System;
 using UnityEngine;
 
 namespace SimpleSerializables.Types

@@ -1,6 +1,7 @@
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
 using HarmonyLib;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools.BonelabSupport
 {

@@ -1,6 +1,7 @@
 #if MELONLOADER
 using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
+using CustomCampaignTools.Utilities;
 #endif
 using UnityEngine;
 using System;

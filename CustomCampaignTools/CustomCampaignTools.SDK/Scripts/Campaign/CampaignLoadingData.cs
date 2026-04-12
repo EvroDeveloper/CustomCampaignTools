@@ -12,6 +12,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Linq;
+using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools
 {
@@ -31,13 +33,13 @@ namespace CustomCampaignTools
         public AvatarRestrictionType AvatarRestrictionType { get; set; }
         public AvatarCrateRefSer CampaignAvatar { get; set; } = new AvatarCrateRefSer();
         public AvatarCrateRefSer BaseGameFallbackAvatar { get; set; } = new AvatarCrateRefSer();
-        public List<AvatarCrateRefSer> WhitelistedAvatars { get; set; } = [];
+        public List<AvatarCrateRefSer> WhitelistedAvatars { get; set; } = new List<AvatarCrateRefSer>();
         public bool SaveLevelWeapons { get; set; } = false;
-        public List<SpawnableCrateRefSer> InventorySaveLimit { get; set; } = [];
+        public List<SpawnableCrateRefSer> InventorySaveLimit { get; set; } = new List<SpawnableCrateRefSer>();
         public bool SaveLevelAmmo { get; set; } = true;
-        public List<AchievementData> Achievements { get; set; } = [];
+        public List<AchievementData> Achievements { get; set; } = new List<AchievementData>();
         public bool LockInCampaign { get; set; } = false;
-        public List<SpawnableCrateRefSer> CampaignUnlockCrates { get; set; } = [];
+        public List<SpawnableCrateRefSer> CampaignUnlockCrates { get; set; } = new List<SpawnableCrateRefSer>();
 #endregion
 
 #region 1.1.0
@@ -45,7 +47,7 @@ namespace CustomCampaignTools
         public SerializedLevelSetup IntroLevel { get; set; }
         public bool PrioritizeInLevelPanel { get; set; } = true;
         public MonoDiscRefSer AchievementUnlockSound { get; set; } = new MonoDiscRefSer();
-        public List<SpawnableCrateRefSer> HideCratesFromGachapon { get; set; } = [];
+        public List<SpawnableCrateRefSer> HideCratesFromGachapon { get; set; } = new List<SpawnableCrateRefSer>();
         public bool DevBuild { get; set; } = false;
 #endregion
 
@@ -63,32 +65,32 @@ namespace CustomCampaignTools
         {
             return new CampaignLoadingData()
             {
-                Version = 2;
+                Version = 2,
                 Name = campaignSettings.Name,
                 IntroLevel = campaignSettings.IntroLevel.Serialize(),
                 InitialLevel = campaignSettings.MainMenu.Serialize(),
                 MainLevels = SerializedLevelSetup.CopyFrom(campaignSettings.MainLevels),
                 ExtraLevels = SerializedLevelSetup.CopyFrom(campaignSettings.ExtraLevels),
-                LoadScene = new ScannableRefSer<LevelCrateReference>(campaignSettings.LoadScene.Barcode),
-                LoadSceneMusic = new ScannableRefSer<MonoDiscReference>(campaignSettings.LoadSceneMusic.Barcode),
+                LoadScene = new LevelCrateRefSer(campaignSettings.LoadScene.Barcode),
+                LoadSceneMusic = new MonoDiscRefSer(campaignSettings.LoadSceneMusic.Barcode),
                 UnlockableLevels = campaignSettings.UnlockableLevels,
                 ShowInMenu = campaignSettings.ShowCampaignInMenu,
                 PrioritizeInLevelPanel = campaignSettings.PrioritizeInLevelPanel,
                 RestrictDevTools = campaignSettings.RestrictDevTools,
                 AvatarRestrictionType = campaignSettings.AvatarRestriction,
-                WhitelistedAvatars = CampaignSettings.CrateArrayToBarcodes(campaignSettings.WhitelistedAvatars),
-                CampaignAvatar = new ScannableRefSer<AvatarCrateReference>(campaignSettings.CampaignAvatar),
-                BaseGameFallbackAvatar = new ScannableRefSer<AvatarCrateReference>(campaignSettings.BaseGameFallbackAvatar),
+                WhitelistedAvatars = campaignSettings.WhitelistedAvatars.Select(a => { return new AvatarCrateRefSer(a); }).ToList(),
+                CampaignAvatar = new AvatarCrateRefSer(campaignSettings.CampaignAvatar),
+                BaseGameFallbackAvatar = new AvatarCrateRefSer(campaignSettings.BaseGameFallbackAvatar),
                 AvatarStatRanges = new AvatarStatRanges(campaignSettings.AvatarHeightRange, campaignSettings.AvatarMassRange, campaignSettings.AvatarArmRange),
                 SaveLevelWeapons = campaignSettings.SaveInventoryBetweenLevels,
-                InventorySaveLimit = CampaignSettings.CrateArrayToBarcodes(campaignSettings.SaveInventoryFilter),
+                InventorySaveLimit = campaignSettings.SaveInventoryFilter.Select(a => { return new SpawnableCrateRefSer(a); }).ToList(),
                 SaveLevelAmmo = campaignSettings.SaveAmmoBetweenLevels,
                 UpdateSaveOnLevelEnter = campaignSettings.UpdateSaveOnLevelEnter,
                 AchievementUnlockSound = new MonoDiscRefSer(campaignSettings.AchievementUnlockSound),
                 Achievements = SerializableAchievement.ConvertToData(campaignSettings.Achievements),
                 LockInCampaign = campaignSettings.LockPlayerInCampaign,
-                CampaignUnlockCrates = CampaignSettings.CrateArrayToBarcodes(campaignSettings.CampaignUnlockCrates),
-                HideCratesFromGachapon = CampaignSettings.CrateArrayToBarcodes(campaignSettings.HideCratesFromGachapon),
+                CampaignUnlockCrates = campaignSettings.CampaignUnlockCrates.Select(a => { return new SpawnableCrateRefSer(a); }).ToList(),
+                HideCratesFromGachapon = campaignSettings.HideCratesFromGachapon.Select(a => { return new SpawnableCrateRefSer(a); }).ToList(),
                 RigManagerOverride = new(campaignSettings.RigManagerOverride),
                 GameplayRigOverride = new(campaignSettings.GameplayRigOverride),
                 CampaignSupportAssembly = new(campaignSettings.CampaignSupportAssembly),
@@ -247,6 +249,7 @@ namespace CustomCampaignTools
             assemblyBytes = assemblyTextAsset.bytes;
         }
 
+#if MELONLOADER
         public Assembly LoadAssembly(Action<Assembly> callback)
         {
             if (!IsValid) return null;
@@ -264,6 +267,7 @@ namespace CustomCampaignTools
             }
             return _assembly;
         }
+#endif
 
         public bool IsValid
         {

@@ -1,7 +1,12 @@
-using UnityEngine;
+#if MELONLOADER
 using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
+#else
+using SLZ.Marrow.Warehouse;
+using TMPro;
+#endif
+using UnityEngine;
 using System;
 
 namespace CustomCampaignTools.SDK

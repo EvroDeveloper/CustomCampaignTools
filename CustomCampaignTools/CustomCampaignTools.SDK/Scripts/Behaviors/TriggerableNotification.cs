@@ -1,5 +1,6 @@
 ﻿#if MELONLOADER
 using BoneLib.Notifications;
+using CustomCampaignTools.Utilities;
 using MelonLoader;
 #endif
 using System;

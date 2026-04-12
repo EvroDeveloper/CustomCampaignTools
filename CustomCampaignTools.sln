@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimeFixer", "SlimeFixer\Sl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomCampaignTools.BonelabSupport", "CustomCampaignTools.BonelabSupport\CustomCampaignTools.BonelabSupport.csproj", "{9937DC2B-6025-4410-BA84-C8B3170E9524}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidTakeoverSupport", "VoidTakeoverSupport\VoidTakeoverSupport.csproj", "{7043832C-94D2-42CD-AFDE-937463B39E5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{9937DC2B-6025-4410-BA84-C8B3170E9524}.Release|x64.Build.0 = Release|Any CPU
 		{9937DC2B-6025-4410-BA84-C8B3170E9524}.Release|x86.ActiveCfg = Release|Any CPU
 		{9937DC2B-6025-4410-BA84-C8B3170E9524}.Release|x86.Build.0 = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|x64.Build.0 = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Debug|x86.Build.0 = Debug|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|x64.ActiveCfg = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|x64.Build.0 = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|x86.ActiveCfg = Release|Any CPU
+		{7043832C-94D2-42CD-AFDE-937463B39E5E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

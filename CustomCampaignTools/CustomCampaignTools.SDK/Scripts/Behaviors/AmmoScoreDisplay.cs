@@ -5,6 +5,7 @@ using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.Attributes;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Data;
+using CustomCampaignTools.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 #else
 using TMPro;

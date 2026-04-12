@@ -1,5 +1,6 @@
 using System;
 using BoneLib;
+using CustomCampaignTools.Utilities;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppTMPro;
