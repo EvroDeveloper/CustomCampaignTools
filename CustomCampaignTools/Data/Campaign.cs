@@ -91,149 +91,134 @@ public class Campaign
     public static bool SessionLocked { get => SessionActive && _sessionLocked; }
     private static bool _sessionLocked;
 
-#region Campaign Registration
-    internal static Campaign RegisterCampaign(CampaignLoadingData data)
+    internal Campaign(CampaignLoadingData data)
     {
-        Campaign campaign = new();
-        try
-        {
-#if DEBUG
-            NullReferenceCheck();
-#endif
-            campaign.Name = data.Name;
-            campaign.PalletBarcode = data.PalletBarcode;
+        if (data == null) throw new NullReferenceException("Campaign Loading Data cannot be Null");
 
-            RegisterCampaignLevels();
-            RegisterMenuStuff();
-            RegisterCheatRestrictions();
-            RegisterLevelSavings();
-            RegisterAchievements();
-            RegisterCrateBullshit();
-            RegisterExperimentalFeatures();
+        Name = data.Name;
+        PalletBarcode = data.PalletBarcode;
 
-            AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
+        RegisterCampaignLevels();
+        RegisterMenuStuff();
+        RegisterCheatRestrictions();
+        RegisterLevelSavings();
+        RegisterCrateBullshit();
+        RegisterAchievements();
+        RegisterExperimentalFeatures();
 
-            campaign.DEVMODE = data.DevBuild;
-
-            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
-
-            CampaignUtilities.AddCampaign(campaign);
-        }
-        catch (Exception ex)
-        {
-            CampaignLogger.Error(campaign, $"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
-        }
-
-        return campaign;
-
-#if DEBUG
-        void NullReferenceCheck()
-        {
-            string[] nullFields = CampaignDebugger.GetAllNullFieldsInObject(data);
-            if(nullFields.Length == 0)
-            {
-                CampaignLogger.Msg(campaign, "No null fields in loading data.");
-            }
-            else
-            {
-                CampaignLogger.Error(campaign, "The following fields are null in the loading data: ");
-                foreach(string nullBruh in nullFields)
-                {
-                    CampaignLogger.Error(nullBruh);
-                }
-            }
-        }
-#endif
+        DEVMODE = data.DevBuild;
 
         void RegisterCampaignLevels()
         {
-            if (data.InitialLevel.IsValid()) campaign.MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
-            else campaign.MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+            if (data.InitialLevel.IsValid()) MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
+            else MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
 
-            if (data.IntroLevel.IsValid()) campaign.IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
-            else campaign.IntroLevel = new CampaignLevel(campaign.MenuLevel.BarcodeString, campaign.MenuLevel.Title, CampaignLevelType.Intro);
+            if (data.IntroLevel.IsValid()) IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
+            else IntroLevel = new CampaignLevel(MenuLevel.BarcodeString, MenuLevel.Title, CampaignLevelType.Intro);
 
-            campaign.MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
-            campaign.ExtraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
-            foreach(CampaignLevel level in campaign.AllLevels)
+            MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
+            ExtraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
+            foreach (CampaignLevel level in AllLevels)
             {
-                campaign.barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
+                barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
             }
 
             if (data.LoadScene.IsValid())
             {
-                campaign.LoadScene = data.LoadScene;
+                LoadScene = data.LoadScene;
             }
 
             if (data.LoadSceneMusic.IsValid())
             {
-                campaign.LoadSceneMusicReference = data.LoadSceneMusic;
+                LoadSceneMusicReference = data.LoadSceneMusic;
             }
         }
 
         void RegisterMenuStuff()
         {
-            campaign.ShowInMenu = data.ShowInMenu;
-            
-            campaign.PrioritizeInLevelPanel = data.PrioritizeInLevelPanel;
-            campaign.LockLevelsUntilEntered = data.UnlockableLevels;
+            ShowInMenu = data.ShowInMenu;
+
+            PrioritizeInLevelPanel = data.PrioritizeInLevelPanel;
+            LockLevelsUntilEntered = data.UnlockableLevels;
         }
 
         void RegisterCheatRestrictions()
         {
-            if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
-                campaign.avatarRestrictor = new WhitelistAvatarRestrictor([.. data.WhitelistedAvatars]);
-            else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
-                campaign.avatarRestrictor = new DefaultAvatarRestrictor(data.CampaignAvatar, data.BaseGameFallbackAvatar);
-            else if(data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
-                campaign.avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
-            
-            campaign.IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
+            if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceWhitelist))
+                avatarRestrictor = new WhitelistAvatarRestrictor([.. data.WhitelistedAvatars]);
+            else if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
+                avatarRestrictor = new DefaultAvatarRestrictor(data.CampaignAvatar, data.BaseGameFallbackAvatar);
+            else if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
+                avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
 
-            campaign.RestrictDevTools = data.RestrictDevTools;
-            campaign.LockInCampaign = data.LockInCampaign;
+            IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
+
+            RestrictDevTools = data.RestrictDevTools;
+            LockInCampaign = data.LockInCampaign;
         }
 
         void RegisterLevelSavings()
-        { 
-            campaign.SaveLevelInventory = data.SaveLevelWeapons;
-            campaign.InventorySaveLimit = [.. data.InventorySaveLimit];
-            campaign.SaveLevelAmmo = data.SaveLevelAmmo;
-            campaign.CreateSaveOnLevelEnter = data.UpdateSaveOnLevelEnter;
+        {
+            SaveLevelInventory = data.SaveLevelWeapons;
+            InventorySaveLimit = [.. data.InventorySaveLimit];
+            SaveLevelAmmo = data.SaveLevelAmmo;
+            CreateSaveOnLevelEnter = data.UpdateSaveOnLevelEnter;
         }
 
         void RegisterCrateBullshit()
         {
-            if(data.CampaignUnlockCrates != null)
-                campaign.CampaignUnlockCrates = [.. data.CampaignUnlockCrates];
+            if (data.CampaignUnlockCrates != null)
+                CampaignUnlockCrates = [.. data.CampaignUnlockCrates];
 
-            if(data.HideCratesFromGachapon != null)
-                campaign.HiddenCrates = [.. data.HideCratesFromGachapon];
+            if (data.HideCratesFromGachapon != null)
+                HiddenCrates = [.. data.HideCratesFromGachapon];
         }
 
         void RegisterAchievements()
         {
-            campaign.Achievements = data.Achievements ?? [];
-            foreach (AchievementData ach in campaign.Achievements)
+            Achievements = data.Achievements ?? [];
+            foreach (AchievementData ach in Achievements)
             {
                 ach.Init();
             }
 
-            if(data.AchievementUnlockSound.IsValid())
+            if (data.AchievementUnlockSound.IsValid())
             {
-                campaign.AchievementUnlockSoundReference = data.AchievementUnlockSound;
+                AchievementUnlockSoundReference = data.AchievementUnlockSound;
             }
         }
 
         void RegisterExperimentalFeatures()
         {
-            campaign.RigManagerOverride = data.RigManagerOverride;
-            campaign.GameplayRigOverride = data.GameplayRigOverride;
-            campaign.CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly((a) => 
+            RigManagerOverride = data.RigManagerOverride;
+            GameplayRigOverride = data.GameplayRigOverride;
+            CampaignSupportAssembly = data.CampaignSupportAssembly.LoadAssembly((a) =>
             {
                 AssemblyUtils.RegisterAssemblyMonoBehaviours(a);
                 AssemblyUtils.HarmonyPatchAssembly(a, $"{data.Name}.supportassembly.patches");
             });
+        }
+    }
+
+#region Campaign Registration
+    internal static Campaign RegisterCampaign(CampaignLoadingData data)
+    {
+        try
+        {
+            Campaign campaign = new(data);
+
+            AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
+
+            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
+
+            CampaignUtilities.AddCampaign(campaign);
+
+            return campaign;
+        }
+        catch (Exception ex)
+        {
+            CampaignLogger.Error($"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
+            return null;
         }
     }
 
