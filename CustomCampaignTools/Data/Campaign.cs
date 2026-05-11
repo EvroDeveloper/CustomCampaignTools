@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace CustomCampaignTools;
 

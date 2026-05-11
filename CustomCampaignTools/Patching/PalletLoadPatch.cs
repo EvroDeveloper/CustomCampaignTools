@@ -1,6 +1,4 @@
-using CustomCampaignTools.Debug;
 using HarmonyLib;
-using Il2CppSLZ.Marrow.Forklift.Model;
 using Il2CppSLZ.Marrow.Warehouse;
 namespace CustomCampaignTools.Patching
 {
