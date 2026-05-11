@@ -53,7 +53,6 @@ namespace CustomCampaignTools
             SaveToDisk();
         }
 
-        #region Saving and Loading
         /// <summary>
         /// Saves the current loaded save data to file.
         /// </summary>
@@ -103,7 +102,5 @@ namespace CustomCampaignTools
             saveData.campaign = c;
             return saveData;
         }
-
-        #endregion
     }
 }

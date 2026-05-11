@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FullSave", "FullSave\FullSa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabWorksSupport", "LabWorksSupport\LabWorksSupport.csproj", "{79D1A4CA-88C7-4AC7-A880-B35EFAF9424F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSerializables", "SimpleSerializables\SimpleSerializables.csproj", "{B2648174-F1C7-4E08-8527-803FDB549D55}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimeFixer", "SlimeFixer\SlimeFixer.csproj", "{111364F6-296F-4981-96FB-5523363B50C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomCampaignTools.BonelabSupport", "CustomCampaignTools.BonelabSupport\CustomCampaignTools.BonelabSupport.csproj", "{9937DC2B-6025-4410-BA84-C8B3170E9524}"
@@ -63,18 +61,6 @@ Global
 		{79D1A4CA-88C7-4AC7-A880-B35EFAF9424F}.Release|x64.Build.0 = Release|Any CPU
 		{79D1A4CA-88C7-4AC7-A880-B35EFAF9424F}.Release|x86.ActiveCfg = Release|Any CPU
 		{79D1A4CA-88C7-4AC7-A880-B35EFAF9424F}.Release|x86.Build.0 = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|x64.Build.0 = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Debug|x86.Build.0 = Debug|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|x64.ActiveCfg = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|x64.Build.0 = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|x86.ActiveCfg = Release|Any CPU
-		{B2648174-F1C7-4E08-8527-803FDB549D55}.Release|x86.Build.0 = Release|Any CPU
 		{111364F6-296F-4981-96FB-5523363B50C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{111364F6-296F-4981-96FB-5523363B50C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{111364F6-296F-4981-96FB-5523363B50C8}.Debug|x64.ActiveCfg = Debug|Any CPU

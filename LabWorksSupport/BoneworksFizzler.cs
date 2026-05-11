@@ -1,6 +1,7 @@
 #if MELONLOADER
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -12,6 +13,7 @@ using SLZ.Marrow.Interaction;
 using SLZ.Marrow.Utilities;
 using SLZ.Marrow.Warehouse;
 using SLZ.Marrow.Zones;
+using SLZ.Marrow;
 #endif
 using System;
 using System.Collections;
@@ -58,7 +60,24 @@ namespace LabWorksSupport
             if(other.attachedRigidbody == null) return;
             if(Tracker.Cache.TryGet(other.gameObject, out Tracker t))
             {
-                DespawnEntity(t.Entity);
+                if (EntityHasTag(t.Entity, MarrowGame.marrowSettings.PlayerTag.Barcode))
+                {
+                    EjectPlayerInventory(t.GetComponentInParent<RigManager>());
+                }
+                else
+                {
+                    DespawnEntity(t.Entity);
+                }
+            }
+#endif
+        }
+
+        public void EjectPlayerInventory(RigManager rm)
+        {
+#if MELONLOADER
+            foreach(var slot in rm.inventory.bodySlots)
+            {
+                slot.inventorySlotReceiver.DropWeapon();
             }
 #endif
         }
@@ -66,18 +85,26 @@ namespace LabWorksSupport
         public void DespawnEntity(MarrowEntity entity)
         {
 #if MELONLOADER
-            foreach(BoneTagReference entityTag in entity.Tags.Tags)
-            {
-                if(entityTag.Barcode.ID == MarrowGame.marrowSettings.BeingTag.Barcode.ID)
-                {
-                    return;
-                }
-            }
+            if(EntityHasTag(entity, MarrowGame.marrowSettings.BeingTag.Barcode)) return;
             if(claimedEntities.Contains(entity)) return;
             claimedEntities.Add(entity);
 
             MelonCoroutines.Start(CoDelayDespawn(entity));
 #endif
+        }
+
+        private bool EntityHasTag(MarrowEntity entity, Barcode boneTag)
+        {
+#if MELONLOADER
+            foreach(BoneTagReference entityTag in entity.Tags.Tags)
+            {
+                if(entityTag.Barcode.ID == boneTag.ID)
+                {
+                    return true;
+                }
+            }
+#endif
+            return false;
         }
 
 #if MELONLOADER

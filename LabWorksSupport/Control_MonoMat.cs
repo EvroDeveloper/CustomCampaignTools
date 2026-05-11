@@ -1,5 +1,6 @@
 ﻿#if MELONLOADER
 using BoneLib;
+using CustomCampaignTools.Debug;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
@@ -151,6 +152,7 @@ namespace CustomCampaignTools.LabWorks
                 HelperMethods.SpawnCrate(lightRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
 				{
 					gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _lightBullets;
+					CampaignLogger.Msg("Set Ammo Count on Light Ammo to " + gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount);
 				});
             }
             if(_mediumBullets > 0)
@@ -158,6 +160,7 @@ namespace CustomCampaignTools.LabWorks
                 HelperMethods.SpawnCrate(mediumRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
                 {
                     gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _mediumBullets;
+					CampaignLogger.Msg("Set Ammo Count on Medium Ammo to " + gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount);
                 });
             }
             if(_heavyBullets > 0)
@@ -165,6 +168,7 @@ namespace CustomCampaignTools.LabWorks
                 HelperMethods.SpawnCrate(heavyRefundSpawnable, giveChangeTransform.Get().position, giveChangeTransform.Get().rotation, Vector3.one, spawnAction: (gobj) =>
                 {
                     gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount = _heavyBullets;
+					CampaignLogger.Msg("Set Ammo Count on Heavy Ammo to " + gobj.GetComponent<AmmoPickupProxy>().ammoPickup.ammoCount);
                 });
             }
 
@@ -202,11 +206,12 @@ namespace CustomCampaignTools.LabWorks
 
 			if(OnItemBought.Get() != null)
 				OnItemBought.Get().Invoke();
+				
+			UpdateTMP();
 
 			if(_openedClip != null)
 				Audio3dManager.PlayAtPoint(_openedClip, transform.position, Audio3dManager.ui);
 
-			UpdateTMP();
 #endif
         }
 

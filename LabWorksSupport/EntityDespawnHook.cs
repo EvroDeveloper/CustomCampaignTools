@@ -4,11 +4,11 @@ using Il2CppSLZ.Marrow.Interaction;
 
 namespace LabWorksSupport;
 
-[HarmonyPatch(typeof(MarrowEntity))]
+//[HarmonyPatch(typeof(MarrowEntity))]
 public class EntityDespawnHook
 {
-    [HarmonyPatch(nameof(MarrowEntity.Despawn))]
-    [HarmonyPrefix]
+    //[HarmonyPatch(nameof(MarrowEntity.Despawn))]
+    //[HarmonyPrefix]
     public static bool OnBeforeDespawn(MarrowEntity __instance)
     {
         //if(DespawnMeshVFX.Cache.TryGet(__instance.gameObject, out var despawner))

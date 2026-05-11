@@ -2,7 +2,6 @@
 using MelonLoader;
 using Il2CppTMPro;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using Il2CppInterop.Runtime.Attributes;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Data;
 using CustomCampaignTools.Utilities;

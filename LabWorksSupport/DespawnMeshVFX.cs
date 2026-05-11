@@ -69,7 +69,7 @@ namespace LabWorksSupport
         }
 
 #if MELONLOADER
-        public static void DespawnMeshes(MeshRenderer[] meshes, SkinnedMeshRenderer[] skinnedMeshes, Material matthew, Color color, Poolee poolee, AudioClip despawnSfx = null)
+        public static void DespawnMeshes(MeshRenderer[] meshes, SkinnedMeshRenderer[] skinnedMeshes, Material matthew, Color color, Poolee poolee, AudioClip despawnSfx)
         {
             foreach(MeshRenderer renderer in meshes)
             {
@@ -88,18 +88,13 @@ namespace LabWorksSupport
                 despawnComponent.StartDespawn();
             }
 
+            Vector3 sfxPos = poolee.transform.position;
+            poolee.Despawn();
+
             if(despawnSfx != null)
             {
-                Audio3dManager.PlayAtPoint(despawnSfx, poolee.transform.position, Audio3dManager.hardInteraction);
+                Audio3dManager.PlayAtPoint(despawnSfx, sfxPos, Audio3dManager.hardInteraction, 1f, 1f);
             }
-            else
-            {
-                MarrowGame.marrowSettings.DespawnSFX.LoadAsset(new Action<AudioClip>((sfx) =>
-                {
-                    Audio3dManager.PlayAtPoint(sfx, poolee.transform.position, Audio3dManager.hardInteraction);
-                }));
-            }
-            poolee.Despawn();
         }
 #endif
     }

@@ -9,7 +9,7 @@ namespace CustomCampaignTools
     [HarmonyPatch(typeof(AmmoInventory))]
     public static class AmmoInventoryPatches
     {
-        public static Action<AmmoInventory> OnNextAwake = (a)=>{};
+        public static Action<AmmoInventory> OnNextAwake = (a) => { };
 
         [HarmonyPatch(nameof(AmmoInventory.Awake))]
         [HarmonyPostfix]
@@ -32,7 +32,7 @@ namespace CustomCampaignTools
             }
 
             OnNextAwake.Invoke(__instance);
-            OnNextAwake = (a)=>{}; // clear it
+            OnNextAwake = (a) => { }; // clear it
         }
     }
 }

@@ -36,6 +36,11 @@ namespace SimpleSerializables.Types
         public static implicit operator string(BarcodeSer b) => b.ID;
 
         public static implicit operator Barcode(BarcodeSer b) => b.ToBarcode();
+        
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
     }
 
 

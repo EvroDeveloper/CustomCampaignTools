@@ -1,11 +1,10 @@
+using BoneLib;
 using BoneLib.Notifications;
 using HarmonyLib;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.UI;
-using MelonLoader;
 using System;
-using System.Linq;
 
 namespace CustomCampaignTools.Patching
 {
@@ -60,9 +59,11 @@ namespace CustomCampaignTools.Patching
         }
 
         [HarmonyPatch(nameof(RigManager.Awake))]
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         public static void OnRigmanagerAwake(RigManager __instance)
         {
+            if(Player.RigManager != __instance) return;
+
             __instance.onAvatarSwapped2 += new Action<Barcode>((b) => { OnAvatarSwapped(__instance, b); });
         }
     }

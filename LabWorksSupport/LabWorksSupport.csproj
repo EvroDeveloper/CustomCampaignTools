@@ -29,6 +29,9 @@
     <Reference Include="BoneLib">
       <HintPath>$(BONELAB_DIR)\Mods\BoneLib.dll</HintPath>
     </Reference>
+    <Reference Include="CustomCampaignTools">
+      <HintPath>$(BONELAB_DIR)\Mods\CustomCampaignTools.dll</HintPath>
+    </Reference>
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
