@@ -1,10 +1,18 @@
-using System;
+#if MELONLOADER
+using MelonLoader;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppUltEvents;
+#else
+using UltEvents;
+#endif
+using System;
 using UnityEngine;
 
 namespace FullSave.SDK.MonoBehaviours
 {
+#if MELONLOADER
+    [RegisterTypeInIl2Cpp]
+#endif
     public class FloatSaver : MonoBehaviour
     {
 #if MELONLOADER

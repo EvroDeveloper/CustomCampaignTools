@@ -12,7 +12,7 @@ public class SceneLoaderUtils
     {
         HashingUtility.OnSceneLoaded();
         
-        OnNextSceneLoaded.Invoke();
+        SafeActions.InvokeActionSafe(OnNextSceneLoaded);
         OnNextSceneLoaded = null;
     }
 }

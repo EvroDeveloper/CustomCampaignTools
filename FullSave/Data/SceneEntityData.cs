@@ -9,6 +9,7 @@ using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
+using Newtonsoft.Json;
 using SimpleSerializables.Types;
 using UnityEngine;
 
@@ -18,9 +19,22 @@ public class SceneEntityData
 {
     // Level Entities - Hash from hierarchy and Name
     // Spawned Entities - Save barcode position and name
+    [JsonProperty]
     public Dictionary<int, MarrowEntitySaveData> levelEntitySaves = [];
+    [JsonProperty]
     public List<SpawnedEntitySave> spawnedEntitySaves = [];
-    public List<SavedComponent> globalSavedComponents;
+    [JsonProperty]
+    private List<SavedComponent> globalSavedComponents = [];
+    
+    [JsonIgnore]
+    public List<SavedComponent> GlobalSavedComponents
+    {
+        get
+        {
+            globalSavedComponents ??= [];
+            return globalSavedComponents;
+        }
+    }
 
     static readonly Barcode[] invalidSaves =
     [
@@ -85,9 +99,16 @@ public class SceneEntityData
             }
         }
 
-        foreach(SavedComponent component in globalSavedComponents)
-        {
-            component.ApplySave();
+        foreach(SavedComponent component in GlobalSavedComponents)
+        {   
+            try
+            { 
+                component.ApplySave();
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Msg(e.Message);
+            }
         }
     }
 
@@ -204,10 +225,17 @@ public class MarrowEntitySaveData
         // for every possible component saver, find components in children and save them
         foreach(Type type in ComponentSaverManager.GetValidComponentTypes())
         {
-            IComponentSaver saver = ComponentSaverManager.GetComponentSaver(type);
-            foreach(Component c in entity.gameObject.GetComponentsInChildren(Il2CppType.From(type)))
+            try
             {
-                savedComponents.Add(new(c, saver, entity.transform));
+                IComponentSaver saver = ComponentSaverManager.GetComponentSaver(type);
+                foreach (Component c in entity.gameObject.GetComponentsInChildren(Il2CppType.From(type)))
+                {
+                    savedComponents.Add(new(c, saver, entity.transform));
+                }
+            }
+            catch(Exception ex)
+            {
+                MelonLogger.Msg("Error in da thingas: " + ex.Message);
             }
         }
     }

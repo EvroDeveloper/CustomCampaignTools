@@ -46,7 +46,7 @@ public static class SaveStack
 
     public static void Load(int index)
     {
-        if(index >= fullSavesList.Count) return;
+        if(index >= fullSavesList.Count) throw new IndexOutOfRangeException();
         fullSavesList[index].LoadSave();
     }
 }
