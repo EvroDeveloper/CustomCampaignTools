@@ -98,10 +98,8 @@
   <ItemGroup>
     <Folder Include="ComponentSavers/SDK/" />
     <Folder Include="MonoBehaviours/" />
-    <Folder Include="SDK/" />
-    <Folder Include="SDK/MonoBehaviours/" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(AssemblyName).dll" "C:\SteamLibrary\steamapps\common\BONELAB\Mods"</PostBuildEvent>
+    <PostBuildEvent>cp "$(TargetDir)$(AssemblyName).dll" "$(BONELAB_DIR)/Mods/$(AssemblyName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
