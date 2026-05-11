@@ -24,7 +24,7 @@ namespace LabWorksSupport
 
         void Awake()
         {
-            if(TryGetComponent(out _collider))
+            if (TryGetComponent(out _collider))
             {
                 _physMat = _collider.sharedMaterial;
             }
@@ -47,7 +47,7 @@ namespace LabWorksSupport
 
         IEnumerator IWaitForRigmanager(Action<RigManager> callback)
         {
-            while(Player.RigManager == null)
+            while (Player.RigManager == null)
             {
                 yield return null;
             }
