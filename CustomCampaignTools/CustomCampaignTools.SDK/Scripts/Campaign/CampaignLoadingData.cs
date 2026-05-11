@@ -44,7 +44,7 @@ namespace CustomCampaignTools
 
 #region 1.1.0
         public BarcodeSer PalletBarcode { get; set; } // Set by Campaign Registerer
-        public SerializedLevelSetup IntroLevel { get; set; }
+        public SerializedLevelSetup IntroLevel { get; set; } = new SerializedLevelSetup();
         public bool PrioritizeInLevelPanel { get; set; } = true;
         public MonoDiscRefSer AchievementUnlockSound { get; set; } = new MonoDiscRefSer();
         public List<SpawnableCrateRefSer> HideCratesFromGachapon { get; set; } = new List<SpawnableCrateRefSer>();
@@ -102,7 +102,7 @@ namespace CustomCampaignTools
 
     public class SerializedLevelSetup
     {
-        public LevelCrateRefSer levelBarcode;
+        public LevelCrateRefSer levelBarcode = new LevelCrateRefSer(Barcode.EmptyBarcode());
         public string levelName;
 
         public bool IsValid()
