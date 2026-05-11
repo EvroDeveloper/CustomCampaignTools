@@ -351,3 +351,4 @@ MigrationBackup/
 .ionide/
 *.DS_Store
 /Mod Staging
+CustomCampaignTools/GameSupport/Libraries/BonelabSupport.dll
