@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
+using System.Linq;
 
 namespace CustomCampaignTools.Utilities;
 

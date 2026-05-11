@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace CustomCampaignTools;
 
@@ -50,8 +51,8 @@ public class Campaign
 
 #region Load Scene
     public LevelCrateReference LoadScene = new LevelCrateReference(Barcode.EmptyBarcode());
+    public MonoDiscReference LoadSceneMusicReference { get; private set; } = new MonoDiscReference(Barcode.EmptyBarcode());
     public AudioClip LoadSceneMusic { get; private set; }
-    private MonoDisc _loadMusicDatacard;
     #endregion // Load Scene
 
     #endregion // Levels
@@ -67,15 +68,8 @@ public class Campaign
     public List<SpawnableCrateReference> InventorySaveLimit = [];
     public bool SaveLevelAmmo;
     public bool CreateSaveOnLevelEnter = false;
-    public AudioClip AchievementUnlockSound
-    {
-        get
-        {
-            return _achievementUnlockSound;
-        }
-    }
-    private MonoDisc _achievementUnlockSoundDatacard;
-    private AudioClip _achievementUnlockSound;
+    public AudioClip AchievementUnlockSound { get; private set; }
+    public MonoDiscReference AchievementUnlockSoundReference { get; private set; } = new MonoDiscReference(Barcode.EmptyBarcode());
     public List<AchievementData> Achievements = [];
     public bool LockInCampaign;
     public bool LockLevelsUntilEntered;
@@ -117,6 +111,8 @@ public class Campaign
             RegisterAchievements();
             RegisterCrateBullshit();
             RegisterExperimentalFeatures();
+
+            AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
 
             campaign.DEVMODE = data.DevBuild;
 
@@ -172,19 +168,7 @@ public class Campaign
 
             if (data.LoadSceneMusic.IsValid())
             {
-                if(data.LoadSceneMusic.ToScannableReference() == null) CampaignLogger.Msg("What the fuck are we doing here");
-                if(data.LoadSceneMusic.ToScannableReference().TryGetDataCard(out campaign._loadMusicDatacard))
-                {
-                    campaign._loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-                    {
-                        campaign.LoadSceneMusic = a;
-                        campaign.LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
-                    }));
-                }
-            }
-            else
-            {
-                CampaignLogger.Msg("Invalid Load Scene Music");
+                campaign.LoadSceneMusicReference = data.LoadSceneMusic;
             }
         }
 
@@ -238,12 +222,7 @@ public class Campaign
 
             if(data.AchievementUnlockSound.IsValid())
             {
-                if(data.AchievementUnlockSound.ToScannableReference().TryGetDataCard(out campaign._achievementUnlockSoundDatacard))
-                campaign._achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-                {
-                    campaign._achievementUnlockSound = a;
-                    campaign._achievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
-                }));
+                campaign.AchievementUnlockSoundReference = data.AchievementUnlockSound;
             }
         }
 
@@ -287,6 +266,28 @@ public class Campaign
         CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
         campaignValueHolder.PalletBarcode = new(palletBarcode);
         return RegisterCampaign(campaignValueHolder);
+    }
+
+    internal void LoadRequiredAssets()
+    {
+        if (LoadSceneMusicReference.TryGetDataCard(out var _loadMusicDatacard))
+        {
+            _loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+            {
+                LoadSceneMusic = a;
+                LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
+            }));
+        }
+
+
+        if (AchievementUnlockSoundReference.TryGetDataCard(out var _achievementUnlockSoundDatacard))
+        {
+            _achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
+            {
+                AchievementUnlockSound = a;
+                AchievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
+            }));
+        }
     }
 #endregion
     
