@@ -206,10 +206,9 @@ public class Campaign
         try
         {
             Campaign campaign = new(data);
+            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
             AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
-
-            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
             CampaignUtilities.AddCampaign(campaign);
 
