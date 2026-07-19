@@ -1,4 +1,5 @@
-﻿#if MELONLOADER
+﻿#if false // i made it work in base game. no need for this thingy anymore
+#if MELONLOADER
 using BoneLib;
 using CustomCampaignTools.Debug;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
@@ -329,3 +330,4 @@ namespace CustomCampaignTools.LabWorks
 #endif
     }
 }
+#endif
