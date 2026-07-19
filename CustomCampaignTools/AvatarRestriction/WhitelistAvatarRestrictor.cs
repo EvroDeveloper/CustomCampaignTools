@@ -6,7 +6,7 @@ using Il2CppSLZ.VRMK;
 
 namespace CustomCampaignTools.AvatarRestriction
 {
-    public class WhitelistAvatarRestrictor : IAvatarRestrictor
+    public class WhitelistAvatarRestrictor : AvatarRestrictor
     {
         public List<string> WhitelistedAvatars = [];
 
@@ -14,23 +14,13 @@ namespace CustomCampaignTools.AvatarRestriction
         {
             WhitelistedAvatars = [.. whitelistedAvatars];
         }
-        
-        public bool IsAvatarAllowed(Avatar avatar)
-        {
-            return true;
-        }
 
-        public bool IsAvatarAllowed(Barcode avatarBarcode)
+        public override bool IsAvatarAllowed(Barcode avatarBarcode)
         {
             return WhitelistedAvatars.Contains(avatarBarcode.ID);
         }
 
-        public bool IsAvatarMenuAllowed()
-        {
-            return true;
-        }
-
-        public void OnFailedAvatarSwitch(RigManager rm)
+        public override void OnFailedAvatarSwitch(RigManager rm)
         {
             Notifier.Send(new Notification()
             {
@@ -39,7 +29,10 @@ namespace CustomCampaignTools.AvatarRestriction
                 Type = NotificationType.Error,
                 ShowTitleOnPopup = true,
             });
+        }
 
+        public override void ForceRigManagerAvatar(RigManager rm)
+        {
             rm.SwapAvatarCrate(new Barcode(WhitelistedAvatars[0]));
         }
     }

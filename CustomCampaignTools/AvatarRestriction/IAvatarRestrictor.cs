@@ -2,16 +2,13 @@ using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.VRMK;
 
-namespace CustomCampaignTools.AvatarRestriction
+namespace CustomCampaignTools.AvatarRestriction;
+
+public class AvatarRestrictor
 {
-    public interface IAvatarRestrictor
-    {
-        bool IsAvatarAllowed(Avatar avatar);
-
-        bool IsAvatarMenuAllowed();
-
-        bool IsAvatarAllowed(Barcode avatarBarcode);
-
-        void OnFailedAvatarSwitch(RigManager rm);
-    }
+    public virtual bool IsAvatarAllowed(Avatar avatar) { return true; }
+    public virtual bool IsAvatarAllowed(Barcode avatarBarcode) { return true; }
+    public virtual bool IsAvatarMenuAllowed() { return true; }
+    public virtual void OnFailedAvatarSwitch(RigManager rm) { }
+    public virtual void ForceRigManagerAvatar(RigManager rm) { }
 }

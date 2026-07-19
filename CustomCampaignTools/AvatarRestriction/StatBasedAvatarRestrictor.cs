@@ -7,7 +7,7 @@ using BoneLib;
 
 namespace CustomCampaignTools.AvatarRestriction
 {
-    public class StatBasedAvatarRestrictor : IAvatarRestrictor
+    public class StatBasedAvatarRestrictor : AvatarRestrictor
     {
         public StatBasedAvatarRestrictor(AvatarStatRanges statRanges)
         {
@@ -20,17 +20,12 @@ namespace CustomCampaignTools.AvatarRestriction
         private Vector2 _avatarMassRange;
         private Vector2 _avatarArmLengthRange;
 
-        public bool IsAvatarAllowed(Avatar avatar)
+        public override bool IsAvatarAllowed(Avatar avatar)
         {
             return IsInRange(avatar.height, _avatarHeightRange) && IsInRange(avatar.massTotal, _avatarMassRange) && IsInRange(avatar.armLength, _avatarArmLengthRange);
         }
 
-        public bool IsAvatarAllowed(Barcode avatarBarcode)
-        {
-            return true;
-        }
-
-        public void OnFailedAvatarSwitch(RigManager rm)
+        public override void OnFailedAvatarSwitch(RigManager rm)
         {
             Notifier.Send(new Notification()
             {
@@ -39,8 +34,6 @@ namespace CustomCampaignTools.AvatarRestriction
                 Type = NotificationType.Error,
                 ShowTitleOnPopup = true,
             });
-
-            rm.SwapAvatarCrate(new Barcode(CommonBarcodes.Avatars.PolyBlank));
         }
 
         bool IsInRange(float value, Vector2 range)
@@ -48,9 +41,9 @@ namespace CustomCampaignTools.AvatarRestriction
             return range.x <= value && value <= range.y;
         }
 
-        public bool IsAvatarMenuAllowed()
+        public override void ForceRigManagerAvatar(RigManager rm)
         {
-            return true;
+            rm.SwapAvatarCrate(new Barcode(CommonBarcodes.Avatars.PolyBlank));
         }
     }
 }

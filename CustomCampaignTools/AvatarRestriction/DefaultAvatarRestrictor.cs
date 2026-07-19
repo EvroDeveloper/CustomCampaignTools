@@ -1,12 +1,11 @@
-using CustomCampaignTools.AvatarRestriction;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.VRMK;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools.AvatarRestriction
 {
-    public class DefaultAvatarRestrictor : IAvatarRestrictor
+    public class DefaultAvatarRestrictor : AvatarRestrictor
     {
         public DefaultAvatarRestrictor(AvatarCrateReference defaultCampaignAvatar, AvatarCrateReference fallbackAvatar)
         {
@@ -34,22 +33,17 @@ namespace CustomCampaignTools
             }
         }
 
-        public bool IsAvatarAllowed(Avatar avatar)
-        {
-            return true;
-        }
-
-        public bool IsAvatarAllowed(Barcode avatarBarcode)
+        public override bool IsAvatarAllowed(Barcode avatarBarcode)
         {
             return avatarBarcode == CampaignAvatar;
         }
 
-        public void OnFailedAvatarSwitch(RigManager rm)
+        public override void ForceRigManagerAvatar(RigManager rm)
         {
             rm.SwapAvatarCrate(CampaignAvatar);
         }
 
-        public bool IsAvatarMenuAllowed()
+        public override bool IsAvatarMenuAllowed()
         {
             return false;
         }

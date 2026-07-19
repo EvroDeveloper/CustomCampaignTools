@@ -61,7 +61,7 @@ public class Campaign
 
     public bool RestrictDevTools;
     public bool IsBodylogRestricted;
-    public IAvatarRestrictor avatarRestrictor;
+    public AvatarRestrictor avatarRestrictor;
 
     public bool SaveLevelInventory;
     public List<SpawnableCrateReference> InventorySaveLimit = [];
