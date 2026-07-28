@@ -5,6 +5,8 @@ using Il2CppSLZ.Bonelab;
 #endif
 using System;
 using UnityEngine;
+using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.SDK
 {
@@ -48,6 +50,20 @@ namespace CustomCampaignTools.SDK
         {
 #if MELONLOADER
             Campaign.Session.saveData.UnlockLevel(barcode);
+#endif
+        }
+
+        public void UnlockSpawnable(string barcode)
+        {
+#if MELONLOADER
+            Campaign.Session.saveData.UnlockSpawnable(new Barcode(barcode));
+#endif
+        }
+
+        public void UnlockSpawnable(MarrowEntity entity)
+        {
+#if MELONLOADER
+            Campaign.Session.saveData.UnlockSpawnable(entity);
 #endif
         }
 
