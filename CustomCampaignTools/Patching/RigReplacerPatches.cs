@@ -1,3 +1,4 @@
+using System;
 using BoneLib;
 using CustomCampaignTools.SDK;
 using HarmonyLib;
@@ -7,11 +8,12 @@ using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.Patching
 {
-    [HarmonyPatch(typeof(StreamSession))]
+    //[HarmonyPatch(typeof(StreamSession))]
+    [Obsolete]
     public static class RigReplacerPatches
     {
-        [HarmonyPatch(nameof(StreamSession.RegisterPlayerMarker))]
-        [HarmonyPrefix]
+        //[HarmonyPatch(nameof(StreamSession.RegisterPlayerMarker))]
+        //[HarmonyPrefix]
         public static bool OnPlayerMarkerRegistered(StreamSession __instance, PlayerMarker playerMarker)
         {
             SpawnableCrateReference rigManSpawn = MarrowGame.marrowSettings.DefaultPlayerRig;
