@@ -13,7 +13,10 @@ namespace CustomCampaignTools.SDK
 {
 #if MELONLOADER
     [RegisterTypeInIl2Cpp]
+#else
+    [AddComponentMenu(null)]
 #endif
+    [Obsolete("Doesnt quite work with the new system im going for")]
     public class CampaignPlayerMarkerOverride : MonoBehaviour
     {
 #if MELONLOADER
