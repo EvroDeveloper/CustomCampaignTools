@@ -32,6 +32,7 @@ namespace LabWorksSupport
 
         void Start()
         {
+            if(_physMat == null) return;
             // RigManager may not be spawned in when the script is started. Wait for RigManager before assigning materials.
             MelonCoroutines.Start(IWaitForRigmanager((r) =>
             {
