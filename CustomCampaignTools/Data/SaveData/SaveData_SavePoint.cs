@@ -16,7 +16,7 @@ using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools;
 
-internal partial class CampaignSaveData
+public partial class CampaignSaveData
 {
     [JsonProperty]
     public SavePoint LoadedSavePoint = new();

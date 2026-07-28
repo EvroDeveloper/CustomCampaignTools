@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace CustomCampaignTools;
 
-internal partial class CampaignSaveData
+public partial class CampaignSaveData
 {
     [JsonProperty]
     public List<AmmoSave> LoadedAmmoSaves = [];

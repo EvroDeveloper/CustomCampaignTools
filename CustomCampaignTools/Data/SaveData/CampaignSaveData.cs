@@ -10,7 +10,7 @@ using System.IO;
 
 namespace CustomCampaignTools;
 
-internal partial class CampaignSaveData
+public partial class CampaignSaveData
 {
     [JsonIgnore]
     public Campaign campaign;

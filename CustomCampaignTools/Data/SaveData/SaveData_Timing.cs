@@ -6,7 +6,7 @@ using System;
 
 namespace CustomCampaignTools;
 
-internal partial class CampaignSaveData
+public partial class CampaignSaveData
 {
     [JsonProperty]
     public List<LevelTime> LevelTimes = [];
