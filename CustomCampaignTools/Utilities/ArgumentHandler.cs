@@ -6,6 +6,7 @@ namespace CustomCampaignTools.Utilities;
 public static class ArgumentHandler
 {
     public static bool forcedCampaign = false;
+    public static bool overrideUnlocks = false;
     public static Barcode campaignToLoad;
 
     public static void HandleArguments(string[] args)
@@ -17,6 +18,10 @@ public static class ArgumentHandler
             {
                 campaignToLoad = new(args[i+1]);
                 forcedCampaign = true;
+            }
+            if(arg == "-customcampaigntools.overrideunlocks")
+            {
+                overrideUnlocks = true;
             }
         }
     }
