@@ -7,7 +7,7 @@ using SimpleSerializables.Types;
 
 namespace CustomCampaignTools;
 
-public partial class CampaignSaveData
+internal partial class CampaignSaveData
 {
     [JsonIgnore] // Not complete feature yet. Planned for 1.3.0
     public HashSet<BarcodeSer> CampaignSpecificUnlocks = [];

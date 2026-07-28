@@ -4,63 +4,62 @@ using CustomCampaignTools.GameSupport;
 using Il2CppSLZ.Marrow.Audio;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools;
+
+internal partial class CampaignSaveData
 {
-    public partial class CampaignSaveData
+    [JsonProperty]
+    public List<string> UnlockedAchievements = [];
+    
+    public bool UnlockAchievement(string key)
     {
-        [JsonProperty]
-        public List<string> UnlockedAchievements = [];
-        
-        public bool UnlockAchievement(string key)
+        UnlockedAchievements ??= [];
+        if (UnlockedAchievements.Contains(key)) return false;
+
+        foreach (AchievementData achievement in campaign.Achievements)
         {
-            UnlockedAchievements ??= [];
-            if (UnlockedAchievements.Contains(key)) return false;
+            if (achievement.Key != key) continue;
 
-            foreach (AchievementData achievement in campaign.Achievements)
+            if (campaign.AchievementUnlockSound != null)
+                Audio3dManager.Play2dOneShot(campaign.AchievementUnlockSound, Audio3dManager.ui, new Il2CppSystem.Nullable<float>(1f), new Il2CppSystem.Nullable<float>(1f));
+
+            if (achievement.cachedTexture != null)
             {
-                if (achievement.Key != key) continue;
-
-                if (campaign.AchievementUnlockSound != null)
-                    Audio3dManager.Play2dOneShot(campaign.AchievementUnlockSound, Audio3dManager.ui, new Il2CppSystem.Nullable<float>(1f), new Il2CppSystem.Nullable<float>(1f));
-
-                if (achievement.cachedTexture != null)
+                Notifier.Send(new Notification()
                 {
-                    Notifier.Send(new Notification()
-                    {
-                        CustomIcon = achievement.cachedTexture,
-                        Title = $"Achievement Get: {achievement.Name}",
-                        Message = achievement.Description,
-                        Type = NotificationType.CustomIcon,
-                        PopupLength = 5,
-                        ShowTitleOnPopup = true,
-                    });
-                }
-                else
-                {
-                    Notifier.Send(new Notification()
-                    {
-                        Title = $"Achievement Get: {achievement.Name}",
-                        Message = achievement.Description,
-                        Type = NotificationType.Information,
-                        PopupLength = 5,
-                        ShowTitleOnPopup = true
-                    });
-                }
-
-                UnlockedAchievements.Add(key);
-                SaveToDisk();
-                GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
-                return true;
+                    CustomIcon = achievement.cachedTexture,
+                    Title = $"Achievement Get: {achievement.Name}",
+                    Message = achievement.Description,
+                    Type = NotificationType.CustomIcon,
+                    PopupLength = 5,
+                    ShowTitleOnPopup = true,
+                });
             }
-            return false;
+            else
+            {
+                Notifier.Send(new Notification()
+                {
+                    Title = $"Achievement Get: {achievement.Name}",
+                    Message = achievement.Description,
+                    Type = NotificationType.Information,
+                    PopupLength = 5,
+                    ShowTitleOnPopup = true
+                });
+            }
+
+            UnlockedAchievements.Add(key);
+            SaveToDisk();
+            GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
+            return true;
         }
+        return false;
+    }
 
-        public void LockAchievement(string key)
+    public void LockAchievement(string key)
+    {
+        if (UnlockedAchievements.Contains(key))
         {
-            if (UnlockedAchievements.Contains(key))
-            {
-                UnlockedAchievements.Remove(key);
-            }
+            UnlockedAchievements.Remove(key);
         }
     }
 }

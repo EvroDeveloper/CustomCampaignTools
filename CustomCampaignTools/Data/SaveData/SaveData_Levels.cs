@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools
-{
-    public partial class CampaignSaveData
-    {
-        [JsonProperty]
-        public List<string> UnlockedLevels = [];
+namespace CustomCampaignTools;
 
-        public void UnlockLevel(string barcode)
+internal partial class CampaignSaveData
+{
+    [JsonProperty]
+    public List<string> UnlockedLevels = [];
+
+    public void UnlockLevel(string barcode)
+    {
+        if (!UnlockedLevels.Contains(barcode))
         {
-            if (!UnlockedLevels.Contains(barcode))
-            {
-                UnlockedLevels.Add(barcode);
-            }
+            UnlockedLevels.Add(barcode);
         }
     }
 }

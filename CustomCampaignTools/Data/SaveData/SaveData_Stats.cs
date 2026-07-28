@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CustomCampaignTools.Data.SaveData;
 
-public partial class CampaignSaveData
+internal partial class CampaignSaveData
 {
     [JsonProperty]
     public Dictionary<string, int> SavedStats = [];

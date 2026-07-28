@@ -1,30 +1,29 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools
+namespace CustomCampaignTools;
+
+// yeah nobody using ts :sob:
+internal partial class CampaignSaveData
 {
-    // yeah nobody using ts :sob:
-    public partial class CampaignSaveData
+    [JsonProperty]
+    public Dictionary<string, float> FloatData = [];
+    
+    public void SetValue(string key, float value)
     {
-        [JsonProperty]
-        public Dictionary<string, float> FloatData = [];
+        if(!FloatData.ContainsKey(key))
+            FloatData.Add(key, value);
+        else
+            FloatData[key] = value;
         
-        public void SetValue(string key, float value)
-        {
-            if(!FloatData.ContainsKey(key))
-                FloatData.Add(key, value);
-            else
-                FloatData[key] = value;
-            
-            SaveToDisk();
-        }
+        SaveToDisk();
+    }
+    
+    public float GetValue(string key)
+    {
+        if(!FloatData.ContainsKey(key))
+            FloatData.Add(key, 0f);
         
-        public float GetValue(string key)
-        {
-            if(!FloatData.ContainsKey(key))
-                FloatData.Add(key, 0f);
-            
-            return FloatData[key];
-        }
+        return FloatData[key];
     }
 }
