@@ -38,9 +38,6 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <PropertyGroup>
-    <BONELAB_DIR>/Users/evanbassett/Downloads/BONELAB</BONELAB_DIR>
-  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="GameSupport\Libraries\BonelabSupport.dll" />
   </ItemGroup>
@@ -50,9 +47,6 @@
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BoneLib">
       <HintPath>$(BONELAB_DIR)\Mods\BoneLib.dll</HintPath>

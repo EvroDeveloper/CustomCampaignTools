@@ -11,10 +11,6 @@
     <ProjectReference Include="../CustomCampaignTools/CustomCampaignTools.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <BONELAB_DIR>/Users/evanbassett/Downloads/BONELAB</BONELAB_DIR>
-  </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(BONELAB_DIR)\MelonLoader\net6\0Harmony.dll</HintPath>
@@ -77,7 +73,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PostBuildEvent>cp "$(TargetDir)$(AssemblyName).dll" "/Users/evanbassett/Documents/GitHub/CustomCampaignTools/CustomCampaignTools/GameSupport/Libraries/BonelabSupport.dll"</PostBuildEvent>
+    <PostBuildEvent>COPY "$(TargetDir)$(AssemblyName).dll" "C:/Users/evrom/OneDrive/Documents/GitHub/LabworksAmmoSaver/CustomCampaignTools/GameSupport/Libraries/BonelabSupport.dll"</PostBuildEvent>
   </PropertyGroup>
 
 </Project>

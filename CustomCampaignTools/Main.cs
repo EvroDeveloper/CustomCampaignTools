@@ -30,11 +30,6 @@ internal class Main : MelonMod
         Hooking.OnLevelLoaded += LevelInitialized;
         Hooking.OnLevelUnloaded += LevelUnloaded;
         Hooking.OnUIRigCreated += OnUIRigCreated;
-
-        if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
-        {
-            PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
-        }
     }
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -45,15 +40,8 @@ internal class Main : MelonMod
         }
     }
 
-    private void PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason()
-    {
-        SwipezPanelPatches.ManualPatch();
-    }
-
     internal static void LevelInitialized(LevelInfo info)
     {
-        string barcode = info.barcode;
-
         GameManager.OnLevelLoaded(info);
 
         SafeActions.InvokeActionSafe(LevelLoadingPatches.OnNextSceneLoaded);
@@ -72,7 +60,6 @@ internal class Main : MelonMod
 
     private static void OnUIRigCreated()
     {
-        GameManager.ManglePlayerMenu();
-        Campaign.OnUIRigCreated();
+        GameManager.OnUIRigCreated();
     }
 }

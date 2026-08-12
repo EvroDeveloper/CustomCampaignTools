@@ -5,7 +5,6 @@ using BoneLib;
 using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools.Patching;
-#region Swipez Extended Panel
 
 //[HarmonyPatch(typeof(LevelPanelOverride))]
 public static class SwipezPanelPatches
@@ -76,5 +75,3 @@ public static class SwipezPanelPatches
         }
     }
 }
-
-#endregion

@@ -62,6 +62,7 @@ public class Campaign
     public bool RestrictDevTools;
     public bool IsBodylogRestricted;
     public AvatarRestrictor avatarRestrictor;
+    public bool ShouldRestrictAvatar => avatarRestrictor != null && !saveData.AvatarUnlocked;
 
     public bool SaveLevelInventory;
     public List<SpawnableCrateReference> InventorySaveLimit = [];
@@ -150,6 +151,9 @@ public class Campaign
                 avatarRestrictor = new DefaultAvatarRestrictor(data.CampaignAvatar, data.BaseGameFallbackAvatar);
             else if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
                 avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
+
+            // DEBUG TESTING
+            avatarRestrictor = new StatBasedAvatarRestrictor(new AvatarStatRanges(new Vector2(1.5f, 2f), new Vector2(0, float.PositiveInfinity), new Vector2(0, float.PositiveInfinity)));
 
             IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
 
@@ -287,7 +291,7 @@ public class Campaign
     public static void Exit()
     {
         _sessionLocked = false;
-        FadeLoader.Load(new Barcode(GameManager.currentGameConfiguration.mainMenuBarcode), MarrowGame.marrowSettings.DefaultLoadingLevel.Barcode);
+        FadeLoader.Load(GameManager.currentGameConfiguration.MainMenu, MarrowGame.marrowSettings.DefaultLoadingLevel);
     }
 
     public int GetMainLevelIndex(Barcode levelBarcode)
@@ -297,8 +301,8 @@ public class Campaign
 
     public CampaignLevel GetLevel(Barcode levelBarcode)
     {
-        if(barcodeToCampaignLevelRegistry.ContainsKey(levelBarcode.ID))
-            return barcodeToCampaignLevelRegistry[levelBarcode.ID];
+        if (barcodeToCampaignLevelRegistry.TryGetValue(levelBarcode.ID, out var level))
+            return level;
         else
             return null;
     }
@@ -337,25 +341,8 @@ public class Campaign
         lastLoadedCampaignLevel = campaignLevel;
     }
 
-    public static void OnUIRigCreated()
+    public override string ToString()
     {
-        if (!SessionActive) return;
-
-        var popUpMenu = Player.UIRig.popUpMenu;
-
-        if (Session.RestrictDevTools && !Session.saveData.DevToolsUnlocked)
-        {
-            popUpMenu.crate_SpawnGun = new GenericCrateReference(Barcode.EmptyBarcode());
-            popUpMenu.crate_Nimbus = new GenericCrateReference(Barcode.EmptyBarcode());
-        }
-#if false
-        if(!Session.avatarRestrictor.IsAvatarMenuAllowed())
-        {
-            Player.UIRig.popUpMenu.radialPageView.onActivated += (Il2CppSystem.Action<PageView>)((p) =>
-            {
-                popUpMenu.RemoveAvatarsMenu();
-            });
-        }
-#endif
+        return Name;
     }
 }

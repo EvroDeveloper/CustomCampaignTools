@@ -1,5 +1,6 @@
 using CustomCampaignTools.Debug;
 using Il2CppSLZ.Marrow.Warehouse;
+using UnityEngine;
 
 namespace CustomCampaignTools.Utilities;
 
@@ -18,8 +19,9 @@ public static class ArgumentHandler
             {
                 campaignToLoad = new(args[i+1]);
                 forcedCampaign = true;
+                i++;
             }
-            if(arg == "-customcampaigntools.overrideunlocks")
+            if (arg == "-customcampaigntools.overrideunlocks")
             {
                 overrideUnlocks = true;
             }

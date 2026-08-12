@@ -1,47 +1,38 @@
-﻿using CustomCampaignTools.GameSupport;
-using BoneLib;
+﻿using BoneLib;
 using CustomCampaignTools.Debug;
+using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.GameSupport.BoneLab;
-using Il2CppSLZ.Marrow.Warehouse;
-using Il2CppSLZ.Bonelab;
-using UnityEngine;
+using CustomCampaignTools.Patching;
 using CustomCampaignTools.Utilities;
+using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Bonelab.SaveData;
+using Il2CppSLZ.Marrow.Warehouse;
+using UnityEngine;
 
 namespace CustomCampaignTools.BonelabSupport;
 
 public class BoneLabGameConfiguration : GameConfiguration
 {
-    public BoneLabGameConfiguration()
-    {
-        _mainMenuMangler = new BoneLabMainMenuMangler();
-        _playerMenuMangler = new BoneLabPlayerMenuMangler();
-    }
-    BoneLabMainMenuMangler _mainMenuMangler;
-    public override IMenuMangler mainMenuMangler
+    public override LevelCrateReference MainMenu
     {
         get
         {
-            _mainMenuMangler ??= new BoneLabMainMenuMangler();
-            return _mainMenuMangler;
+            return new LevelCrateReference(DataManager.ActiveSave.Progression.BeatGame ? CommonBarcodes.Maps.VoidG114 : CommonBarcodes.Maps.MainMenu);
         }
     }
-
-    public override string mainMenuBarcode => CommonBarcodes.Maps.VoidG114;
-
-    BoneLabPlayerMenuMangler _playerMenuMangler;
-    public override IMenuMangler playerMenuMangler
-    {
-        get
-        {
-            _playerMenuMangler ??= new BoneLabPlayerMenuMangler();
-            return _playerMenuMangler;
-        }
-    }
-
     public override void OnLateInitialize()
     {
         BoneMenuCreator.CreateBoneMenu();
         BoneLabMainMenuMangler.CampaignSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
+        if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
+        {
+            PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
+        }
+    }
+
+    private void PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason()
+    {
+        SwipezPanelPatches.ManualPatch();
     }
 
     public override void RefreshCampaignMenu(Campaign campaign)
@@ -69,6 +60,30 @@ public class BoneLabGameConfiguration : GameConfiguration
                     bootstrapper.VoidG114CrateRef = new LevelCrateReference(c.InitialLevel);
                 }
             }));
+        }
+    }
+
+    public override void OnLevelLoaded(LevelInfo info)
+    {
+        if (info.barcode == CommonBarcodes.Maps.VoidG114)
+        {
+            BoneLabMainMenuMangler.MangleMenu();
+        }
+    }
+
+    public override void OnUIRigCreated()
+    {
+        BoneLabPlayerMenuMangler.MangleMenu();
+
+        if (Campaign.SessionActive)
+        {
+            var popUpMenu = Player.UIRig.popUpMenu;
+
+            if (Campaign.Session.RestrictDevTools && !Campaign.Session.saveData.DevToolsUnlocked)
+            {
+                popUpMenu.crate_SpawnGun = new GenericCrateReference(Barcode.EmptyBarcode());
+                popUpMenu.crate_Nimbus = new GenericCrateReference(Barcode.EmptyBarcode());
+            }
         }
     }
 }

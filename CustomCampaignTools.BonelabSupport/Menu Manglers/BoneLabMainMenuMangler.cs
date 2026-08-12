@@ -12,11 +12,11 @@ using UnityEngine.UI;
 
 namespace CustomCampaignTools.BonelabSupport;
 
-public class BoneLabMainMenuMangler : IMenuMangler
+public class BoneLabMainMenuMangler
 {
     public static Sprite CampaignSprite;
 
-    public void MangleMenu()
+    public static void MangleMenu()
     {
         var LevelsGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(8).gameObject;
         var CampaignGrid = GameObject.Instantiate(LevelsGrid, LevelsGrid.transform.parent);

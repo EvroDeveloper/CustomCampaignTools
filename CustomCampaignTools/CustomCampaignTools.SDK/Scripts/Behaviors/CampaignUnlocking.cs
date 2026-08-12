@@ -27,7 +27,7 @@ namespace CustomCampaignTools.SDK
 
             if(enableInstantly)
             {
-                UIRig.Instance.popUpMenu.AddDevMenu(null);
+                // UIRig.Instance.popUpMenu.AddDevMenu(null);
             }
 #endif
         }
@@ -39,10 +39,11 @@ namespace CustomCampaignTools.SDK
 
             if(!enableInstantly) return;
 
-            PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
-            bodyLog?.gameObject.SetActive(true);
+            // TODO: Create an interface that can allow the loaded game configuration to hook into when its enabled instantly.
+            // PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
+            // bodyLog?.gameObject.SetActive(true);
 
-            UIRig.Instance.popUpMenu.AddAvatarsMenu();
+            // UIRig.Instance.popUpMenu.AddAvatarsMenu();
 #endif
         }
 

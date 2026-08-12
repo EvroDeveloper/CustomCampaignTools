@@ -1,12 +1,12 @@
 using SimpleSerializables.Utils;
 using CustomCampaignTools.Debug;
-using Il2CppSLZ.Bonelab.SaveData;
 using Il2CppSLZ.Marrow.SaveData;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader.Utils;
 using Newtonsoft.Json;
 using UnityEngine;
 using System.IO;
+using CustomCampaignTools.GameSupport;
 
 namespace CustomCampaignTools;
 
@@ -21,6 +21,7 @@ public partial class CampaignSaveData
     [JsonIgnore]
     public string BackupSavePath { get => $"{SaveFolder}/slot_Campaign.{campaign.Name}.save_backup.json"; }
     public static string GetLegacySavePath(Campaign c) => $"{MelonEnvironment.UserDataDirectory}/Campaigns/{c.Name}/save.json";
+
 
     public CampaignSaveData() {}
 
@@ -44,11 +45,10 @@ public partial class CampaignSaveData
         UnlockedAchievements = [];
         UnlockedLevels = [];
 
-
         foreach (string barcode in campaign.CampaignUnlockCrates)
-            DataManager._instance._activeSave.Unlocks.ClearUnlockForBarcode(new Barcode(barcode));
+            GameManager.currentGameConfiguration.GameDataManager.ClearUnlockForBarcode(new Barcode(barcode));
 
-        DataManager.TrySaveActiveSave(SaveFlags.DefaultAndPlayerSettingsAndUnlocks);
+        GameManager.currentGameConfiguration.GameDataManager.TrySaveActiveSave(SaveFlags.DefaultAndPlayerSettingsAndUnlocks);
 
         SaveToDisk();
     }

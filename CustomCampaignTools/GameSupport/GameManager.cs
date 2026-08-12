@@ -21,11 +21,17 @@ public static class GameManager
             return;
         
         Assembly gameSupport = AssemblyUtils.LoadEmbeddedAssembly(Main.ModAssembly, supportLibraryLoadPath);
-        Type gameConfigurationType = AssemblyUtils.FindTypeInAssembly<GameConfiguration>(gameSupport);
 
+        Type gameConfigurationType = AssemblyUtils.FindTypeInAssembly<GameConfiguration>(gameSupport);
         currentGameConfiguration = (GameConfiguration)Activator.CreateInstance(gameConfigurationType);
         currentGameConfiguration.SupportAssembly = gameSupport;
+
+        Type dataManagerType = AssemblyUtils.FindTypeInAssembly<IGameDataManager>(gameSupport);
+        currentGameConfiguration.GameDataManager = (IGameDataManager)Activator.CreateInstance(dataManagerType);
+
         AssemblyUtils.HarmonyPatchAssembly(gameSupport, "customcampaigntools.supportlibrary.patches"); // bullshit random string that means nothing to me
+
+        currentGameConfiguration.OnInitialize();
     }
 
     public static void OnLateInitialize()
@@ -33,17 +39,14 @@ public static class GameManager
         currentGameConfiguration.OnLateInitialize();
     }
 
-    public static void ManglePlayerMenu()
+    public static void OnUIRigCreated()
     {
-        currentGameConfiguration.playerMenuMangler.MangleMenu();
+        currentGameConfiguration.OnUIRigCreated();
     }
 
     public static void OnLevelLoaded(LevelInfo info)
     {
-        if (info.barcode == currentGameConfiguration.mainMenuBarcode)
-        {
-            currentGameConfiguration.mainMenuMangler.MangleMenu();
-        }
+        currentGameConfiguration.OnLevelLoaded(info);
     }
 
     internal static void OnBootstrapSceneLoaded()

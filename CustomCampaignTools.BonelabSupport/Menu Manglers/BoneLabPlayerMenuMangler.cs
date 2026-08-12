@@ -9,40 +9,21 @@ using UnityEngine.UI;
 
 namespace CustomCampaignTools.GameSupport.BoneLab
 {
-    public class BoneLabPlayerMenuMangler : IMenuMangler
+    public static class BoneLabPlayerMenuMangler
     {
-        // Much of code taken from Bonemenu, sorry!
-        PreferencesPanelView panelView;
-        public GameObject optionsPanel;
-
-        public Transform OptionsGrid
-        {
-            get
-            {
-                if (_optionsGrid is null || _optionsGrid.WasCollected)
-                    return null;
-
-                return _optionsGrid;
-            }
-        }
-        private Transform _optionsGrid;
-
-        private GameObject _optionButton;
-        private Button _optionButtonComponent;
-
-        public void MangleMenu()
+        public static void MangleMenu()
         {
             if(!Campaign.SessionActive) return;
 
-            panelView = Player.UIRig.popUpMenu.preferencesPanelView;
-            optionsPanel = panelView.pages[panelView.defaultPage];
-            _optionsGrid = optionsPanel.transform.Find("grid_Options");
+            var panelView = Player.UIRig.popUpMenu.preferencesPanelView;
+            var optionsPanel = panelView.pages[panelView.defaultPage];
+            var _optionsGrid = optionsPanel.transform.Find("grid_Options");
 
             if (!ArgumentHandler.forcedCampaign)
             {
 
                 // need to ensure i'm copying a correct one
-                _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(4).gameObject, _optionsGrid);
+                var _optionButton = GameObject.Instantiate(_optionsGrid.GetChild(4).gameObject, _optionsGrid);
                 _optionButton.SetActive(true);
 
                 var tmp = _optionButton.GetComponentInChildren<TMP_Text>(true);
@@ -50,7 +31,7 @@ namespace CustomCampaignTools.GameSupport.BoneLab
 
                 _optionButton.transform.SetSiblingIndex(_optionsGrid.childCount - 1);
 
-                _optionButtonComponent = _optionButton.GetComponent<Button>();
+                var _optionButtonComponent = _optionButton.GetComponent<Button>();
                 _optionButtonComponent.onClick.m_PersistentCalls.Clear();
                 _optionButtonComponent.onClick.m_Calls.ClearPersistent();
                 _optionButtonComponent.onClick.m_Calls.Clear();
