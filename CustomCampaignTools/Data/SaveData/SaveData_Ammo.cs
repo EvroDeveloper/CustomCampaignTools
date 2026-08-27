@@ -8,7 +8,7 @@ namespace CustomCampaignTools;
 public partial class CampaignSaveData
 {
     [JsonProperty("LoadedAmmoSaves")]
-    private List<AmmoSave> LegacyLoadedAmmoSaves
+    private List<LegacyAmmoSave> LegacyLoadedAmmoSaves
     {
         set
         {
@@ -17,7 +17,7 @@ public partial class CampaignSaveData
 
             SavedAmmo ??= [];
 
-            foreach (AmmoSave ammoSave in value)
+            foreach (LegacyAmmoSave ammoSave in value)
             {
                 string levelBarcode = ammoSave.LevelBarcode?.ID;
                 if (string.IsNullOrEmpty(levelBarcode) || SavedAmmo.ContainsKey(levelBarcode))
