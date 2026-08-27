@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using CustomCampaignTools.Data;
 using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
@@ -9,83 +9,80 @@ namespace CustomCampaignTools;
 public partial class CampaignSaveData
 {
     [JsonProperty]
+    [Obsolete]
     public List<AmmoSave> LoadedAmmoSaves = [];
+
+    [JsonProperty]
+    public Dictionary<string, AmmoCount> SavedAmmo = [];
 
     public void SaveAmmoForLevel(Barcode levelBarcode)
     {
         if (!campaign.SaveLevelAmmo) return;
         if (string.IsNullOrEmpty(levelBarcode.ID) || !levelBarcode.IsValid()) return;
 
-        AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
+        AmmoCount previousAmmoSum = GetPreviousLevelsAmmoSave(levelBarcode);
+        AmmoCount additionalAmmo = AmmoCount.GetFromPlayer() - previousAmmoSum;
+        SavedAmmo ??= [];
 
         if (!DoesSavedAmmoExist(levelBarcode))
         {
-            LoadedAmmoSaves.Add(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave);
+            SavedAmmo[levelBarcode.ID] = additionalAmmo;
         }
         else
         {
-            AmmoSave previousHighScore = GetSavedAmmo(levelBarcode);
+            AmmoCount previousHighScore = GetSavedAmmo(levelBarcode);
+            AmmoCount bestAmmo = AmmoCount.Max(additionalAmmo, previousHighScore);
 
-            for (int i = 0; i < LoadedAmmoSaves.Count; i++)
-            {
-                if (LoadedAmmoSaves[i].LevelBarcode == levelBarcode)
-                {
-                    LoadedAmmoSaves[i] = AmmoSave.SumOfBest(AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave, previousHighScore);
-                }
-            }
+            SavedAmmo[levelBarcode.ID] = bestAmmo;
         }
 
         campaign.saveData.SaveToDisk();
     }
 
-    public AmmoSave GetPreviousLevelsAmmoSave(Barcode levelBarcode)
+    public AmmoCount GetPreviousLevelsAmmoSave(Barcode levelBarcode)
     {
         int levelIndex = campaign.GetMainLevelIndex(levelBarcode);
 
-        AmmoSave previousLevelsAmmoSave = new AmmoSave();
+        AmmoCount previousLevelsAmmoSave = new AmmoCount();
 
         for (int i = 0; i < levelIndex; i++)
         {
-            previousLevelsAmmoSave.LightAmmo += GetSavedAmmo(campaign.MainLevels[i]).LightAmmo;
-            previousLevelsAmmoSave.MediumAmmo += GetSavedAmmo(campaign.MainLevels[i]).MediumAmmo;
-            previousLevelsAmmoSave.HeavyAmmo += GetSavedAmmo(campaign.MainLevels[i]).HeavyAmmo;
+            previousLevelsAmmoSave += GetSavedAmmo(campaign.MainLevels[i]);
         }
 
         return previousLevelsAmmoSave;
     }
 
-    public AmmoSave GetSavedAmmo(CampaignLevel level)
+    public AmmoCount GetSavedAmmo(CampaignLevel level)
     {
         return GetSavedAmmo(level.Barcode);
     }
 
-    public AmmoSave GetSavedAmmo(Barcode levelBarcode)
+    public AmmoCount GetSavedAmmo(Barcode levelBarcode)
     {
-        return LoadedAmmoSaves.FirstOrDefault(x => x.LevelBarcode == levelBarcode);
+        if (!string.IsNullOrEmpty(levelBarcode?.ID)
+            && SavedAmmo != null
+            && SavedAmmo.TryGetValue(levelBarcode.ID, out AmmoCount ammoCount))
+            return ammoCount;
+
+        return new AmmoCount();
     }
 
     public bool DoesSavedAmmoExist(Barcode levelBarcode)
     {
-        if (LoadedAmmoSaves == null)
-            return false;
-
-        if (LoadedAmmoSaves.Count == 0)
-            return false;
-
-        if (LoadedAmmoSaves.Any(x => x.LevelBarcode == levelBarcode))
-            return true;
-
-        return false;
+        return !string.IsNullOrEmpty(levelBarcode?.ID)
+            && SavedAmmo != null
+            && SavedAmmo.ContainsKey(levelBarcode.ID);
     }
 
     public void ClearAmmoSave()
     {
-        LoadedAmmoSaves ??= [];
-        LoadedAmmoSaves.Clear();
+        SavedAmmo ??= [];
+        SavedAmmo.Clear();
         // Fill default ammo saves
         foreach (CampaignLevel level in campaign.MainLevels)
         {
-            LoadedAmmoSaves.Add(new AmmoSave(level, 0, 0, 0));
+            SavedAmmo[level.Barcode.ID] = new AmmoCount();
         }
     }
 

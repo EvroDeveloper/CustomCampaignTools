@@ -39,10 +39,10 @@ namespace CustomCampaignTools.SDK
                 CampaignLogger.SessionMsg($"AmmoScoreDisplay could not find campaign for barcode {barcode}");
                 return;
             }
-            AmmoSave ammoSave = campaign.saveData.GetSavedAmmo(mBarcode);
+            AmmoCount ammoCount = campaign.saveData.GetSavedAmmo(mBarcode);
             if(textMeshPro.Get() == null)
                 textMeshPro.Set(GetComponent<TMP_Text>());
-            GetComponent<TMP_Text>().text = ammoSave.GetCombinedTotal().ToString();
+            GetComponent<TMP_Text>().text = ammoCount.Total.ToString();
 #endif
         }
     }

@@ -34,13 +34,12 @@ public partial class CampaignSaveData
 
         boxBarcodes ??= [];
 
-        AmmoSave ammoSave = new();
+        AmmoCount ammoCount = new();
 
         if (campaign.SaveLevelAmmo)
         {
-            AmmoSave previousAmmoSave = GetPreviousLevelsAmmoSave(levelBarcode);
-
-            ammoSave = AmmoSave.CreateFromPlayer(levelBarcode) - previousAmmoSave;
+            AmmoCount previousAmmo = GetPreviousLevelsAmmoSave(levelBarcode);
+            ammoCount = AmmoCount.GetFromPlayer() - previousAmmo;
         }
 
         List<int> savedDespawns = [];
@@ -58,7 +57,7 @@ public partial class CampaignSaveData
             savedEnableds.Add(saver.uniqueID.Get(), saver.gameObject.activeSelf);
         }
 
-        LoadedSavePoint = new SavePoint(levelBarcode, transform, inventoryData, ammoSave, boxBarcodes, savedDespawns, savedEnableds);
+        LoadedSavePoint = new SavePoint(levelBarcode, transform, inventoryData, ammoCount, boxBarcodes, savedDespawns, savedEnableds);
 
         CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {levelBarcode.ID}");
 
@@ -78,7 +77,7 @@ public partial class CampaignSaveData
         public float RotationAngle;
 
         public InventoryData InventoryData;
-        public AmmoSave MidLevelAmmoSave;
+        public AmmoCount MidLevelAmmoSave;
         public List<BarcodePosRot> BoxContainedBarcodes;
         public List<int> DespawnedSpawners;
         public Dictionary<int, bool> ObjectEnabledSaves;
@@ -99,7 +98,7 @@ public partial class CampaignSaveData
 
         }
 
-        public SavePoint(Barcode levelBarcode, SimpleTransform transform, InventoryData inventoryData, AmmoSave ammoSave, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
+        public SavePoint(Barcode levelBarcode, SimpleTransform transform, InventoryData inventoryData, AmmoCount ammoCount, List<BarcodePosRot> boxContainedBarcodes, List<int> savedDespawns, Dictionary<int, bool> savedEnableds)
         {
             LevelBarcode = new(levelBarcode);
             
@@ -108,7 +107,7 @@ public partial class CampaignSaveData
             RotationAngle = transform.rotation.eulerAngles.y;
 
             InventoryData = inventoryData;
-            MidLevelAmmoSave = ammoSave;
+            MidLevelAmmoSave = ammoCount;
 
             BoxContainedBarcodes = boxContainedBarcodes;
             DespawnedSpawners = savedDespawns;
