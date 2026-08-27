@@ -8,9 +8,27 @@ namespace CustomCampaignTools;
 
 public partial class CampaignSaveData
 {
-    [JsonProperty]
-    [Obsolete]
-    public List<AmmoSave> LoadedAmmoSaves = [];
+    [JsonProperty("LoadedAmmoSaves")]
+    private List<AmmoSave> LegacyLoadedAmmoSaves
+    {
+        set
+        {
+            if (value == null)
+                return;
+
+            SavedAmmo ??= [];
+
+            foreach (AmmoSave ammoSave in value)
+            {
+                string levelBarcode = ammoSave.LevelBarcode?.ID;
+                if (string.IsNullOrEmpty(levelBarcode) || SavedAmmo.ContainsKey(levelBarcode))
+                    continue;
+
+                SavedAmmo[levelBarcode] = new AmmoCount(ammoSave.LightAmmo, ammoSave.MediumAmmo, ammoSave.HeavyAmmo);
+            }
+
+        }
+    }
 
     [JsonProperty]
     public Dictionary<string, AmmoCount> SavedAmmo = [];
