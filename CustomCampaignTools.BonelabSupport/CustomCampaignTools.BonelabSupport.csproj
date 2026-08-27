@@ -10,6 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="../CustomCampaignTools/CustomCampaignTools.csproj" />
   </ItemGroup>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <BONELAB_DIR>/Users/evanbassett/Downloads/BONELAB</BONELAB_DIR>
+  </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -73,7 +76,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(AssemblyName).dll" "C:/Users/evrom/OneDrive/Documents/GitHub/LabworksAmmoSaver/CustomCampaignTools/GameSupport/Libraries/BonelabSupport.dll"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT'">copy /Y "$(TargetDir)$(AssemblyName).dll" "$(MSBuildProjectDirectory)\..\CustomCampaignTools\GameSupport\Libraries\BonelabSupport.dll"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' != 'Windows_NT'">cp "$(TargetDir)$(AssemblyName).dll" "$(MSBuildProjectDirectory)/../CustomCampaignTools/GameSupport/Libraries/BonelabSupport.dll"</PostBuildEvent>
   </PropertyGroup>
 
 </Project>
