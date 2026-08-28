@@ -1,9 +1,10 @@
 using BoneLib;
+using BoneLib.Notifications;
 using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.Utilities;
-using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using Newtonsoft.Json;
@@ -239,10 +240,10 @@ public class Campaign
 
         string json = File.ReadAllText(campaignJsonPath);
 
-        return RegisterCampaignFromJson(json, pallet.Barcode);
+        return RegisterCampaignFromJson(json, pallet);
     }
 
-    internal static Campaign RegisterCampaignFromJson(string json, Barcode palletBarcode)
+    internal static Campaign RegisterCampaignFromJson(string json, Pallet pallet)
     {
         var settings = new JsonSerializerSettings
         {
@@ -251,7 +252,30 @@ public class Campaign
         };
 
         CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
-        campaignValueHolder.PalletBarcode = new(palletBarcode);
+        if (campaignValueHolder == null)
+        {
+            CampaignLogger.Error($"Failed to deserialize campaign data for pallet {pallet.Title}");
+            return null;
+        }
+
+        if (campaignValueHolder.Version > CampaignConstants.CampaignDataVersion)
+        {
+            string campaignName = string.IsNullOrWhiteSpace(campaignValueHolder.Name) ? pallet.Title : campaignValueHolder.Name;
+
+            CampaignLogger.Error($"Refusing to load campaign {campaignName}: campaign data version {campaignValueHolder.Version} is newer than supported version {CampaignConstants.CampaignDataVersion}");
+            Notifier.Send(new Notification()
+            {
+                Title = "Campaign Tools Requires an Update",
+                Message = $"{campaignName} was configured for a newer version of Custom Campaign Tools. Please update the code mod to load this campaign.",
+                Type = NotificationType.Error,
+                PopupLength = 4,
+                ShowTitleOnPopup = true,
+            });
+
+            return null;
+        }
+
+        campaignValueHolder.PalletBarcode = new(pallet.Barcode);
         return RegisterCampaign(campaignValueHolder);
     }
 
@@ -291,7 +315,7 @@ public class Campaign
     public static void Exit()
     {
         _sessionLocked = false;
-        FadeLoader.Load(GameManager.currentGameConfiguration.MainMenu, MarrowGame.marrowSettings.DefaultLoadingLevel);
+        FadeLoader.Load(GameManager.currentGameConfiguration.MainMenu, MarrowSettings.RuntimeInstance.DefaultLoadingLevel);
     }
 
     public int GetMainLevelIndex(Barcode levelBarcode)
