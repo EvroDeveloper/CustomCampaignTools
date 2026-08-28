@@ -57,7 +57,9 @@ namespace CustomCampaignTools.SDK
 
                 BoxCollider collider = entitySaveZone.Get();
 
-                Collider[] trackers = Physics.OverlapBox(collider.bounds.center, collider.bounds.extents, Quaternion.identity, (int)BoneLib.GameLayers.ENTITY_TRACKER, QueryTriggerInteraction.Collide);
+                Vector3 colliderScale = collider.transform.lossyScale;
+                Vector3 halfExtents = Vector3.Scale(collider.size * 0.5f, new Vector3(Mathf.Abs(colliderScale.x), Mathf.Abs(colliderScale.y), Mathf.Abs(colliderScale.z)));
+                Collider[] trackers = Physics.OverlapBox(collider.transform.TransformPoint(collider.center), halfExtents, collider.transform.rotation, (int)BoneLib.GameLayers.ENTITY_TRACKER, QueryTriggerInteraction.Collide);
                 foreach (Collider tracker in trackers)
                 {
                     if (tracker.TryGetComponent(out Tracker t))
