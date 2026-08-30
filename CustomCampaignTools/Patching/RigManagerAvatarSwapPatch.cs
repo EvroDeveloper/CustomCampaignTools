@@ -1,68 +1,55 @@
+using System.Collections.Generic;
 using BoneLib;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Warehouse;
 using Il2CppSLZ.VRMK;
 using MelonLoader;
 
 namespace CustomCampaignTools.Patching;
 
-[HarmonyPatch(typeof(RigManager._SwapAvatarCrate_d__66))]
+[HarmonyPatch(typeof(RigManager))]
 public static class RigManagerAvatarSwapPatch
 {
-    [HarmonyPatch(nameof(RigManager._SwapAvatarCrate_d__66.MoveNext))]
+    [HarmonyPatch(nameof(RigManager.EarlyUpdate))]
     [HarmonyPrefix]
-    public static bool MoveNextPostfix(RigManager._SwapAvatarCrate_d__66 __instance)
+    public static void EarlyUpdatePrefix(RigManager __instance)
     {
-        if (!Campaign.SessionActive || !Campaign.Session.ShouldRestrictAvatar || __instance.__4__this != Player.RigManager) return true; // Always allow avatar swap when not in campaign or avatar is unlocked
+        if(!Campaign.SessionActive || !Campaign.Session.ShouldRestrictAvatar) return;
+        if(__instance != Player.RigManager) return;
+        if(!__instance._avatarDirty) return;
 
-        var barcode = __instance.barcode;
-        var thisAwaiter = __instance.__u__1;
-        var spawnAvatarCrateAwaiter = __instance.__u__2;
-        var avatarCache = __instance.__4__this._avatarCache;
-
-        // Catch invalid avatar barcodes on the first MoveNext
-        if(!Campaign.Session.avatarRestrictor.IsAvatarAllowed(barcode))
+        if(!IsAvatarAllowed(__instance, __instance._avatarOnDeck))
         {
-            thisAwaiter.task = new UniTask<bool>(false);
-            __instance.callback?.Invoke(false);
+            __instance._avatarDirty = false;
             Campaign.Session.avatarRestrictor.OnFailedAvatarSwitch();
-            return false;
-        }
 
-        // Catch invalid avatars if they are already cached by the first MoveNext.
-        if(avatarCache != null && avatarCache.ContainsKey(barcode))
-        {
-            MelonLogger.Msg("Checking Avatar Cache");
-            if(avatarCache.TryGetValue(barcode, out var avatarToSwapTo) && !Campaign.Session.avatarRestrictor.IsAvatarAllowed(avatarToSwapTo))
+            if(!IsAvatarAllowed(__instance, __instance.avatar))
             {
-                thisAwaiter.task = new UniTask<bool>(false);
-                __instance.callback?.Invoke(false);
-                Campaign.Session.avatarRestrictor.OnFailedAvatarSwitch();
-                return false;
+                Campaign.Session.avatarRestrictor.ForceRigManagerAvatar(__instance);
+            }
+            return;
+        }
+    }
+
+    public static bool IsAvatarAllowed(RigManager rigManager, Avatar avatar)
+    {
+        return Campaign.Session.avatarRestrictor.IsAvatarAllowed(rigManager._avatarOnDeck) && Campaign.Session.avatarRestrictor.IsAvatarAllowed(GetBarcodeFromAvatar(rigManager, rigManager._avatarOnDeck));
+    }
+
+    public static Barcode GetBarcodeFromAvatar(RigManager rigManager, Avatar avatar)
+    {
+        if(rigManager._avatarCache == null) return Barcode.EmptyBarcode();
+        
+        foreach(var barcodeAvatarPair in rigManager._avatarCache)
+        {
+            if(barcodeAvatarPair.Value == avatar)
+            {
+                return barcodeAvatarPair.Key;
             }
         }
-#if false
-
-        // Catch invalid avatars if they have to be spawned in.
-        if (spawnAvatarCrateAwaiter != null && spawnAvatarCrateAwaiter.IsCompleted && spawnAvatarCrateAwaiter.task != null && spawnAvatarCrateAwaiter.task.result != null && !Campaign.Session.avatarRestrictor.IsAvatarAllowed(spawnAvatarCrateAwaiter.task.result.GetComponent<Avatar>()))
-        {
-            thisAwaiter.task = new UniTask<bool>(false);
-            __instance.callback?.Invoke(false);
-            Campaign.Session.avatarRestrictor.OnFailedAvatarSwitch();
-            return false;
-        }
-#endif
-
-        // Death
-        if (__instance._avatarToSwapTo_5__2 != null && !Campaign.Session.avatarRestrictor.IsAvatarAllowed(__instance._avatarToSwapTo_5__2))
-        {
-            thisAwaiter.task = new UniTask<bool>(false);
-            __instance.callback?.Invoke(false);
-            Campaign.Session.avatarRestrictor.OnFailedAvatarSwitch();
-            return false;
-        }
-
-        return true;
+        
+        return Barcode.EmptyBarcode();
     }
 }
