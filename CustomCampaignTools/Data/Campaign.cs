@@ -258,11 +258,12 @@ public class Campaign
             return null;
         }
 
-        if (campaignValueHolder.Version > CampaignConstants.CampaignDataVersion)
+        CampaignVersion deserializedVersion = new CampaignVersion(campaignValueHolder.Version);
+        if (deserializedVersion > CampaignConstants.CurrentVersion)
         {
             string campaignName = string.IsNullOrWhiteSpace(campaignValueHolder.Name) ? pallet.Title : campaignValueHolder.Name;
 
-            CampaignLogger.Error($"Refusing to load campaign {campaignName}: campaign data version {campaignValueHolder.Version} is newer than supported version {CampaignConstants.CampaignDataVersion}");
+            CampaignLogger.Error($"Refusing to load campaign {campaignName}: campaign data version {deserializedVersion} is newer than supported version {CampaignConstants.CurrentVersion}");
             Notifier.Send(new Notification()
             {
                 Title = "Campaign Tools Requires an Update",

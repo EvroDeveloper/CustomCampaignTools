@@ -19,7 +19,7 @@ namespace CustomCampaignTools
 {
     internal class CampaignLoadingData
     {
-        public int Version { get; set; } = 0; // Default version to 0 if Version doesnt exist in Json
+        public string Version { get; set; } = "0.0.0"; // Default version to 0 if Version doesnt exist in Json
 #region 1.0.0
         public string Name { get; set; }
         public SerializedLevelSetup InitialLevel { get; set; }
@@ -65,7 +65,7 @@ namespace CustomCampaignTools
         {
             return new CampaignLoadingData()
             {
-                Version = 2,
+                Version = CampaignConstants.CurrentVersion.ToString(),
                 Name = campaignSettings.Name,
                 IntroLevel = campaignSettings.IntroLevel.Serialize(),
                 InitialLevel = campaignSettings.MainMenu.Serialize(),

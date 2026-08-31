@@ -2,15 +2,7 @@
 using CustomCampaignTools;
 using MelonLoader;
 
-//[assembly: AssemblyTitle(CustomCampaignTools.BuildInfo.Description)]
-//[assembly: AssemblyDescription(CustomCampaignTools.BuildInfo.Description)]
-//[assembly: AssemblyCompany(CustomCampaignTools.BuildInfo.Company)]
-//[assembly: AssemblyProduct(CustomCampaignTools.BuildInfo.Name)]
-//[assembly: AssemblyCopyright("Developed by " + CustomCampaignTools.BuildInfo.Author)]
-//[assembly: AssemblyTrademark(CustomCampaignTools.BuildInfo.Company)]
-//[assembly: AssemblyVersion(CustomCampaignTools.BuildInfo.Version)]
-//[assembly: AssemblyFileVersion(CustomCampaignTools.BuildInfo.Version)]
-[assembly: MelonInfo(typeof(CustomCampaignTools.Main), CustomCampaignTools.BuildInfo.Name, CustomCampaignTools.BuildInfo.Version, CustomCampaignTools.BuildInfo.Author, CustomCampaignTools.BuildInfo.DownloadLink)]
+[assembly: MelonInfo(typeof(CustomCampaignTools.Main), CustomCampaignTools.CampaignConstants.ModName, CustomCampaignTools.CampaignConstants.Version, CustomCampaignTools.CampaignConstants.ModAuthor, CustomCampaignTools.BuildInfo.DownloadLink)]
 [assembly: MelonOptionalDependencies("BrowsingPlus")]
 
 // Create and Setup a MelonGame Attribute to mark a Melon as Universal or Compatible with specific Games.

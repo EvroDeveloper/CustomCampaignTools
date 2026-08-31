@@ -29,7 +29,6 @@ public static class RigManagerAvatarSwapPatch
             {
                 Campaign.Session.avatarRestrictor.ForceRigManagerAvatar(__instance);
             }
-            return;
         }
     }
 
