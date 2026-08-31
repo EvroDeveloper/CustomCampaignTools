@@ -24,6 +24,7 @@ public static class BodylogToggler
 
     public static void ForceSetBodylog(bool active)
     {
-        _lastFoundBodylog?.gameObject.SetActive(active);
+        if(_lastFoundBodylog != null)
+            _lastFoundBodylog.gameObject.SetActive(active);
     }
 }
