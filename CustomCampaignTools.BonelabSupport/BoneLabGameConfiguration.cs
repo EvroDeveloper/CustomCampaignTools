@@ -1,8 +1,8 @@
 ﻿using BoneLib;
+using CustomCampaignTools.BonelabSupport.Patching;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.GameSupport.BoneLab;
-using CustomCampaignTools.Patching;
 using CustomCampaignTools.Utilities;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Bonelab.SaveData;

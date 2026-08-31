@@ -13,7 +13,7 @@ using Il2CppTMPro;
 using Il2CppSLZ.Marrow.Utilities;
 using CustomCampaignTools.Utilities;
 
-namespace CustomCampaignTools.Patching;
+namespace CustomCampaignTools.BonelabSupport.Patching;
 
 [HarmonyPatch(typeof(LevelsPanelView))]
 public static class LevelsPanelPatches

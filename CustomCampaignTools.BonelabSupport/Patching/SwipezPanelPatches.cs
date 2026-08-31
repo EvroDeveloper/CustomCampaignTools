@@ -4,9 +4,8 @@ using BrowsingPlus.PanelUI;
 using BoneLib;
 using CustomCampaignTools.Utilities;
 
-namespace CustomCampaignTools.Patching;
+namespace CustomCampaignTools.BonelabSupport.Patching;
 
-//[HarmonyPatch(typeof(LevelPanelOverride))]
 public static class SwipezPanelPatches
 {
     private static Dictionary<Campaign, PanelContainer> campaignToContainerOpen = [];
@@ -15,10 +14,6 @@ public static class SwipezPanelPatches
     {
         Hooking.CreateHook(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.PopulateMenus)), typeof(SwipezPanelPatches).GetMethod(nameof(MenuPopulationOverride)));
         Hooking.CreateHook(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.OnInitialized)), typeof(SwipezPanelPatches).GetMethod(nameof(MenuInitContainerOverride)));
-
-        // var harmony = new HarmonyLib.Harmony("swipez.panel.populate");
-        // harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.PopulateMenus)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuPopulationOverride"));
-        // harmony.Patch(typeof(LevelPanelOverride).GetMethod(nameof(LevelPanelOverride.OnInitialized)), postfix: new HarmonyMethod(typeof(SwipezPanelPatches), "MenuInitContainerOverride"));
 
         LevelsPanelPatches.SwipezActive = true;
     }

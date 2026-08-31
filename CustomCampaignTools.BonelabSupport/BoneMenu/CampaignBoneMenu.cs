@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using CustomCampaignTools.BonelabSupport.Patches;
+using CustomCampaignTools.BonelabSupport.Patching;
 
 namespace CustomCampaignTools.BonelabSupport
 {
