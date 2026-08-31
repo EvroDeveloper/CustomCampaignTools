@@ -84,6 +84,11 @@ public class BoneLabGameConfiguration : GameConfiguration
                 popUpMenu.crate_SpawnGun = new GenericCrateReference(Barcode.EmptyBarcode());
                 popUpMenu.crate_Nimbus = new GenericCrateReference(Barcode.EmptyBarcode());
             }
+
+            if(Campaign.Session.ShouldRestrictAvatar && !Campaign.Session.avatarRestrictor.IsAvatarMenuAllowed())
+            {
+                popUpMenu.RemoveAvatarsMenu();
+            }
         }
     }
 }
