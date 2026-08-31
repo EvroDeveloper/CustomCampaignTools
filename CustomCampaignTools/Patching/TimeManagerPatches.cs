@@ -3,23 +3,22 @@ using MelonLoader;
 using HarmonyLib;
 using CustomCampaignTools.Timing;
 
-namespace CustomCampaignTools.Patching
-{
-    [HarmonyPatch(typeof(TimeManager))]
-    public static class TimeManagerPatches
-    {
-        [HarmonyPatch(nameof(TimeManager.PAUSE))]
-        [HarmonyPostfix]
-        public static void OnPause()
-        {
-            LevelTiming.ONGAMEPAUSE();
-        }
+namespace CustomCampaignTools.Patching;
 
-        [HarmonyPatch(nameof(TimeManager.UNPAUSE))]
-        [HarmonyPostfix]
-        public static void OnUnpause()
-        {
-            LevelTiming.ONGAMERESUME();
-        }
+[HarmonyPatch(typeof(TimeManager))]
+public static class TimeManagerPatches
+{
+    [HarmonyPatch(nameof(TimeManager.PAUSE))]
+    [HarmonyPostfix]
+    public static void OnPause()
+    {
+        LevelTiming.ONGAMEPAUSE();
+    }
+
+    [HarmonyPatch(nameof(TimeManager.UNPAUSE))]
+    [HarmonyPostfix]
+    public static void OnUnpause()
+    {
+        LevelTiming.ONGAMERESUME();
     }
 }
