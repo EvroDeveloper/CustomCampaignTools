@@ -22,12 +22,10 @@ public static class GameManager
         
         Assembly gameSupport = AssemblyUtils.LoadEmbeddedAssembly(Main.ModAssembly, supportLibraryLoadPath);
 
-        Type gameConfigurationType = AssemblyUtils.FindTypeInAssembly<GameConfiguration>(gameSupport);
-        currentGameConfiguration = (GameConfiguration)Activator.CreateInstance(gameConfigurationType);
+        currentGameConfiguration = AssemblyUtils.FindInheritingTypeAndCreate<GameConfiguration>(gameSupport);
         currentGameConfiguration.SupportAssembly = gameSupport;
 
-        Type dataManagerType = AssemblyUtils.FindTypeInAssembly<IGameDataManager>(gameSupport);
-        currentGameConfiguration.GameDataManager = (IGameDataManager)Activator.CreateInstance(dataManagerType);
+        currentGameConfiguration.GameDataManager = AssemblyUtils.FindInheritingTypeAndCreate<IGameDataManager>(gameSupport);
 
         AssemblyUtils.HarmonyPatchAssembly(gameSupport, "customcampaigntools.supportlibrary.patches"); // bullshit random string that means nothing to me
 

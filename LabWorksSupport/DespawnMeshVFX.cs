@@ -5,6 +5,7 @@ using Il2CppSLZ.Marrow.Audio;
 using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.Utilities;
+using Il2CppSLZ.Marrow.VFX;
 using MelonLoader;
 #else
 using SLZ.Marrow.Pool;
@@ -30,6 +31,10 @@ namespace LabWorksSupport
                 return _cache;
             }
         }
+
+        public static Material DespawnMaterial;
+        public static Color DespawnColor;
+
 #if MELONLOADER
         public DespawnMeshVFX(IntPtr ptr) : base(ptr) { }
         public Il2CppReferenceField<Poolee> poolee;
@@ -64,19 +69,24 @@ namespace LabWorksSupport
         {
 #if MELONLOADER
             // Clone all Mesh Renderers and SkinnedMeshRenderers to another thingas
-            DespawnMeshes(meshRenderers, skinnedMeshRenderers, despawnMaterial, color, poolee.Get(), despawnSfx.Get());
+            DespawnMeshes(meshRenderers, skinnedMeshRenderers, color, poolee.Get(), despawnSfx.Get());
 #endif
         }
 
 #if MELONLOADER
-        public static void DespawnMeshes(MeshRenderer[] meshes, SkinnedMeshRenderer[] skinnedMeshes, Material matthew, Color color, Poolee poolee, AudioClip despawnSfx)
+        public static void DespawnMeshes(MeshRenderer[] meshes, SkinnedMeshRenderer[] skinnedMeshes, Color color, Poolee poolee, AudioClip despawnSfx = null)
         {
+            if(DespawnMaterial == null)
+            {
+                throw new NullReferenceException("No Despawn Material has been set yet, and no Override material was provided");
+            }
+
             foreach(MeshRenderer renderer in meshes)
             {
                 GameObject despawnMesh = new GameObject("Despawn Mesh - " + renderer.gameObject.name);
                 DespawnMesh despawnComponent = despawnMesh.AddComponent<DespawnMesh>();
                 despawnComponent.color = color;
-                despawnComponent.CloneMeshRenderer(renderer, matthew);
+                despawnComponent.CloneMeshRenderer(renderer, DespawnMaterial);
                 despawnComponent.StartDespawn();
             }
             foreach(SkinnedMeshRenderer renderer in skinnedMeshes)
@@ -84,7 +94,7 @@ namespace LabWorksSupport
                 GameObject despawnMesh = new GameObject("Despawn Mesh - " + renderer.gameObject.name);
                 DespawnMesh despawnComponent = despawnMesh.AddComponent<DespawnMesh>();
                 despawnComponent.color = color;
-                despawnComponent.CloneSkinnedMeshRenderer(renderer, matthew);
+                despawnComponent.CloneSkinnedMeshRenderer(renderer, DespawnMaterial);
                 despawnComponent.StartDespawn();
             }
 
@@ -93,8 +103,27 @@ namespace LabWorksSupport
 
             if(despawnSfx != null)
             {
-                Audio3dManager.PlayAtPoint(despawnSfx, sfxPos, Audio3dManager.hardInteraction, 1f, 1f);
+                Audio3dManager.PlayAtPoint(despawnSfx, sfxPos, Audio3dManager.hardInteraction, 0.5f, 1f);
             }
+        }
+
+        public static void DespawnEntity(MarrowEntity ThisEntity, Color? overrideDespawnColor = null)
+        {
+            Color col = overrideDespawnColor ?? DespawnColor;
+
+            if(Cache.TryGet(ThisEntity.gameObject, out var Thingas))
+            {
+                Thingas.Despawn(col);
+                return;
+            }
+            else
+            {
+                MeshRenderer[] meshRenderers = ThisEntity.GetComponentsInChildren<MeshRenderer>();
+                SkinnedMeshRenderer[] skinnedMeshRenderers = ThisEntity.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+                DespawnMeshes(meshRenderers, skinnedMeshRenderers, col, ThisEntity._poolee, null);
+            }
+
         }
 #endif
     }

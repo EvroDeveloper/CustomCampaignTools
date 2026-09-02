@@ -65,6 +65,9 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UniTask">
+      <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\Il2CppUniTask.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <PropertyGroup>

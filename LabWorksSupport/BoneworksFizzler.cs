@@ -112,18 +112,7 @@ namespace LabWorksSupport
         {
             yield return new WaitForSeconds(0.025f);
 
-            if(entity.TryGetComponent<DespawnMeshVFX>(out var vfx))
-            {
-                vfx.Despawn(despawnColor);
-            }
-            else
-            {
-                // Clone all Mesh Renderers and SkinnedMeshRenderers to another thingas
-                MeshRenderer[] entityMeshes = entity.GetComponentsInChildren<MeshRenderer>();
-                SkinnedMeshRenderer[] entitySkinnedMeshes = entity.GetComponentsInChildren<SkinnedMeshRenderer>();
-
-                DespawnMeshVFX.DespawnMeshes(entityMeshes, entitySkinnedMeshes, despawnMaterial, despawnColor, entity._poolee, despawnSound);
-            }
+            DespawnMeshVFX.DespawnEntity(entity, despawnColor.Get());
 
             yield return new WaitForSeconds(1f);
 

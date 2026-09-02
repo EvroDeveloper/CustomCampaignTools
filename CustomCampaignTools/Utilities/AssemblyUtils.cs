@@ -70,4 +70,10 @@ public class AssemblyUtils
 
         return Assembly.Load(assemblyBytes);
     }
+
+    public static T FindInheritingTypeAndCreate<T>(Assembly assembly)
+    {
+        Type type = FindTypeInAssembly<T>(assembly);
+        return (T)Activator.CreateInstance(type);
+    }
 }
