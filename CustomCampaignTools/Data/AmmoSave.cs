@@ -1,8 +1,5 @@
 using SimpleSerializables.Types;
 using Il2CppSLZ.Marrow;
-using Il2CppSLZ.Marrow.SceneStreaming;
-using Il2CppSLZ.Marrow.Warehouse;
-using UnityEngine;
 
 namespace CustomCampaignTools.Data;
 
@@ -33,9 +30,10 @@ public struct AmmoCount
     
     public void AddToPlayer()
     {
-        AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.lightAmmoGroup, LightAmmo);
-        AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.mediumAmmoGroup, MediumAmmo);
-        AmmoInventory.Instance.AddCartridge(AmmoInventory.Instance.heavyAmmoGroup, HeavyAmmo);
+        AmmoInventory ammoInventory = AmmoInventory.Instance;
+        ammoInventory.AddCartridge(ammoInventory.lightAmmoGroup, LightAmmo);
+        ammoInventory.AddCartridge(ammoInventory.mediumAmmoGroup, MediumAmmo);
+        ammoInventory.AddCartridge(ammoInventory.heavyAmmoGroup, HeavyAmmo);
     }
 
     public static AmmoCount Max(AmmoCount lhs, AmmoCount rhs)
