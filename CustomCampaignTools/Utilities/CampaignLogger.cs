@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using CustomCampaignTools.Utilities;
+using MelonLoader;
 
 namespace CustomCampaignTools.Debug;
 
@@ -7,9 +8,9 @@ public class CampaignLogger
     private static readonly MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
 
 #if DEBUG
-    const bool EnableLogging = true;
+    static bool EnableLogging = true;
 #else
-    const bool EnableLogging = false;
+    static bool EnableLogging = false;
 #endif
     private static bool VerboseLogging = true;
 
@@ -93,5 +94,12 @@ public class CampaignLogger
     public static void SessionMsg(object message, bool force = false)
     {
         Msg(Campaign.Session, message, force);
+    }
+
+
+    [CampaignArgument("-customcampaigntools.debug")]
+    public static void EnterDebugMode()
+    {
+        EnableLogging = true;
     }
 }

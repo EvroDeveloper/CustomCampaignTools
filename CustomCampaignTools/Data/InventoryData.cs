@@ -100,7 +100,7 @@ namespace CustomCampaignTools.Data
         {
             if(Barcode != null && Barcode != string.Empty && slot != null && slot.GetHost() == null)
             {
-                var task = slot.SpawnInSlotAsync(new Barcode(Barcode));
+                slot.SpawnInSlotAsync(new Barcode(Barcode));
             }
         }
 
@@ -115,13 +115,5 @@ namespace CustomCampaignTools.Data
 
             return new InventoryItem(slot.gameObject.name, itemPoolee.SpawnableCrate.Barcode.ID);
         }
-    }
-
-    public struct GunInfo
-    {
-        public bool MagInserted;
-        public bool MagAmmoCount;
-        public bool RoundChambered;
-        // uhh anything else? might check hahoos gun saving
     }
 }

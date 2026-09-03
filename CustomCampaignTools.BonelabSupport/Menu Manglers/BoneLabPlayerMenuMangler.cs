@@ -19,7 +19,7 @@ namespace CustomCampaignTools.GameSupport.BoneLab
             var optionsPanel = panelView.pages[panelView.defaultPage];
             var _optionsGrid = optionsPanel.transform.Find("grid_Options");
 
-            if (!ArgumentHandler.forcedCampaign)
+            if (!CampaignForcing.forcedCampaign)
             {
 
                 // need to ensure i'm copying a correct one

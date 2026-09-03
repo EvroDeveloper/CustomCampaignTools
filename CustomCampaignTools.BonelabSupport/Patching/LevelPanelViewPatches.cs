@@ -30,7 +30,7 @@ public static class LevelsPanelPatches
     [HarmonyPostfix]
     public static void UpdatePageItemsPostfix(LevelsPanelView __instance, int pageIdx, int maxItems)
     {
-        if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign || (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel))
+        if (Campaign.SessionLocked || CampaignForcing.forcedCampaign || (Campaign.SessionActive && Campaign.Session.PrioritizeInLevelPanel))
         {
             int startingIndex = maxItems * pageIdx;
 
@@ -66,7 +66,7 @@ public static class LevelsPanelPatches
         if(SwipezActive) return;
 
         List<LevelCrate> panelCratesOverwrite = [];
-        if (Campaign.SessionLocked || ArgumentHandler.forcedCampaign)
+        if (Campaign.SessionLocked || CampaignForcing.forcedCampaign)
         {
             panelCratesOverwrite = Campaign.Session.GetUnlockedLevels().ToCrates();
         }
