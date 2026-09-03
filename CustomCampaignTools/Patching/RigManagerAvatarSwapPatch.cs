@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using BoneLib;
+using CustomCampaignTools.Debug;
+using CustomCampaignTools.Utilities.Patching;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow;
@@ -9,14 +11,19 @@ using MelonLoader;
 
 namespace CustomCampaignTools.Patching;
 
-[HarmonyPatch(typeof(RigManager))]
 public static class RigManagerAvatarSwapPatch
 {
-    [HarmonyPatch(nameof(RigManager.EarlyUpdate))]
+    [CampaignPatch(typeof(RigManager), nameof(RigManager.EarlyUpdate), CampaignPatchRunFlags.SessionActive)]
     [HarmonyPrefix]
     public static void EarlyUpdatePrefix(RigManager __instance)
     {
-        if(!Campaign.SessionActive || !Campaign.Session.ShouldRestrictAvatar) return;
+        if(!Campaign.SessionActive)
+        {
+            CampaignLogger.Error("THIS SHOULD NOT HAPPEN EVER");
+            return;
+        }
+
+        if(!Campaign.Session.ShouldRestrictAvatar) return;
         if(__instance != Player.RigManager) return;
         if(!__instance._avatarDirty) return;
 

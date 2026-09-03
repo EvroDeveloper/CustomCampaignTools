@@ -3,15 +3,15 @@ using Il2CppSLZ.Marrow.SceneStreaming;
 using HarmonyLib;
 using System;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.Utilities.Patching;
 
 namespace CustomCampaignTools.Patching;
 
-[HarmonyPatch(typeof(AmmoInventory))]
 public static class AmmoInventoryPatches
 {
     public static Action<AmmoInventory> OnNextAwake = (a) => { };
 
-    [HarmonyPatch(nameof(AmmoInventory.Awake))]
+    [CampaignPatch(typeof(AmmoInventory), nameof(AmmoInventory.Awake), CampaignPatchRunFlags.SessionActive)]
     [HarmonyPostfix]
     public static void AwakePostfix(AmmoInventory __instance)
     {

@@ -2,6 +2,7 @@ using System;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Timing;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.Utilities.Patching;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.SceneStreaming;
@@ -43,6 +44,11 @@ public static class LevelLoadingPatches
             if(destinationCampaign.LoadScene.IsValid())
                 loadLevel = destinationCampaign.LoadScene;
 
+            if(Campaign.Session == null)
+            {
+                CampaignPatcher.OnEnterCampaign();
+            }
+
             Campaign.Session = destinationCampaign;
 
             OnNextSceneLoaded += () =>
@@ -63,6 +69,13 @@ public static class LevelLoadingPatches
                         }
                     };
                 }
+            }
+        }
+        else
+        {
+            if(Campaign.Session != null)
+            {
+                CampaignPatcher.OnExitedCampaign();
             }
         }
 

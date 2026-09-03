@@ -3,6 +3,7 @@ using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.Utilities.Patching;
 using MelonLoader;
 using System;
 using System.Reflection;
@@ -16,6 +17,7 @@ internal class Main : MelonMod
     public override void OnInitializeMelon()
     {
         ModAssembly = MelonAssembly.Assembly;
+        CampaignPatcher.PatchAssembly(ModAssembly);
         GameManager.InitializeGameConfiguration();
         ArgumentHandler.HandleArguments(Environment.GetCommandLineArgs());
     }

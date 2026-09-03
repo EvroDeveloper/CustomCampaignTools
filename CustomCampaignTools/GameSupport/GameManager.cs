@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using BoneLib;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.Utilities.Patching;
 using MelonLoader;
 
 namespace CustomCampaignTools.GameSupport;
@@ -28,6 +29,7 @@ public static class GameManager
         currentGameConfiguration.GameDataManager = AssemblyUtils.FindInheritingTypeAndCreate<IGameDataManager>(gameSupport);
 
         AssemblyUtils.HarmonyPatchAssembly(gameSupport, "customcampaigntools.supportlibrary.patches"); // bullshit random string that means nothing to me
+        CampaignPatcher.PatchAssembly(gameSupport);
 
         currentGameConfiguration.OnInitialize();
     }

@@ -98,7 +98,7 @@ public class CampaignLogger
 
 
     [CampaignArgument("-customcampaigntools.debug")]
-    public static void EnterDebugMode()
+    private static void EnterDebugMode()
     {
         EnableLogging = true;
     }

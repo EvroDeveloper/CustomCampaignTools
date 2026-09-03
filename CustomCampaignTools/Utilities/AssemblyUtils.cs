@@ -64,7 +64,9 @@ public class AssemblyUtils
                 var attribute = method.GetCustomAttribute<A>();
                 if(attribute != null)
                 {
-                    methods.Add((method, attribute));
+                    var multipleAttributes = method.GetCustomAttributes<A>();
+                    foreach(var att in multipleAttributes)
+                        methods.Add((method, att));
                 }
             }
         });
