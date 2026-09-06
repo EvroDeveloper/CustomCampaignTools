@@ -13,6 +13,16 @@ public partial class CampaignSaveData
         if (!UnlockedLevels.Contains(barcode))
         {
             UnlockedLevels.Add(barcode);
+            SaveToDisk();
+        }
+    }
+
+    public void LockLevel(string barcode)
+    {
+        if (UnlockedLevels.Contains(barcode))
+        {
+            UnlockedLevels.Remove(barcode);
+            SaveToDisk();
         }
     }
 }

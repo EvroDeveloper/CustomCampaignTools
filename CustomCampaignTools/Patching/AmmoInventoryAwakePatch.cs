@@ -9,24 +9,20 @@ namespace CustomCampaignTools.Patching;
 
 public static class AmmoInventoryPatches
 {
-    public static Action<AmmoInventory> OnNextAwake = (a) => { };
+    public static event Action<AmmoInventory> OnNextAwake = (a) => { };
 
     [CampaignPatch(typeof(AmmoInventory), nameof(AmmoInventory.Awake), CampaignPatchRunFlags.SessionActive)]
     [HarmonyPostfix]
     public static void AwakePostfix(AmmoInventory __instance)
     {
-        var levelBarcode = SceneStreamer.Session.Level.Barcode;
-
-        if (!CampaignUtilities.IsCampaignLevel(levelBarcode, out Campaign campaign, out CampaignLevelType levelType)) return;
-
-        if (levelType != CampaignLevelType.MainLevel) return;
-
-        int levelIndex = campaign.GetMainLevelIndex(levelBarcode);
+        if (CampaignLevel.Session is not MainLevel mainLevel) return;
 
         AmmoInventory.Instance.ClearAmmo();
 
+        Campaign campaign = Campaign.Session;
+        
         // Accumulate ammo saves from previous levels
-        for (int i = 0; i < levelIndex; i++)
+        for (int i = 0; i < mainLevel.LevelIndex; i++)
         {
             campaign.saveData.GetSavedAmmo(campaign.MainLevels[i].Barcode).AddToPlayer();
         }

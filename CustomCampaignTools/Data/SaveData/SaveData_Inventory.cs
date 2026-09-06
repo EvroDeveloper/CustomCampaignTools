@@ -15,5 +15,6 @@ public partial class CampaignSaveData
         if (!campaign.SaveLevelInventory) return;
         InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager, campaign.InventorySaveLimit);
         InventorySaves[nextLevelBarcode] = inventoryData;
+        SaveToDisk();
     }
 }

@@ -20,7 +20,8 @@ public static class LevelLoadingPatches
     [HarmonyPrefix]
     public static bool LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
     {
-        bool loadingIntoCampaign = CampaignUtilities.TryGetFromLevel(level.Barcode, out var destinationCampaign);
+        bool loadingIntoCampaign = CampaignUtilities.TryGetCampaignLevel(level.Barcode, out var destinationCampaignLevel);
+        var destinationCampaign = destinationCampaignLevel.campaign;
 
         SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
         SavepointFunctions.WasLastLoadByContinue = false;
@@ -50,6 +51,7 @@ public static class LevelLoadingPatches
             }
 
             Campaign.Session = destinationCampaign;
+            CampaignLevel.Session = destinationCampaignLevel;
 
             OnNextSceneLoaded += () =>
             {

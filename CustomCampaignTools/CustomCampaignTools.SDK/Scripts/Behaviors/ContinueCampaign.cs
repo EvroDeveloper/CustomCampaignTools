@@ -21,21 +21,17 @@ namespace CustomCampaignTools.SDK
         public void Continue()
         {
 #if MELONLOADER
-            Campaign campaign = CampaignUtilities.GetFromLevel();
-
-            if (!campaign.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
+            if (!Campaign.Session.saveData.LoadedSavePoint.IsValid(out bool hasSpawnPoint))
                 return;
             
-            campaign.saveData.LoadedSavePoint.LoadContinue(campaign.LoadScene);
+            Campaign.Session.saveData.LoadedSavePoint.LoadContinue(Campaign.Session.LoadScene);
 #endif
         }
 
         public void EnableIfValidSave(GameObject obj)
         {
 #if MELONLOADER
-            Campaign campaign = CampaignUtilities.GetFromLevel();
-
-            if (campaign.saveData.LoadedSavePoint.IsValid(out _)) obj.SetActive(true);
+            if (Campaign.Session.saveData.LoadedSavePoint.IsValid(out _)) obj.SetActive(true);
 #endif
         }
     }

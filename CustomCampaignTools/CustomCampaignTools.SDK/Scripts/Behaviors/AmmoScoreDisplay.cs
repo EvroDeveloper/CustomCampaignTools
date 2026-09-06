@@ -33,13 +33,12 @@ namespace CustomCampaignTools.SDK
         public void SetTargetBarcode(string barcode)
         {
 #if MELONLOADER
-            Barcode mBarcode = new Barcode(barcode);
-            if (!CampaignUtilities.TryGetFromLevel(mBarcode, out Campaign campaign))
+            if (!CampaignUtilities.TryGetCampaignLevel(new Barcode(barcode), out CampaignLevel campaignLevel))
             {
                 CampaignLogger.SessionMsg($"AmmoScoreDisplay could not find campaign for barcode {barcode}");
                 return;
             }
-            AmmoCount ammoCount = campaign.saveData.GetSavedAmmo(mBarcode);
+            AmmoCount ammoCount = campaignLevel.campaign.saveData.GetSavedAmmo(campaignLevel);
             if(textMeshPro.Get() == null)
                 textMeshPro.Set(GetComponent<TMP_Text>());
             GetComponent<TMP_Text>().text = ammoCount.Total.ToString();

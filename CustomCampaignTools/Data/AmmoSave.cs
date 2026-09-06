@@ -16,24 +16,23 @@ public struct AmmoCount
         HeavyAmmo = heavy;
     }
 
+    public AmmoCount(AmmoInventory ammoInventory)
+    {
+        LightAmmo = ammoInventory.GetCartridgeCount("light");
+        MediumAmmo = ammoInventory.GetCartridgeCount("medium");
+        HeavyAmmo = ammoInventory.GetCartridgeCount("heavy");
+    }
+
     public readonly int Total => LightAmmo + MediumAmmo + HeavyAmmo;
 
     public static AmmoCount GetFromPlayer()
     {
-        return new AmmoCount()
-        {
-            LightAmmo = AmmoInventory.Instance.GetCartridgeCount("light"),
-            MediumAmmo = AmmoInventory.Instance.GetCartridgeCount("medium"),
-            HeavyAmmo = AmmoInventory.Instance.GetCartridgeCount("heavy"),
-        };
+        return AmmoInventory.Instance.GetAmmoCount();
     }
     
     public void AddToPlayer()
     {
-        AmmoInventory ammoInventory = AmmoInventory.Instance;
-        ammoInventory.AddCartridge(ammoInventory.lightAmmoGroup, LightAmmo);
-        ammoInventory.AddCartridge(ammoInventory.mediumAmmoGroup, MediumAmmo);
-        ammoInventory.AddCartridge(ammoInventory.heavyAmmoGroup, HeavyAmmo);
+        AmmoInventory.Instance.AddAmmoCount(this);
     }
 
     public static AmmoCount Max(AmmoCount lhs, AmmoCount rhs)
@@ -63,6 +62,27 @@ public struct AmmoCount
             MediumAmmo = lhs.MediumAmmo - rhs.MediumAmmo,
             HeavyAmmo = lhs.HeavyAmmo - rhs.HeavyAmmo,
         };
+    }
+}
+
+public static class AmmoInventoryExtensions
+{
+    public static void AddAmmoCount(this AmmoInventory ammoInventory, AmmoCount ammoCount)
+    {
+        ammoInventory.AddCartridge(ammoInventory.lightAmmoGroup, ammoCount.LightAmmo);
+        ammoInventory.AddCartridge(ammoInventory.mediumAmmoGroup, ammoCount.MediumAmmo);
+        ammoInventory.AddCartridge(ammoInventory.heavyAmmoGroup, ammoCount.HeavyAmmo);
+    }
+
+    public static AmmoCount GetAmmoCount(this AmmoInventory ammoInventory)
+    {
+        return new AmmoCount(ammoInventory);
+    }
+
+    public static void SetAmmoCount(this AmmoInventory ammoInventory, AmmoCount ammoCount)
+    {
+        ammoInventory.ClearAmmo();
+        ammoInventory.AddAmmoCount(ammoCount);
     }
 }
 

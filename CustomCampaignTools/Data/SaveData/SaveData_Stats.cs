@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace CustomCampaignTools.Data.SaveData;
+namespace CustomCampaignTools;
 
 public partial class CampaignSaveData
 {
@@ -23,6 +23,7 @@ public partial class CampaignSaveData
             SavedStats.Add(stat, 0);
         
         SavedStats[stat] += 1;
+        SaveToDisk();
     }
 
     public void DecrementStat(string stat)
@@ -31,6 +32,7 @@ public partial class CampaignSaveData
             SavedStats.Add(stat, 0);
         
         SavedStats[stat] -= 1;
+        SaveToDisk();
     }
 
     public void ForceSetStat(string stat, int value)
@@ -39,5 +41,6 @@ public partial class CampaignSaveData
             SavedStats.Add(stat, 0);
         
         SavedStats[stat] = value;
+        SaveToDisk();
     }
 }

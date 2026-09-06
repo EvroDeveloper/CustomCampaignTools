@@ -26,7 +26,7 @@ public partial class CampaignSaveData
 
     public void UnlockSpawnable(MarrowEntity entity)
     {
-        if(entity._poolee.SpawnableCrate == null) return;
+        if(entity?._poolee?.SpawnableCrate == null) return;
         CampaignSpecificUnlocks.Add(new(entity._poolee.SpawnableCrate.Barcode));
         SaveToDisk();
     }

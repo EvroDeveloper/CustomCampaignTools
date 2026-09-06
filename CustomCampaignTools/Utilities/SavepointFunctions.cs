@@ -16,7 +16,7 @@ namespace CustomCampaignTools
         {
             WasLastLoadByContinue = false;
 
-            Campaign campaign = CampaignUtilities.GetFromLevel();
+            Campaign campaign = CampaignUtilities.GetCampaign();
 
             CampaignSaveData.SavePoint savePoint = campaign.saveData.LoadedSavePoint;
 

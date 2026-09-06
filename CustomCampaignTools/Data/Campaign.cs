@@ -24,7 +24,12 @@ public class Campaign
 
 #region Levels
     public CampaignLevel IntroLevel { get; private set; }
-    public CampaignLevel MenuLevel { get; private set; }
+    public CampaignLevel MenuLevel
+    {
+        get => _menuLevel ?? MainLevels[0]; 
+        private set => _menuLevel = value;
+    }
+    private MenuLevel _menuLevel;
 
     public CampaignLevel InitialLevel
     {
@@ -36,8 +41,8 @@ public class Campaign
                 return MenuLevel;
         }
     }
-    public CampaignLevel[] MainLevels { get; private set; }
-    public CampaignLevel[] ExtraLevels { get; private set; }
+    public MainLevel[] MainLevels { get; private set; }
+    public ExtraLevel[] ExtraLevels { get; private set; }
     public CampaignLevel[] AllLevels
     {
         get
@@ -112,14 +117,14 @@ public class Campaign
 
         void RegisterCampaignLevels()
         {
-            if (data.InitialLevel.IsValid()) MenuLevel = new CampaignLevel(data.InitialLevel, CampaignLevelType.Menu);
-            else MenuLevel = new CampaignLevel(data.MainLevels[0], CampaignLevelType.MainLevel);
+            if (data.InitialLevel.IsValid()) MenuLevel = new CampaignLevel(this, data.InitialLevel, CampaignLevelType.Menu);
+            else MenuLevel = null; // InitialLevel will fall back to MainLevels[0] if MenuLevel is null
 
-            if (data.IntroLevel.IsValid()) IntroLevel = new CampaignLevel(data.IntroLevel, CampaignLevelType.Intro);
-            else IntroLevel = new CampaignLevel(MenuLevel.BarcodeString, MenuLevel.Title, CampaignLevelType.Intro);
+            if (data.IntroLevel.IsValid()) IntroLevel = new IntroLevel(this, data.IntroLevel, CampaignLevelType.Intro);
+            else IntroLevel = new IntroLevel(this, MenuLevel.BarcodeString, MenuLevel.Title, CampaignLevelType.Intro);
 
-            MainLevels = [.. data.MainLevels.Select(l => new CampaignLevel(l, CampaignLevelType.MainLevel))];
-            ExtraLevels = [.. data.ExtraLevels.Select(l => new CampaignLevel(l, CampaignLevelType.ExtraLevel))];
+            MainLevels = [.. data.MainLevels.Select(l => new MainLevel(this, l))];
+            ExtraLevels = [.. data.ExtraLevels.Select(l => new ExtraLevel(this, l))];
             foreach (CampaignLevel level in AllLevels)
             {
                 barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
@@ -332,6 +337,11 @@ public class Campaign
             return null;
     }
 
+    public bool TryGetLevel(Barcode levelBarcode, out CampaignLevel campaignLevel)
+    {
+        return barcodeToCampaignLevelRegistry.TryGetValue(levelBarcode.ID, out campaignLevel);
+    }
+
     public CampaignLevel[] GetUnlockedLevels(bool includeRedacted = false)
     {
         HashSet<CampaignLevel> levels = [];
@@ -361,9 +371,11 @@ public class Campaign
 
     public static void OnLevelLoaded(LevelInfo info)
     {
-        if(!CampaignUtilities.TryGetFromLevel(info.levelReference.Barcode, out Session, out var campaignLevel)) return;
+        if(!CampaignUtilities.TryGetCampaignLevel(info.levelReference.Barcode, out CampaignLevel.Session)) return;
 
-        lastLoadedCampaignLevel = campaignLevel;
+        Session = CampaignLevel.Session.campaign;
+
+        lastLoadedCampaignLevel = CampaignLevel.Session;
     }
 
     public override string ToString()

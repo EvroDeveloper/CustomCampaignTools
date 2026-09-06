@@ -1,16 +1,8 @@
-using System;
 using HarmonyLib;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Warehouse;
-using System.Collections.Generic;
-
-
-using System.Linq;
-using Il2CppCysharp.Threading.Tasks;
-using MelonLoader;
 using UnityEngine;
 using Il2CppTMPro;
-using Il2CppSLZ.Marrow.Utilities;
 using CustomCampaignTools.Utilities;
 
 namespace CustomCampaignTools.BonelabSupport.Patching;
@@ -19,6 +11,7 @@ namespace CustomCampaignTools.BonelabSupport.Patching;
 public static class LevelsPanelPatches
 {
     public static bool SwipezActive = false;
+
     [HarmonyPatch(nameof(LevelsPanelView.CalculateSceneList))]
     [HarmonyPostfix]
     public static void CalculateSceneListPostfix(LevelsPanelView __instance)
@@ -44,14 +37,11 @@ public static class LevelsPanelPatches
                     obj.SetActive(true);
 
                     LevelCrate targetCrateAtButton = __instance._levelCrates[levelIndex];
-                    CampaignLevel cLevel = Campaign.Session.GetLevel(targetCrateAtButton.Barcode);
+                    if(!Campaign.Session.TryGetLevel(targetCrateAtButton.Barcode, out CampaignLevel cLevel)) continue;
 
-                    if (cLevel == null) continue;
-
-                    TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
-                    if (text == null) continue;
-
-                    text.text = cLevel.Title;
+                    TMP_Text tmp = obj.GetComponentInChildren<TMP_Text>();
+                    if (tmp == null) continue;
+                    tmp.text = cLevel.Title;
                 }
                 else
                 {
@@ -65,10 +55,9 @@ public static class LevelsPanelPatches
     {
         if(SwipezActive) return;
 
-        List<LevelCrate> panelCratesOverwrite = [];
         if (Campaign.SessionLocked || CampaignForcing.forcedCampaign)
         {
-            panelCratesOverwrite = Campaign.Session.GetUnlockedLevels().ToCrates();
+            SetLevelPanelCrates(__instance, Campaign.Session.GetUnlockedLevels().ToCrates());
         }
         else
         {
@@ -83,7 +72,7 @@ public static class LevelsPanelPatches
             List<LevelCrate> instanceCrates = [.. __instance._levelCrates];
 
             List<LevelCrate> SLZCrates = [.. instanceCrates.Where(crate => crate.Pallet.IsInMarrowGame())];
-            List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.IsInMarrowGame() && !CampaignUtilities.TryGetFromLevel(crate.Barcode, out _))];
+            List<LevelCrate> NonCampaignCrates = [.. instanceCrates.Where(crate => !crate.Pallet.IsInMarrowGame() && !CampaignUtilities.TryGetCampaign(crate.Barcode, out _))];
 
             List<CampaignLevel> CampaignCrates = [];
             foreach (Campaign c in CampaignUtilities.LoadedCampaigns)
@@ -92,13 +81,18 @@ public static class LevelsPanelPatches
                 CampaignCrates.AddRange(c.GetUnlockedLevels());
             }
 
-            panelCratesOverwrite = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
+            List<LevelCrate> panelCratesOverwrite = [.. SLZCrates, .. CampaignCrates, .. NonCampaignCrates];
             if (prioritizedCampaign != null) panelCratesOverwrite.InsertRange(0, prioritizedCampaign.GetUnlockedLevels().ToCrates());
-        }
 
-        __instance._levelCrates.Clear();
-        foreach (LevelCrate c in panelCratesOverwrite) __instance._levelCrates.Add(c);
-        __instance._totalScenes = __instance._levelCrates.Count;
-        __instance._numberOfPages = (__instance._levelCrates.Count / __instance.items.Length) + 1;
+            SetLevelPanelCrates(__instance, panelCratesOverwrite);
+        }
+    }
+
+    public static void SetLevelPanelCrates(LevelsPanelView levelPanel, List<LevelCrate> levelCrates)
+    {
+        levelPanel._levelCrates.Clear();
+        foreach(LevelCrate c in levelCrates) levelPanel._levelCrates.Add(c);
+        levelPanel._totalScenes = levelPanel._levelCrates.Count;
+        levelPanel._numberOfPages = (levelPanel._levelCrates.Count / levelPanel.items.Length) + 1;
     }
 }
