@@ -1,8 +1,8 @@
-using BoneLib.Notifications;
 using CustomCampaignTools.Utilities.Patching;
 using HarmonyLib;
-using Il2CppSLZ.Marrow.Warehouse;
+using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.UI;
+using BoneLib.Notifications;
 
 namespace CustomCampaignTools.BonelabSupport.Patching;
 
@@ -12,10 +12,10 @@ public static class AvatarPanelEnable
     [HarmonyPostfix]
     public static void OnPanelEnabled(AvatarsPanelView __instance)
     {
-        if (Campaign.Session.saveData.AvatarUnlocked) return;
+        if (!Campaign.Session.ShouldRestrictAvatar) return;
         if (Campaign.Session.avatarRestrictor.IsAvatarMenuAllowed()) return;
 
-        __instance.Deactivate();
+        __instance.CloseMenu();
         __instance.popUpMenu.Deactivate();
 
         Notifier.Send(new Notification()
@@ -25,5 +25,13 @@ public static class AvatarPanelEnable
             Type = NotificationType.Error,
             ShowTitleOnPopup = true,
         });
+    }
+
+    [CampaignPatch(typeof(PopUpMenuView), nameof(PopUpMenuView.AddAvatarsMenu), CampaignPatchRunFlags.SessionActive)]
+    [HarmonyPrefix]
+    public static bool OnMenuAddAvatarMenu(PopUpMenuView __instance)
+    {
+        if (!Campaign.Session.ShouldRestrictAvatar) return true;
+        return Campaign.Session.avatarRestrictor.IsAvatarMenuAllowed();
     }
 }
