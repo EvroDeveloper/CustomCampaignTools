@@ -35,7 +35,7 @@ public class DefaultAvatarRestrictor : AvatarRestrictor
 
     public override bool IsAvatarAllowed(Barcode avatarBarcode)
     {
-        return avatarBarcode == CampaignAvatar;
+        return avatarBarcode.ID == CampaignAvatar.ID;
     }
 
     public override void ForceRigManagerAvatar(RigManager rm)
