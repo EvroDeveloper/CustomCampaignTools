@@ -5,7 +5,6 @@ using Il2CppSLZ.Bonelab;
 
 namespace CustomCampaignTools.BonelabSupport.Patching;
 
-[HarmonyPatch(typeof(PullCordDevice))]
 public static class BodylogToggler
 {
     private static PullCordDevice _lastFoundBodylog;
@@ -16,10 +15,19 @@ public static class BodylogToggler
     {
         _lastFoundBodylog = __instance;
 
-        if (Campaign.Session.IsBodylogRestricted && !Campaign.Session.saveData.AvatarUnlocked)
+        if ((Campaign.Session.IsBodylogRestricted && !Campaign.Session.saveData.AvatarUnlocked) || !Campaign.Session.saveData.ManualBodylogToggle)
             __instance.gameObject.SetActive(false);
-        
-        __instance.gameObject.SetActive(Campaign.Session.saveData.ManualBodylogToggle);
+    }
+
+    [CampaignPatch(typeof(CampaignSaveData), nameof(CampaignSaveData.UnlockAvatar), CampaignPatchRunFlags.SessionActive)]
+    [HarmonyPostfix]
+    public static void OnAvatarUnlockedHook(CampaignSaveData __instance)
+    {
+        if(__instance.campaign == Campaign.Session)
+        {
+            ForceSetBodylog(true);
+            BoneLib.Player.UIRig.popUpMenu.AddAvatarsMenu();
+        }
     }
 
     public static void ForceSetBodylog(bool active)
