@@ -109,5 +109,7 @@
   <PropertyGroup>
     <PostBuildEvent Condition="'$(SkipModInstall)' != 'true' And '$(OS)' == 'Windows_NT'">copy /Y "$(TargetDir)$(AssemblyName).dll" "$(BONELAB_DIR)\Mods\$(AssemblyName).dll"</PostBuildEvent>
     <PostBuildEvent Condition="'$(SkipModInstall)' != 'true' And '$(OS)' != 'Windows_NT'">cp "$(TargetDir)$(AssemblyName).dll" "$(BONELAB_DIR)/Mods/$(AssemblyName).dll"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(SkipModInstall)' != 'true' And '$(OS)' == 'Windows_NT'">copy /Y "$(TargetDir)$(AssemblyName).dll" "$(MSBuildProjectDirectory)\..\Mod Staging\Mods\$(AssemblyName).dll"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(SkipModInstall)' != 'true' And '$(OS)' != 'Windows_NT'">cp "$(TargetDir)$(AssemblyName).dll" "$(MSBuildProjectDirectory)/../Mod Staging/Mods/$(AssemblyName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
