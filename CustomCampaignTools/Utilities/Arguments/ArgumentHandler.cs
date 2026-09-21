@@ -13,7 +13,7 @@ public static class ArgumentHandler
 {
     public static void HandleArguments(string[] args)
     {
-        var values = AssemblyUtils.FindMethodsWithAttribute<CampaignArgumentAttribute>(Main.ModAssembly, BindingFlags.Static).ToList();
+        var values = AssemblyUtils.FindMethodsWithAttribute<CampaignArgumentAttribute>(Main.ModAssembly, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).ToList();
         values.AddRange(AssemblyUtils.FindMethodsWithAttribute<CampaignArgumentAttribute>(GameManager.currentGameConfiguration.SupportAssembly, BindingFlags.Static));
 
         Dictionary<string, (MethodInfo, CampaignArgumentAttribute)> argToMethod = [];
@@ -39,7 +39,7 @@ public static class ArgumentHandler
                         extraArgs[a] = args[i+a+1];
                     }
                     i += attribute.ExtraArgs;
-                    method.Invoke(null, extraArgs);
+                    method.Invoke(null, [extraArgs]);
                 }
                 else
                 {

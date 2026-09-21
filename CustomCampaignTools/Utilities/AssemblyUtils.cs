@@ -61,13 +61,9 @@ public class AssemblyUtils
             MethodInfo[] typeMethods = type.GetMethods(bindingFlags);
             foreach(MethodInfo method in typeMethods)
             {
-                var attribute = method.GetCustomAttribute<A>();
-                if(attribute != null)
-                {
-                    var multipleAttributes = method.GetCustomAttributes<A>();
-                    foreach(var att in multipleAttributes)
-                        methods.Add((method, att));
-                }
+                var multipleAttributes = method.GetCustomAttributes<A>();
+                foreach(var att in multipleAttributes)
+                    methods.Add((method, att));
             }
         });
         return [.. methods];

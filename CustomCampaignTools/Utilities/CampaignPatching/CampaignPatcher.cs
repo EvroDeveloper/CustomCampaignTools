@@ -37,13 +37,11 @@ public static class CampaignPatcher
         public void Patch()
         {
             patchHarmony.Patch(sourceMethod, prefix, postfix);
-            CampaignLogger.Msg("Enabling Patch: " + patchHarmony.Id);
         }
 
         public void Unpatch()
         {
             patchHarmony.UnpatchSelf();
-            CampaignLogger.Msg("Disabling Patch: " + patchHarmony.Id);
         }
     }
 
@@ -53,7 +51,7 @@ public static class CampaignPatcher
     public static void PatchAssembly(Assembly assembly)
     {
         CampaignLogger.Msg("CampaignPatching Assembly " + assembly.GetName());
-        var patches = AssemblyUtils.FindMethodsWithAttribute<CampaignPatchAttribute>(assembly, BindingFlags.Static);
+        var patches = AssemblyUtils.FindMethodsWithAttribute<CampaignPatchAttribute>(assembly, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         foreach(var patch in patches)
         {
             var attribute = patch.Item2;
@@ -69,6 +67,8 @@ public static class CampaignPatcher
 
             CampaignPatchWrapper wrapper = new(harmony, sourceMethod, hookMethod, isPrefix);
 
+            CampaignLogger.Msg("Found Campaign Patch: " + harmony.Id);
+
             if(attribute.RunFlags == CampaignPatchRunFlags.Always)
                 wrapper.Patch();
             else if(attribute.RunFlags == CampaignPatchRunFlags.SessionActive)
@@ -80,7 +80,7 @@ public static class CampaignPatcher
 
     public static void OnExitedCampaign()
     {
-        CampaignLogger.Msg("Exiting Campaign. Unpatching campaign patches, repatching non-campaign patches");
+        CampaignLogger.MsgVerbose("Exiting Campaign. Unpatching campaign patches, repatching non-campaign patches");
         foreach(CampaignPatchWrapper campaignPatch in CampaignOnlyPatches)
         {
             campaignPatch.Unpatch();
@@ -93,7 +93,7 @@ public static class CampaignPatcher
 
     public static void OnEnterCampaign()
     {
-        CampaignLogger.Msg("Entering Campaign. Repatching campaign patches, Unpatching non-campaign patches");
+        CampaignLogger.MsgVerbose("Entering Campaign. Repatching campaign patches, Unpatching non-campaign patches");
         foreach(CampaignPatchWrapper campaignPatch in CampaignOnlyPatches)
         {
             campaignPatch.Patch();
