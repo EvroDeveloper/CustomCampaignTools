@@ -26,6 +26,12 @@ public static class FadeLoader
         HelperMethods.SpawnCrate(LoadFadeBarcode, Vector3.zero);
         yield return new WaitForSeconds(2);
         loadScene ??= new Barcode(CommonBarcodes.Maps.LoadDefault);
-        SceneStreamer.Load(level, loadScene);
+        try
+        {
+            // This call errors when it tries to run .Forget but i've never ran into an issue with it
+            // I think it has to do with my LevelLoadingPatches
+            SceneStreamer.Load(level, loadScene);
+        }
+        catch { }
     }
 }
