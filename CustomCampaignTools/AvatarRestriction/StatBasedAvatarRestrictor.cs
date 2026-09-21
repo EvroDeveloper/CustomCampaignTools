@@ -8,9 +8,9 @@ using CustomCampaignTools.Debug;
 
 namespace CustomCampaignTools.AvatarRestriction;
 
-public class StatBasedAvatarRestrictor : AvatarRestrictor
+public class StatBasedAvatarRestrictor : DefaultAvatarRestrictor
 {
-    public StatBasedAvatarRestrictor(AvatarStatRanges statRanges)
+    public StatBasedAvatarRestrictor(AvatarStatRanges statRanges, AvatarCrateReference defaultCampaignAvatar, AvatarCrateReference fallbackAvatar) : base(defaultCampaignAvatar, fallbackAvatar)
     {
         _avatarHeightRange = new Vector2(statRanges.heightRangeLow, statRanges.heightRangeHigh);
         _avatarMassRange = new Vector2(statRanges.massRangeLow, statRanges.massRangeHigh);
@@ -23,11 +23,18 @@ public class StatBasedAvatarRestrictor : AvatarRestrictor
 
     public override bool IsAvatarAllowed(Avatar avatar)
     {
-        CampaignLogger.Msg("Testing avatar: " + avatar.gameObject.name);
-        CampaignLogger.Msg($"Avatar Height: {avatar.height}, Valid Range: {_avatarHeightRange}");
-        CampaignLogger.Msg($"Avatar Height: {avatar.massTotal}, Valid Range: {_avatarMassRange}");
-        CampaignLogger.Msg($"Avatar Height: {avatar.armLength}, Valid Range: {_avatarArmLengthRange}");
         return IsInRange(avatar.height, _avatarHeightRange) && IsInRange(avatar.massTotal, _avatarMassRange) && IsInRange(avatar.armLength, _avatarArmLengthRange);
+    }
+
+    public override bool IsAvatarAllowed(Barcode avatarBarcode)
+    {
+        // only stat restriciton here, dont use default's barcode restricting
+        return true;
+    }
+
+    public override bool IsAvatarMenuAllowed()
+    {
+        return true;
     }
 
     public override void OnFailedAvatarSwitch()
@@ -44,10 +51,5 @@ public class StatBasedAvatarRestrictor : AvatarRestrictor
     static bool IsInRange(float value, Vector2 range)
     {
         return range.x <= value && value <= range.y;
-    }
-
-    public override void ForceRigManagerAvatar(RigManager rm)
-    {
-        rm.SwapAvatarCrate(new Barcode(CommonBarcodes.Avatars.PolyBlank));
     }
 }
