@@ -57,6 +57,12 @@ namespace CustomCampaignTools
             return false;
         }
 
+        public static bool IsValidVersionString(string versionString)
+        {
+            string[] dotSplit = versionString.Split('.');
+            return dotSplit.Length == 3;
+        }
+
         public override string ToString()
         {
             return $"{VersionMajor}.{VersionMinor}.{VersionPatch}";
