@@ -46,6 +46,7 @@ namespace CustomCampaignTools
 #endregion
 
 #region 1.2.0
+        public bool DisableBodyLog { get; set; }
         public AvatarStatRanges AvatarStatRanges { get; set; }
         public bool UpdateSaveOnLevelEnter { get; set; } = true;
         public SpawnableCrateRefSer RigManagerOverride { get; set; } = new SpawnableCrateRefSer();
@@ -72,6 +73,7 @@ namespace CustomCampaignTools
                 PrioritizeInLevelPanel = campaignSettings.PrioritizeInLevelPanel,
                 RestrictDevTools = campaignSettings.RestrictDevTools,
                 AvatarRestrictionType = campaignSettings.AvatarRestriction,
+                DisableBodyLog = campaignSettings.DisableBodyLog,
                 WhitelistedAvatars = campaignSettings.WhitelistedAvatars.Select(a => { return new AvatarCrateRefSer(a); }).ToList(),
                 CampaignAvatar = new AvatarCrateRefSer(campaignSettings.CampaignAvatar),
                 BaseGameFallbackAvatar = new AvatarCrateRefSer(campaignSettings.BaseGameFallbackAvatar),
