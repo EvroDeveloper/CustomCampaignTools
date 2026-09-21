@@ -28,7 +28,7 @@ public partial class CampaignSaveData
         SaveToDisk();
     }
 
-    public void SavePlayer(Barcode levelBarcode, SimpleTransform transform, List<BarcodePosRot> boxBarcodes = null)
+    public void SavePlayer(CampaignLevel campaignLevel, SimpleTransform transform, List<BarcodePosRot> boxBarcodes = null)
     {
         InventoryData inventoryData = InventoryData.GetFromRigmanager(Player.RigManager);
 
@@ -38,8 +38,11 @@ public partial class CampaignSaveData
 
         if (campaign.SaveLevelAmmo)
         {
-            AmmoCount previousAmmo = GetPreviousLevelsAmmoSave(levelBarcode);
-            ammoCount = AmmoCount.GetFromPlayer() - previousAmmo;
+            ammoCount = AmmoCount.GetFromPlayer();
+            if(campaignLevel is MainLevel mainLevel)
+            {
+                ammoCount -= GetPreviousLevelsAmmoSave(mainLevel);
+            }
         }
 
         List<int> savedDespawns = [];
@@ -57,9 +60,9 @@ public partial class CampaignSaveData
             savedEnableds.Add(saver.uniqueID.Get(), saver.gameObject.activeSelf);
         }
 
-        LoadedSavePoint = new SavePoint(levelBarcode, transform, inventoryData, ammoCount, boxBarcodes, savedDespawns, savedEnableds);
+        LoadedSavePoint = new SavePoint(campaignLevel.Barcode, transform, inventoryData, ammoCount, boxBarcodes, savedDespawns, savedEnableds);
 
-        CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {levelBarcode.ID}");
+        CampaignLogger.Msg(campaign, $"Saved player at {transform.position} in level {campaignLevel.Title}");
 
         SaveToDisk();
         GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
@@ -86,7 +89,7 @@ public partial class CampaignSaveData
         public void OnDeserialized(StreamingContext context)
         {
 #pragma warning disable CS0618
-            if(Position == Vector3.zero && (PositionX != 0 || PositionY != 0 || PositionZ != 0))
+            if(Position == null || (Position == Vector3.zero && (PositionX != 0 || PositionY != 0 || PositionZ != 0)))
             {
                 Position = new(new Vector3(PositionX, PositionY, PositionZ)); // hehe new new
             }
@@ -121,7 +124,7 @@ public partial class CampaignSaveData
         /// <returns></returns>
         public bool IsValid(out bool hasSpawnPoint)
         {
-            if (Position == Vector3.zero)
+            if (Position == null || Position == Vector3.zero)
                 hasSpawnPoint = false;
             else
                 hasSpawnPoint = true;

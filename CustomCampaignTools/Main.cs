@@ -55,7 +55,7 @@ internal class Main : MelonMod
         if (Campaign.SessionActive)
         {
             if (Campaign.lastLoadedCampaignLevel == null) return;
-            Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel.Barcode);
+            Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
             LevelTiming.OnCampaignLevelUnloaded(Campaign.Session, Campaign.lastLoadedCampaignLevel.BarcodeString);
         }
     }

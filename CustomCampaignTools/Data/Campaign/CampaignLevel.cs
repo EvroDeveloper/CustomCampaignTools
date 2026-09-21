@@ -5,15 +5,6 @@ using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools
 {
-    public enum CampaignLevelType
-    {
-        None,
-        Intro,
-        Menu,
-        MainLevel,
-        ExtraLevel // Extra levels do not save ammo
-    }
-
     public class CampaignLevel
     {
         public Campaign campaign;
@@ -23,14 +14,13 @@ namespace CustomCampaignTools
 
         public string Title
         {
-            get{
+            get
+            {
                 if(_overrideName == string.Empty) return Crate.Title;
                 return _overrideName;
             }
         }
         private readonly string _overrideName = "";
-
-        public CampaignLevelType type;
 
         public LevelCrate Crate
         {
@@ -64,26 +54,25 @@ namespace CustomCampaignTools
         /// </summary>
         public static CampaignLevel Session;
         public static bool SessionActive => Session != null;
-        public static CampaignLevelType SessionType => Session != null ? Session.type : CampaignLevelType.None;
 
-        public CampaignLevel(Campaign campaign, string barcode, string name, CampaignLevelType type)
+        public CampaignLevel(Campaign campaign, string barcode, string name)
         {
+            this.campaign = campaign;
             Barcode = new Barcode(barcode);
             _overrideName = name;
-            this.type = type;
         }
-        public CampaignLevel(Campaign campaign, Barcode barcode, string name, CampaignLevelType type)
+        public CampaignLevel(Campaign campaign, Barcode barcode, string name)
         {
+            this.campaign = campaign;
             Barcode = barcode;
             _overrideName = name;
-            this.type = type;
         }
 
-        public CampaignLevel(Campaign campaign, SerializedLevelSetup levelSetup, CampaignLevelType type)
+        public CampaignLevel(Campaign campaign, SerializedLevelSetup levelSetup)
         {
+            this.campaign = campaign;
             Barcode = levelSetup.levelBarcode;
             _overrideName = levelSetup.levelName;
-            this.type = type;
         }
 
         public CampaignLevel(CampaignLevel copy)
@@ -91,7 +80,6 @@ namespace CustomCampaignTools
             campaign = copy.campaign;
             Barcode = copy.Barcode;
             _overrideName = copy._overrideName;
-            type = copy.type;
         }
 
         public bool IsValid()
@@ -112,7 +100,7 @@ namespace CustomCampaignTools
             {
                 if(_levelIndex == -1)
                 {
-                    _levelIndex = campaign.GetMainLevelIndex(Barcode);
+                    _levelIndex = campaign.GetMainLevelIndex(this);
                 }
                 return _levelIndex;
             }
@@ -124,15 +112,15 @@ namespace CustomCampaignTools
         {
         }
 
-        public MainLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup, CampaignLevelType.MainLevel)
+        public MainLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup)
         {
         }
 
-        public MainLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name, CampaignLevelType.MainLevel)
+        public MainLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name)
         {
         }
 
-        public MainLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name, CampaignLevelType.MainLevel)
+        public MainLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name)
         {
         }
     }
@@ -143,15 +131,15 @@ namespace CustomCampaignTools
         {
         }
 
-        public ExtraLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup, CampaignLevelType.ExtraLevel)
+        public ExtraLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup)
         {
         }
 
-        public ExtraLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name, CampaignLevelType.ExtraLevel)
+        public ExtraLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name)
         {
         }
 
-        public ExtraLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name, CampaignLevelType.ExtraLevel)
+        public ExtraLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name)
         {
         }
     }
@@ -162,15 +150,15 @@ namespace CustomCampaignTools
         {
         }
 
-        public MenuLevel(Campaign campaign, SerializedLevelSetup levelSetup, CampaignLevelType type) : base(campaign, levelSetup, type)
+        public MenuLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup)
         {
         }
 
-        public MenuLevel(Campaign campaign, string barcode, string name, CampaignLevelType type) : base(campaign, barcode, name, type)
+        public MenuLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name)
         {
         }
 
-        public MenuLevel(Campaign campaign, Barcode barcode, string name, CampaignLevelType type) : base(campaign, barcode, name, type)
+        public MenuLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name)
         {
         }
     }
@@ -181,15 +169,15 @@ namespace CustomCampaignTools
         {
         }
 
-        public IntroLevel(Campaign campaign, SerializedLevelSetup levelSetup, CampaignLevelType type) : base(campaign, levelSetup, type)
+        public IntroLevel(Campaign campaign, SerializedLevelSetup levelSetup) : base(campaign, levelSetup)
         {
         }
 
-        public IntroLevel(Campaign campaign, string barcode, string name, CampaignLevelType type) : base(campaign, barcode, name, type)
+        public IntroLevel(Campaign campaign, string barcode, string name) : base(campaign, barcode, name)
         {
         }
 
-        public IntroLevel(Campaign campaign, Barcode barcode, string name, CampaignLevelType type) : base(campaign, barcode, name, type)
+        public IntroLevel(Campaign campaign, Barcode barcode, string name) : base(campaign, barcode, name)
         {
         }
     }

@@ -48,8 +48,6 @@ namespace CustomCampaignTools.SDK
         public void Save()
         {
 #if MELONLOADER
-            Barcode barcode = SceneStreamer.Session.Level.Barcode;
-
             if (entitySaveZone.Get() != null)
             {
                 HashSet<MarrowEntity> boxVolEntities = [];
@@ -88,11 +86,11 @@ namespace CustomCampaignTools.SDK
                     if (entity._poolee.SpawnableCrate == null) continue;
                     Entities.Add(new CampaignSaveData.BarcodePosRot(entity._poolee.SpawnableCrate.Barcode, entity.transform.position, entity.transform.rotation, entity.transform.lossyScale));
                 }
-                Campaign.Session.saveData.SavePlayer(barcode, new SimpleTransform(playerSpawnPoint.Get()), Entities);
+                Campaign.Session.saveData.SavePlayer(CampaignLevel.Session, new SimpleTransform(playerSpawnPoint.Get()), Entities);
             }
             else
             {
-                Campaign.Session.saveData.SavePlayer(barcode, new SimpleTransform(playerSpawnPoint.Get()));
+                Campaign.Session.saveData.SavePlayer(CampaignLevel.Session, new SimpleTransform(playerSpawnPoint.Get()));
             }
 #endif
         }

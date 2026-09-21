@@ -32,12 +32,14 @@ public partial class CampaignSaveData
     [JsonProperty]
     public Dictionary<string, AmmoCount> SavedAmmo = [];
 
-    public void SaveAmmoForLevel(Barcode levelBarcode)
+    public void SaveAmmoForLevel(CampaignLevel campaignLevel)
     {
         if (!campaign.SaveLevelAmmo) return;
+        if(campaignLevel is not MainLevel mainLevel) return;
+        var levelBarcode = campaignLevel.Barcode;
         if (string.IsNullOrEmpty(levelBarcode.ID) || !levelBarcode.IsValid()) return;
 
-        AmmoCount previousAmmoSum = GetPreviousLevelsAmmoSave(levelBarcode);
+        AmmoCount previousAmmoSum = GetPreviousLevelsAmmoSave(mainLevel);
         AmmoCount additionalAmmo = AmmoCount.GetFromPlayer() - previousAmmoSum;
         SavedAmmo ??= [];
 
@@ -56,9 +58,9 @@ public partial class CampaignSaveData
         campaign.saveData.SaveToDisk();
     }
 
-    public AmmoCount GetPreviousLevelsAmmoSave(Barcode levelBarcode)
+    public AmmoCount GetPreviousLevelsAmmoSave(MainLevel mainLevel)
     {
-        int levelIndex = campaign.GetMainLevelIndex(levelBarcode);
+        int levelIndex = mainLevel.LevelIndex;
 
         AmmoCount previousLevelsAmmoSave = new AmmoCount();
 

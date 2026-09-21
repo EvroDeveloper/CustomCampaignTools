@@ -16,30 +16,39 @@ public static class LevelLoadingPatches
 {
     public static Action OnNextSceneLoaded = ()=>{};
 
+    // This patch is insanely sketchy on Quest. I think it causes an error, and lakatrazz avoids patching the actual UniTask method on quest. And yet, it works. Dont know why
     [HarmonyPatch(nameof(SceneStreamer.LoadAsync), [typeof(LevelCrateReference), typeof(LevelCrateReference)])]
     [HarmonyPrefix]
-    public static bool LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
+    public static void LoadPrefixPatch(LevelCrateReference level, ref LevelCrateReference loadLevel, ref UniTask __result)
     {
         bool loadingIntoCampaign = CampaignUtilities.TryGetCampaignLevel(level.Barcode, out var destinationCampaignLevel);
-        var destinationCampaign = destinationCampaignLevel.campaign;
 
+        if(loadingIntoCampaign)
+        {
+            CampaignLogger.Msg("Loading into Campaign: " + destinationCampaignLevel.campaign.Name);
+        }
+       
         SavepointFunctions.CurrentLevelLoadedByContinue = SavepointFunctions.WasLastLoadByContinue;
         SavepointFunctions.WasLastLoadByContinue = false;
 
-        if(Campaign.SessionActive && destinationCampaign == Campaign.Session)
+        if(loadingIntoCampaign && destinationCampaignLevel.campaign == Campaign.Session)
         {
-            if(Campaign.Session.GetLevel(level.Barcode).type == CampaignLevelType.MainLevel && Campaign.Session.GetLevel(SceneStreamer.Session.Level.Barcode).type == CampaignLevelType.MainLevel)
+            bool wasAlreadyInCampaign = CampaignUtilities.TryGetCampaignLevel(SceneStreamer.Session.Level.Barcode, out var previousCampaignLevel);
+            if(wasAlreadyInCampaign && destinationCampaignLevel is MainLevel destMainLevel && previousCampaignLevel is MainLevel prevMainLevel)
             {
-                if(Campaign.Session.GetMainLevelIndex(level.Barcode) == Campaign.Session.GetMainLevelIndex(SceneStreamer.Session.Level.Barcode) + 1)
+                if(destMainLevel.LevelIndex == prevMainLevel.LevelIndex + 1)
                 {
                     Campaign.Session.saveData.SaveInventoryForLevel(level.Barcode.ID);
                 }
             }
         }
 
+        var destinationCampaign = destinationCampaignLevel?.campaign;
+
         if(loadingIntoCampaign)
         {
             destinationCampaign.saveData.UnlockLevel(level.Barcode.ID);
+            CampaignLogger.MsgVerbose(destinationCampaign, "Unlocked level: " + destinationCampaignLevel.Title);
 
             // If the level its loading into is a campaign level, force load scene to be Campaign Load scene
             if(destinationCampaign.LoadScene.IsValid())
@@ -48,6 +57,7 @@ public static class LevelLoadingPatches
             if(Campaign.Session == null)
             {
                 CampaignPatcher.OnEnterCampaign();
+                CampaignLogger.MsgVerbose(destinationCampaign, "CampaignPatcher Enabling Campaign Patches");
             }
 
             Campaign.Session = destinationCampaign;
@@ -58,11 +68,11 @@ public static class LevelLoadingPatches
                 LevelTiming.OnCampaignLevelLoaded(destinationCampaign, level.Barcode.ID);
             };
 
-            if(destinationCampaign.GetLevel(level.Barcode).type == CampaignLevelType.MainLevel)
+            if(destinationCampaignLevel is MainLevel)
             {
                 if (!SavepointFunctions.CurrentLevelLoadedByContinue)
                 {
-                    if(destinationCampaign.CreateSaveOnLevelEnter) OnNextSceneLoaded += () => destinationCampaign.saveData.SavePlayer(level.Barcode, SimpleTransform.Identity);
+                    if(destinationCampaign.CreateSaveOnLevelEnter) OnNextSceneLoaded += () => destinationCampaign.saveData.SavePlayer(destinationCampaignLevel, SimpleTransform.Identity);
                     if(destinationCampaign.SaveLevelInventory) OnNextSceneLoaded += () =>
                     {
                         if(destinationCampaign.saveData.InventorySaves.ContainsKey(level.Barcode.ID))
@@ -79,10 +89,10 @@ public static class LevelLoadingPatches
             {
                 CampaignPatcher.OnExitedCampaign();
             }
+            Campaign.Session = null;
+            CampaignLevel.Session = null;
         }
 
         RigReplacementUtility.OnLevelLoadStart(destinationCampaign);
-
-        return true;
     }
 }
