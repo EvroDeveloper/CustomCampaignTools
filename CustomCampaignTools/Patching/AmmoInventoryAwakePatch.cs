@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Utilities.Patching;
+using CustomCampaignTools.Data;
 
 namespace CustomCampaignTools.Patching;
 
@@ -24,7 +25,7 @@ public static class AmmoInventoryPatches
         // Accumulate ammo saves from previous levels
         for (int i = 0; i < mainLevel.LevelIndex; i++)
         {
-            campaign.saveData.GetSavedAmmo(campaign.MainLevels[i].Barcode).AddToPlayer();
+            AmmoInventory.Instance.AddAmmoCount(campaign.saveData.GetSavedAmmo(campaign.MainLevels[i].Barcode));
         }
 
         OnNextAwake.Invoke(__instance);
