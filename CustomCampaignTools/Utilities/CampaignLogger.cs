@@ -1,9 +1,10 @@
-﻿using CustomCampaignTools.Utilities;
+﻿using BoneLib.Notifications;
+using CustomCampaignTools.Utilities;
 using MelonLoader;
 
 namespace CustomCampaignTools.Debug;
 
-public class CampaignLogger
+public class CampaignLogger : ILoggerSource
 {
     private static readonly MelonLogger.Instance loggerInstance = new("CustomCampaignTools");
 
@@ -14,6 +15,8 @@ public class CampaignLogger
 #endif
     private static bool VerboseLogging = true;
 
+    static bool EnableErrorNotifications = true;
+
     /// <summary>
     /// Prints a message to the Console when built with DEBUG or forced is enabled
     /// </summary>
@@ -22,7 +25,7 @@ public class CampaignLogger
     public static void Msg(object message, bool force = false)
     {
         if (!EnableLogging && !force) return;
-        loggerInstance.Msg($"[CampaignLogger] {message}");
+        Msg(instance, message, force);
     }
 
     /// <summary>
@@ -31,15 +34,11 @@ public class CampaignLogger
     /// <param name="campaign">The Campaign to send a log for</param>
     /// <param name="message"></param>
     /// <param name="force">If true, sends message to console even without Debug or Dev mode</param>
-    public static void Msg(Campaign campaign, object message, bool force = false)
+    public static void Msg(ILoggerSource campaign, object message, bool force = false)
     {
-        if(campaign == null)
-        {
-            Msg(message, force);
-            return;
-        }
-        if (!EnableLogging && !campaign.DEVMODE && !force) return;
-        loggerInstance.Msg($"[CampaignLogger - {campaign.Name}] {message}");
+        campaign ??= instance;
+        if (!EnableLogging && !campaign.ForceMessages() && !force) return;
+        loggerInstance.Msg($"[{campaign.GetName()}] {message}");
     }
 
     /// <summary>
@@ -49,22 +48,20 @@ public class CampaignLogger
     public static void MsgVerbose(object message)
     {
         if (!VerboseLogging) return;
-        loggerInstance.Msg($"[CampaignLogger] {message}");
+        MsgVerbose(instance, message);
     }
 
     /// <summary>
     /// Prints a verbose Campaign message to the Console if the campaign is a Dev build, when built with DEBUG, or forced is enabled
     /// </summary>
-    /// <param name="campaign">The Campaign to send a log for</param>
+    /// <param name="loggerSource">The ILoggerSource to send a log for</param>
     /// <param name="message"></param>
-    public static void MsgVerbose(Campaign campaign, object message)
+    public static void MsgVerbose(ILoggerSource loggerSource, object message)
     {
-        if (campaign != null)
-        {
-            if (!VerboseLogging) return;
-            loggerInstance.Msg($"[CampaignLogger - {campaign.Name}] {message}");
-        }
-        else Msg(message);
+        if (!VerboseLogging) return;
+
+        loggerSource ??= instance;
+        loggerInstance.Msg($"[{loggerSource.GetName()}] {message}");
     }
 
     /// <summary>
@@ -72,10 +69,10 @@ public class CampaignLogger
     /// </summary>
     /// <param name="campaign"></param>
     /// <param name="message"></param>
-    public static void Error(Campaign campaign, object message)
+    public static void Error(ILoggerSource loggerSource, object message)
     {
-        if(campaign != null) loggerInstance.Error($"[CampaignLogger - {campaign.Name}] {message}");
-        else Error(message);
+        loggerSource ??= instance;
+        loggerInstance.Error($"[{loggerSource.GetName()}] {message}");
     }
 
     /// <summary>
@@ -84,7 +81,7 @@ public class CampaignLogger
     /// <param name="message"></param>
     public static void Error(object message)
     {
-        loggerInstance.Error($"[CampaignLogger] {message}");
+        Error(instance, message);
     }
 
     /// <summary>
@@ -102,4 +99,15 @@ public class CampaignLogger
     {
         EnableLogging = true;
     }
+
+    private static CampaignLogger instance = new CampaignLogger();
+    
+    public string GetName() => "CampaignLogger";
+    public bool ForceMessages() => false;
+}
+
+public interface ILoggerSource
+{
+    public string GetName();
+    public bool ForceMessages();
 }
