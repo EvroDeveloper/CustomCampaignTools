@@ -1,66 +1,57 @@
 using BoneLib;
-using BoneLib.Notifications;
 using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.Utilities;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
-using MelonLoader;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
 namespace CustomCampaignTools;
 
-public class Campaign
+public partial class Campaign
 {
     public string Name;
     public Barcode PalletBarcode;
 
 #region Levels
-    public CampaignLevel IntroLevel { get; private set; }
+    private CampaignLevel _introLevel;
+    private MenuLevel _menuLevel;
     public CampaignLevel MenuLevel
     {
-        get => _menuLevel ?? MainLevels[0]; 
-        private set => _menuLevel = value;
+        get
+        {
+            if(_menuLevel != null) return _menuLevel;
+            return MainLevels[0];
+        }
     }
-    private MenuLevel _menuLevel;
 
     public CampaignLevel InitialLevel
     {
         get
         {
-            if (!saveData.SkipIntro && IntroLevel.IsValid())
-                return IntroLevel;
+            if (!saveData.SkipIntro && _introLevel != null && _introLevel.IsValid())
+                return _introLevel;
             else
                 return MenuLevel;
         }
     }
     public MainLevel[] MainLevels { get; private set; }
     public ExtraLevel[] ExtraLevels { get; private set; }
-    public CampaignLevel[] AllLevels
-    {
-        get
-        {
-            _allLevels ??= [.. MainLevels, .. ExtraLevels, MenuLevel, IntroLevel];
-            return _allLevels;
-        }
-    }
-    private CampaignLevel[] _allLevels;
+    public CampaignLevel[] AllLevels { get; private set; }
     private readonly Dictionary<string, CampaignLevel> barcodeToCampaignLevelRegistry = [];
 
 #region Load Scene
-    public LevelCrateReference LoadScene = new LevelCrateReference(Barcode.EmptyBarcode());
+    public LevelCrateReference LoadScene = new(Barcode.EmptyBarcode());
     public MonoDiscReference LoadSceneMusicReference { get; private set; } = new MonoDiscReference(Barcode.EmptyBarcode());
     public AudioClip LoadSceneMusic { get; private set; }
-    #endregion // Load Scene
+#endregion // Load Scene
 
-    #endregion // Levels
+#endregion // Levels
 
     public bool ShowInMenu;
     public bool PrioritizeInLevelPanel = true;
@@ -92,12 +83,6 @@ public class Campaign
 
     public CampaignSaveData saveData;
 
-    public static Campaign Session;
-    public static CampaignLevel lastLoadedCampaignLevel;
-    public static bool SessionActive { get => Session != null; }
-    public static bool SessionLocked { get => SessionActive && _sessionLocked; }
-    private static bool _sessionLocked;
-
     internal Campaign(CampaignLoadingData data)
     {
         if (data == null) throw new NullReferenceException("Campaign Loading Data cannot be Null");
@@ -117,14 +102,18 @@ public class Campaign
 
         void RegisterCampaignLevels()
         {
-            if (data.InitialLevel.IsValid()) MenuLevel = new CampaignLevel(this, data.InitialLevel, CampaignLevelType.Menu);
-            else MenuLevel = null; // InitialLevel will fall back to MainLevels[0] if MenuLevel is null
-
-            if (data.IntroLevel.IsValid()) IntroLevel = new IntroLevel(this, data.IntroLevel, CampaignLevelType.Intro);
-            else IntroLevel = new IntroLevel(this, MenuLevel.BarcodeString, MenuLevel.Title, CampaignLevelType.Intro);
+            if (data.InitialLevel.IsValid()) _menuLevel = new MenuLevel(this, data.InitialLevel);
 
             MainLevels = [.. data.MainLevels.Select(l => new MainLevel(this, l))];
             ExtraLevels = [.. data.ExtraLevels.Select(l => new ExtraLevel(this, l))];
+
+            if (data.IntroLevel.IsValid()) _introLevel = new IntroLevel(this, data.IntroLevel);
+
+            List<CampaignLevel> allLevels = [.. MainLevels, .. ExtraLevels];
+            if(_menuLevel != null) allLevels.Insert(0, _menuLevel);
+            if(_introLevel != null) allLevels.Insert(0, _introLevel);
+            AllLevels = [.. allLevels];
+            
             foreach (CampaignLevel level in AllLevels)
             {
                 barcodeToCampaignLevelRegistry[level.Barcode.ID] = level;
@@ -156,12 +145,14 @@ public class Campaign
             else if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.RestrictAvatar))
                 avatarRestrictor = new DefaultAvatarRestrictor(data.CampaignAvatar, data.BaseGameFallbackAvatar);
             else if (data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.EnforceStatRange))
-                avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges);
+                avatarRestrictor = new StatBasedAvatarRestrictor(data.AvatarStatRanges, data.CampaignAvatar, data.BaseGameFallbackAvatar);
 
             // DEBUG TESTING
-            avatarRestrictor = new StatBasedAvatarRestrictor(new AvatarStatRanges(new Vector2(1.5f, 2f), new Vector2(0, float.PositiveInfinity), new Vector2(0, float.PositiveInfinity)));
+            avatarRestrictor = new StatBasedAvatarRestrictor(new AvatarStatRanges(new Vector2(1.5f, 2f), new Vector2(0, float.PositiveInfinity), new Vector2(0, float.PositiveInfinity)), data.CampaignAvatar, data.BaseGameFallbackAvatar);
 
-            IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog);
+#pragma warning disable CS0618 // Type or member is obsolete
+            IsBodylogRestricted = data.AvatarRestrictionType.HasFlag(AvatarRestrictionType.DisableBodyLog) || data.DisableBodyLog;
+#pragma warning restore CS0618 // Type or member is obsolete
 
             RestrictDevTools = data.RestrictDevTools;
             LockInCampaign = data.LockInCampaign;
@@ -210,104 +201,6 @@ public class Campaign
         }
     }
 
-#region Campaign Registration
-    internal static Campaign RegisterCampaign(CampaignLoadingData data)
-    {
-        try
-        {
-            Campaign campaign = new(data);
-            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
-
-            AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
-
-            CampaignUtilities.AddCampaign(campaign);
-
-            return campaign;
-        }
-        catch (Exception ex)
-        {
-            CampaignLogger.Error($"Failed to register campaign {data.Name}: {ex} {ex.StackTrace}");
-            return null;
-        }
-    }
-
-    internal static Campaign RegisterCampaignFromPallet(Pallet pallet)
-    {
-        if (!AssetWarehouse.Instance.TryGetPalletManifest(pallet.Barcode, out var manifest))
-        {
-            CampaignLogger.Error($"Failed to register campaign from pallet {pallet.Barcode}: Pallet manifest not found");
-            return null;
-        }
-
-        string campaignJsonPath = Path.Combine(Path.GetDirectoryName(manifest.PalletPath), CampaignConstants.CampaignJsonFileName);
-        if (!File.Exists(campaignJsonPath)) return null;
-        CampaignLogger.Msg("Json FOUND for Pallet " + pallet.Title);
-
-        string json = File.ReadAllText(campaignJsonPath);
-
-        return RegisterCampaignFromJson(json, pallet);
-    }
-
-    internal static Campaign RegisterCampaignFromJson(string json, Pallet pallet)
-    {
-        var settings = new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
-        };
-
-        CampaignLoadingData campaignValueHolder = JsonConvert.DeserializeObject<CampaignLoadingData>(json, settings);
-        if (campaignValueHolder == null)
-        {
-            CampaignLogger.Error($"Failed to deserialize campaign data for pallet {pallet.Title}");
-            return null;
-        }
-
-        CampaignVersion deserializedVersion = new CampaignVersion(campaignValueHolder.Version);
-        if (deserializedVersion > CampaignConstants.CurrentVersion)
-        {
-            string campaignName = string.IsNullOrWhiteSpace(campaignValueHolder.Name) ? pallet.Title : campaignValueHolder.Name;
-
-            CampaignLogger.Error($"Refusing to load campaign {campaignName}: campaign data version {deserializedVersion} is newer than supported version {CampaignConstants.CurrentVersion}");
-            Notifier.Send(new Notification()
-            {
-                Title = "Campaign Tools Requires an Update",
-                Message = $"{campaignName} was configured for a newer version of Custom Campaign Tools. Please update the code mod to load this campaign.",
-                Type = NotificationType.Error,
-                PopupLength = 4,
-                ShowTitleOnPopup = true,
-            });
-
-            return null;
-        }
-
-        campaignValueHolder.PalletBarcode = new(pallet.Barcode);
-        return RegisterCampaign(campaignValueHolder);
-    }
-
-    internal void LoadRequiredAssets()
-    {
-        if (LoadSceneMusicReference.TryGetDataCard(out var _loadMusicDatacard))
-        {
-            _loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-            {
-                LoadSceneMusic = a;
-                LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }));
-        }
-
-
-        if (AchievementUnlockSoundReference.TryGetDataCard(out var _achievementUnlockSoundDatacard))
-        {
-            _achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-            {
-                AchievementUnlockSound = a;
-                AchievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }));
-        }
-    }
-#endregion
-    
     public void Enter()
     {
         if(LockInCampaign)
@@ -326,12 +219,24 @@ public class Campaign
 
     public int GetMainLevelIndex(Barcode levelBarcode)
     {
-        return MainLevels.ToList().FindIndex(l => l.Barcode == levelBarcode);
+        if(TryGetLevel(levelBarcode, out var level) && level is MainLevel mainLevel)
+        {
+            return GetMainLevelIndex(mainLevel);
+        }
+        else
+        {
+            throw new ArgumentException("levelBarcode is not in the campaign or is not a main level");
+        }
+    }
+
+    public int GetMainLevelIndex(MainLevel mainLevel)
+    {
+        return Array.IndexOf(MainLevels, mainLevel);
     }
 
     public CampaignLevel GetLevel(Barcode levelBarcode)
     {
-        if (barcodeToCampaignLevelRegistry.TryGetValue(levelBarcode.ID, out var level))
+        if (TryGetLevel(levelBarcode, out var level))
             return level;
         else
             return null;
