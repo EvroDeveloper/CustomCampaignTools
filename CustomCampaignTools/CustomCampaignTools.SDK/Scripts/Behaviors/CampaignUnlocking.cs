@@ -39,11 +39,13 @@ namespace CustomCampaignTools.SDK
 
             if(!enableInstantly) return;
 
-            // TODO: Create an interface that can allow the loaded game configuration to hook into when its enabled instantly.
-            // PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
-            // bodyLog?.gameObject.SetActive(true);
+            // Haha no FUCK YOU and your todo, im just going to harmony patch this method from the bonelab support :onlyforgenius:
 
-            // UIRig.Instance.popUpMenu.AddAvatarsMenu();
+            // // TODO: Create an interface that can allow the loaded game configuration to hook into when its enabled instantly.
+            // // PullCordDevice bodyLog = Player.PhysicsRig.GetComponentInChildren<PullCordDevice>(true);
+            // // bodyLog?.gameObject.SetActive(true);
+            // 
+            // // UIRig.Instance.popUpMenu.AddAvatarsMenu();
 #endif
         }
 
