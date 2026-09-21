@@ -1,3 +1,4 @@
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 
@@ -23,12 +24,12 @@ internal static class RigReplacementUtility
         
         if(destination == null)
         {
-            if(MarrowGame.marrowSettings.DefaultPlayerRig != _defaultPlayerRig) MarrowGame.marrowSettings._defaultPlayerRig = _defaultPlayerRig;
-            if(MarrowGame.marrowSettings.UIEventSystem != _defaultGameplayRig) MarrowGame.marrowSettings._uiEventSystem = _defaultGameplayRig;
+            if(MarrowSettings.RuntimeInstance.DefaultPlayerRig != _defaultPlayerRig) MarrowSettings.RuntimeInstance._defaultPlayerRig = _defaultPlayerRig;
+            if(MarrowSettings.RuntimeInstance.UIEventSystem != _defaultGameplayRig)  MarrowSettings.RuntimeInstance._uiEventSystem = _defaultGameplayRig;
             return;
         }
 
-        MarrowGame.marrowSettings._defaultPlayerRig = destination.RigManagerOverride.TryGetCrate(out _) ? Campaign.Session.RigManagerOverride : _defaultPlayerRig;
-        MarrowGame.marrowSettings._uiEventSystem = destination.GameplayRigOverride.TryGetCrate(out _) ? Campaign.Session.GameplayRigOverride : _defaultGameplayRig;
+        MarrowSettings.RuntimeInstance._defaultPlayerRig = destination.RigManagerOverride.TryGetCrate(out _) ? Campaign.Session.RigManagerOverride : _defaultPlayerRig;
+        MarrowSettings.RuntimeInstance._uiEventSystem = destination.GameplayRigOverride.TryGetCrate(out _) ? Campaign.Session.GameplayRigOverride : _defaultGameplayRig;
     }
 }
