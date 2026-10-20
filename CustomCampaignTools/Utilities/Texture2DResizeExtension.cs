@@ -11,13 +11,49 @@ public static class Texture2DResizeExtension
 {
     public static Texture2D ProperResize(this Texture2D texture2D, int width, int height)
     {
-        var rt = new RenderTexture(width, height, 24);
-        RenderTexture.active = rt;
-        Graphics.Blit(texture2D, rt);
-        var newTexture = new Texture2D(width, height);
-        newTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        newTexture.Apply();
-        UnityEngine.Object.Destroy(rt);
-        return newTexture;
+        var previousRenderTexture = RenderTexture.active;
+        var rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
+
+        try
+        {
+            Graphics.Blit(texture2D, rt);
+            RenderTexture.active = rt;
+
+            var newTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            newTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            newTexture.Apply();
+
+            return newTexture;
+        }
+        finally
+        {
+            RenderTexture.active = previousRenderTexture;
+            RenderTexture.ReleaseTemporary(rt);
+        }
+    }
+
+    public static Texture2D CPUResize(this Texture2D texture2D, int width, int height)
+    {
+        var pixels = texture2D.GetPixels32();
+        var result = new Color32[width * height];
+
+        for (int y = 0; y < height; y++)
+        {
+            int sourceY = y * texture2D.height / height;
+
+            for (int x = 0; x < width; x++)
+            {
+                int sourceX = x * texture2D.width / width;
+
+                result[y * width + x] =
+                    pixels[sourceY * texture2D.width + sourceX];
+            }
+        }
+
+        var resized = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        resized.SetPixels32(result);
+        resized.Apply();
+
+        return resized;
     }
 }

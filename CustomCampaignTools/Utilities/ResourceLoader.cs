@@ -30,7 +30,7 @@ public static class ResourceLoader
 
     public static Texture2D GetTexture(Assembly assembly, string resourceName, bool loosePath = false)
     {
-        byte[] imgBytes =  GetBytes(assembly, resourceName, loosePath);
+        byte[] imgBytes = GetBytes(assembly, resourceName, loosePath);
 
         Texture2D texture = new Texture2D(2, 2);
         if (!texture.LoadImage(imgBytes)) return null;
