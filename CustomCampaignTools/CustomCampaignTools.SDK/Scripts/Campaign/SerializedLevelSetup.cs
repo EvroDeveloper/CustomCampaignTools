@@ -5,6 +5,9 @@ using SLZ.Marrow.Warehouse;
 using CustomCampaignTools.SDK;
 #endif
 using SimpleSerializables.Types;
+#if UNITY_EDITOR
+using System.Collections.Generic;
+#endif
 
 namespace CustomCampaignTools
 {
