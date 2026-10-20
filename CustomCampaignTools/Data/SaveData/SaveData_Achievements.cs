@@ -1,8 +1,16 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using BoneLib.Notifications;
 using CustomCampaignTools.GameSupport;
+using CustomCampaignTools.Utilities;
+using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
+using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace CustomCampaignTools;
 
@@ -16,43 +24,64 @@ public partial class CampaignSaveData
         UnlockedAchievements ??= [];
         if (UnlockedAchievements.Contains(key)) return false;
 
-        foreach (AchievementData achievement in campaign.Achievements)
+        AchievementData achievement = campaign.Achievements[key];
+
+        if(achievement == null) return false;
+
+        UnlockedAchievements.Add(key);
+        SaveToDisk();
+        GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
+
+        MelonCoroutines.Start(FireAchievementNotification(achievement, campaign.AchievementUnlockSoundReference));
+        return true;
+    }
+
+    public void FireAchievementNotification(AchievementData achievementData)
+    {
+        MelonCoroutines.Start(FireAchievementNotification(achievementData, campaign.AchievementUnlockSoundReference));
+    }
+
+    private static IEnumerator FireAchievementNotification(AchievementData achievementData, MonoDiscReference achievementSoundReference)
+    {
+        AudioClip achievementSound = null;
+        if(achievementSoundReference.TryGetDataCard(out var disc))
         {
-            if (achievement.Key != key) continue;
-
-            if (campaign.AchievementUnlockSound != null)
-                Audio3dManager.Play2dOneShot(campaign.AchievementUnlockSound, Audio3dManager.ui, new Il2CppSystem.Nullable<float>(1f), new Il2CppSystem.Nullable<float>(1f));
-
-            if (achievement.cachedTexture != null)
-            {
-                Notifier.Send(new Notification()
-                {
-                    CustomIcon = achievement.cachedTexture,
-                    Title = $"Achievement Get: {achievement.Name}",
-                    Message = achievement.Description,
-                    Type = NotificationType.CustomIcon,
-                    PopupLength = 5,
-                    ShowTitleOnPopup = true,
-                });
-            }
-            else
-            {
-                Notifier.Send(new Notification()
-                {
-                    Title = $"Achievement Get: {achievement.Name}",
-                    Message = achievement.Description,
-                    Type = NotificationType.Information,
-                    PopupLength = 5,
-                    ShowTitleOnPopup = true
-                });
-            }
-
-            UnlockedAchievements.Add(key);
-            SaveToDisk();
-            GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
-            return true;
+            yield return new AwaitTask<AudioClip>(disc.AudioClip.LoadAssetAsync(), out var result);
+            achievementSound = result.Value;
         }
-        return false;
+
+        Texture2D achievementIcon;
+        if(achievementData.Type == AchievementData.IconType.Bytes)
+        {
+            achievementIcon = achievementData.LoadIconBytes();
+        }
+        else
+        {
+            yield return new AwaitTask<Texture2D>(achievementData.LoadIconTask(), out var tex);
+            achievementIcon = tex.Value;
+        }
+        achievementIcon = achievementIcon.CPUResize(336, 336);
+        achievementIcon.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+        NotificationType notificationType = achievementIcon == null ? NotificationType.Information : NotificationType.CustomIcon;
+        Notifier.Send(new Notification()
+        {
+            CustomIcon = achievementIcon,
+            Title = $"Achievement Get: {achievementData.Name}",
+            Message = achievementData.Description,
+            Type = notificationType,
+            PopupLength = 5,
+            ShowTitleOnPopup = true,
+        });
+
+        if(achievementSound != null)
+        {
+            Audio3dManager.Play2dOneShot(achievementSound, Audio3dManager.ui, new(1f), new(1f));
+        }
+
+        yield return new WaitForSeconds(5f);
+        
+        achievementIcon.hideFlags = HideFlags.None;
     }
 
     public void LockAchievement(string key)

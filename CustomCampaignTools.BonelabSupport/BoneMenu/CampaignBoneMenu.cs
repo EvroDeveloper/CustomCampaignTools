@@ -39,7 +39,7 @@ namespace CustomCampaignTools.BonelabSupport
                 var achievementPage = campaignPage.CreatePage($"{c.Name} Achievements", Color.yellow);
                 var achievementSubPage = achievementPage;
 
-                if(c.saveData.UnlockedAchievements.Count > 10)
+                if(c.saveData.UnlockedAchievements.Count > 10 && false) // Dont need anymore, bonemenu fixed pages
                 {
                     for (int i = 0; i < c.saveData.UnlockedAchievements.Count; i++)
                     {
@@ -51,7 +51,7 @@ namespace CustomCampaignTools.BonelabSupport
                         string key = c.saveData.UnlockedAchievements[i];
                         try
                         {
-                            achievementSubPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
+                            achievementSubPage.CreateFunction(c.OrderedAchievements.First(a => a.Key == key).Name, Color.yellow, null);
                         }
                         catch
                         {
@@ -63,19 +63,19 @@ namespace CustomCampaignTools.BonelabSupport
                 {
                     foreach (string key in c.saveData.UnlockedAchievements)
                     {
-                        try
+                        if(c.Achievements.TryGetValue(key, out var achievement))
                         {
-                            achievementPage.CreateFunction(c.Achievements.First(a => a.Key == key).Name, Color.yellow, null);
-                        }
-                        catch
-                        {
-                            MelonLogger.Error($"Unlocked Achievement {key} could not be found in {c.Name}'s Achievements");
+#if DEBUG
+                            achievementPage.CreateFunction(achievement.Name, Color.yellow, () => c.saveData.FireAchievementNotification(achievement));
+#else                            
+                            achievementPage.CreateFunction(achievement.Name, Color.yellow, null);
+#endif
                         }
                     }
                 }
             }
 
-            if(c.avatarRestrictor == null || c.saveData.AvatarUnlocked)
+            if(!c.ShouldRestrictAvatar)
             {
                 campaignPage.CreateBool("Enable Bodylog", Color.white, c.saveData.ManualBodylogToggle, b => {
                     c.saveData.SetManualBodylogToggle(b);

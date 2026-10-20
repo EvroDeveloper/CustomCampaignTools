@@ -83,7 +83,7 @@ namespace CustomCampaignTools
                 SaveLevelAmmo = campaignSettings.SaveAmmoBetweenLevels,
                 UpdateSaveOnLevelEnter = campaignSettings.UpdateSaveOnLevelEnter,
                 AchievementUnlockSound = new MonoDiscRefSer(campaignSettings.AchievementUnlockSound),
-                Achievements = SerializableAchievement.ConvertToData(campaignSettings.Achievements),
+                Achievements = campaignSettings.Achievements.ToList(),
                 LockInCampaign = campaignSettings.LockPlayerInCampaign,
                 CampaignUnlockCrates = campaignSettings.CampaignUnlockCrates.Select(a => { return new SpawnableCrateRefSer(a); }).ToList(),
                 HideCratesFromGachapon = campaignSettings.HideCratesFromGachapon.Select(a => { return new SpawnableCrateRefSer(a); }).ToList(),

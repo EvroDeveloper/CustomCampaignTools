@@ -40,10 +40,11 @@ namespace CustomCampaignTools.SDK
                 lockIcon.Get().SetActive(!unlocked);
             }
             
-            if(achievement.cachedSprite != null)
+            achievementIcon.Get().sprite = null;
+            achievement.CacheSprite((sprite) =>
             {
-                achievementIcon.Get().sprite = achievement.cachedSprite;
-            }
+                achievementIcon.Get().sprite = sprite;
+            });
             achievementIcon.Get().color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1);
         }
 #else

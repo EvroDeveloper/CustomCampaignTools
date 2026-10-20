@@ -65,9 +65,9 @@ public partial class Campaign
     public List<SpawnableCrateReference> InventorySaveLimit = [];
     public bool SaveLevelAmmo;
     public bool CreateSaveOnLevelEnter = false;
-    public AudioClip AchievementUnlockSound { get; private set; }
     public MonoDiscReference AchievementUnlockSoundReference { get; private set; } = new MonoDiscReference(Barcode.EmptyBarcode());
-    public List<AchievementData> Achievements = [];
+    public Dictionary<string, AchievementData> Achievements = [];
+    public List<AchievementData> OrderedAchievements = [];
     public bool LockInCampaign;
     public bool LockLevelsUntilEntered;
 
@@ -177,10 +177,10 @@ public partial class Campaign
 
         void RegisterAchievements()
         {
-            Achievements = data.Achievements ?? [];
-            foreach (AchievementData ach in Achievements)
+            foreach (AchievementData ach in data.Achievements ?? [])
             {
-                ach.Init();
+                Achievements.Add(ach.Key, ach);
+                OrderedAchievements.Add(ach);
             }
 
             if (data.AchievementUnlockSound.IsValid())

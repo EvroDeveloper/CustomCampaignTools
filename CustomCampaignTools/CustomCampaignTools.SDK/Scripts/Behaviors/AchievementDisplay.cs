@@ -62,7 +62,7 @@ namespace CustomCampaignTools.SDK
                 if (achievementIndex < Campaign.Session.Achievements.Count)
                 {
                     currentView.gameObject.SetActive(true);
-                    currentView.ShowAchievement(Campaign.Session.Achievements[achievementIndex]);
+                    currentView.ShowAchievement(Campaign.Session.OrderedAchievements[achievementIndex]);
                 }
                 else
                 {

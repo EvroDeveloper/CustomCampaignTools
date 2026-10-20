@@ -101,15 +101,5 @@ public partial class Campaign
                 LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
             }));
         }
-
-
-        if (AchievementUnlockSoundReference.TryGetDataCard(out var _achievementUnlockSoundDatacard))
-        {
-            _achievementUnlockSoundDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-            {
-                AchievementUnlockSound = a;
-                AchievementUnlockSound.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }));
-        }
     }
 }
