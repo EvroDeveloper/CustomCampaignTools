@@ -1,12 +1,12 @@
 #if MELONLOADER
 using MelonLoader;
-using BoneLib;
-using Il2CppSLZ.Bonelab;
+using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.Warehouse;
+#else
+using SLZ.Marrow.Interaction;
 #endif
 using System;
 using UnityEngine;
-using Il2CppSLZ.Marrow.Interaction;
-using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.SDK
 {
