@@ -13,6 +13,7 @@ namespace CustomCampaignTools.BonelabSupport;
 
 public class BoneLabGameConfiguration : GameConfiguration
 {
+    public static Sprite LogoSprite;
     public override LevelCrateReference MainMenu
     {
         get
@@ -23,7 +24,7 @@ public class BoneLabGameConfiguration : GameConfiguration
     public override void OnLateInitialize()
     {
         BoneMenuCreator.CreateBoneMenu();
-        BoneLabMainMenuMangler.CampaignSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
+        LogoSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
         if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
         {
             PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();

@@ -14,15 +14,12 @@ namespace CustomCampaignTools.BonelabSupport;
 
 public class BoneLabMainMenuMangler
 {
-    public static Sprite CampaignSprite;
-
     public static void MangleMenu()
     {
         var LevelsGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(8).gameObject;
         var CampaignGrid = GameObject.Instantiate(LevelsGrid, LevelsGrid.transform.parent);
         CampaignGrid.name = "group_CAMPAIGNS";
-        CampaignGrid.transform.localPosition = Vector3.zero;
-        CampaignGrid.transform.localRotation = LevelsGrid.transform.localRotation;
+        CampaignGrid.transform.SetLocalPositionAndRotation(Vector3.zero, LevelsGrid.transform.localRotation);
         CampaignGrid.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>().text = "CAMPAIGNS";
 
         BonelabLevelsPanelView oldPanelComponent = CampaignGrid.GetComponentInChildren<BonelabLevelsPanelView>(true);
@@ -37,7 +34,6 @@ public class BoneLabMainMenuMangler
 
         UnityEngine.Object.Destroy(oldPanelComponent);
 
-
         // Clone a menu button and edit it's text and icon
         var MainGrid = GameObject.Find("CANVAS_UX").transform.Find("MENU").GetChild(3).gameObject;
         var targetButton = MainGrid.transform.GetChild(4).gameObject;
@@ -45,16 +41,12 @@ public class BoneLabMainMenuMangler
         var newButton = GameObject.Instantiate(targetButton, targetButton.transform.parent);
 
         newButton.GetComponentInChildren<TMP_Text>(true).text = "CAMPAIGNS";
-        var onClick = newButton.GetComponentInChildren<Button>(true).onClick;
-        onClick.m_PersistentCalls.Clear();
-        onClick.m_Calls.ClearPersistent();
-        onClick.m_Calls.Clear();
-        onClick.AddListener(new Action(() => { MainGrid.SetActive(false); CampaignGrid.SetActive(true); cPanel.Activate(); }));
+        newButton.GetComponentInChildren<Button>(true).onClick.ClearAndSetCallback(new Action(() => { MainGrid.SetActive(false); CampaignGrid.SetActive(true); cPanel.Activate(); }));
         var uiImage = newButton.GetComponentInChildren<Button>(true).targetGraphic.GetComponent<Image>();
 
-        if (CampaignSprite != null && uiImage != null)
+        if (BoneLabGameConfiguration.LogoSprite != null && uiImage != null)
         {
-            uiImage.sprite = CampaignSprite;
+            uiImage.sprite = BoneLabGameConfiguration.LogoSprite;
         }
 
         CampaignGrid.SetActive(false);
