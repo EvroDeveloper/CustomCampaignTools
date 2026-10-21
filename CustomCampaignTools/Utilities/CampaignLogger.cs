@@ -1,4 +1,5 @@
 ﻿using BoneLib.Notifications;
+using CustomCampaignTools.Notifications;
 using CustomCampaignTools.Utilities;
 using MelonLoader;
 
@@ -15,7 +16,7 @@ public class CampaignLogger : ILoggerSource
 #endif
     private static bool VerboseLogging = true;
 
-    static bool EnableErrorNotifications = true;
+    private static bool EnableErrorNotifications = false;
 
     /// <summary>
     /// Prints a message to the Console when built with DEBUG or forced is enabled
@@ -73,6 +74,7 @@ public class CampaignLogger : ILoggerSource
     {
         loggerSource ??= instance;
         loggerInstance.Error($"[{loggerSource.GetName()}] {message}");
+        if(EnableErrorNotifications) new LogErrorNotification(loggerSource, message).PlayNotification();
     }
 
     /// <summary>

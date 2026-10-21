@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BoneLib.Notifications;
 using CustomCampaignTools.GameSupport;
+using CustomCampaignTools.Notifications;
 using CustomCampaignTools.Utilities;
 using Il2CppCysharp.Threading.Tasks;
 using Il2CppSLZ.Marrow.Audio;
@@ -32,7 +33,9 @@ public partial class CampaignSaveData
         SaveToDisk();
         GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
 
-        MelonCoroutines.Start(FireAchievementNotification(achievement, campaign.AchievementUnlockSoundReference));
+        AchievementGetNotification notif = new(campaign, achievement);
+        notif.PlayNotification();
+        
         return true;
     }
 
