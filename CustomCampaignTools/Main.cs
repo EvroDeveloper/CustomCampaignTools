@@ -20,27 +20,23 @@ internal class Main : MelonMod
     {
         ModAssembly = MelonAssembly.Assembly;
         CampaignPatcher.PatchAssembly(ModAssembly);
-        GameManager.InitializeGameConfiguration();
+        GameManager.OnInitialize();
         ArgumentHandler.HandleArguments(Environment.GetCommandLineArgs());
     }
 
     public override void OnLateInitializeMelon()
     {
-        // Create Bonemenu
         GameManager.OnLateInitialize();
 
         Hooking.OnLevelLoaded += OnLevelInitialized;
         Hooking.OnLevelUnloaded += OnLevelUnloaded;
-        Hooking.OnUIRigCreated += OnUIRigCreated;
         Hooking.OnMarrowGameStarted += OnMarrowGameStarted;
     }
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
-        if(buildIndex == 0)
-        {
-            GameManager.OnBootstrapSceneLoaded();
-        }
+        GameManager.OnSceneWasInitialized(buildIndex, sceneName);
+        CampaignForcing.OnSceneWasInitialized(buildIndex);
     }
 
     internal static void OnLevelInitialized(LevelInfo info)
@@ -58,11 +54,6 @@ internal class Main : MelonMod
             Campaign.Session.saveData.SaveAmmoForLevel(Campaign.lastLoadedCampaignLevel);
             LevelTiming.OnCampaignLevelUnloaded(Campaign.Session, Campaign.lastLoadedCampaignLevel.BarcodeString);
         }
-    }
-
-    private static void OnUIRigCreated()
-    {
-        GameManager.OnUIRigCreated();
     }
 
     internal static DataCardReference<MonoDisc> DefaultLoadSceneMusic { get; private set; }

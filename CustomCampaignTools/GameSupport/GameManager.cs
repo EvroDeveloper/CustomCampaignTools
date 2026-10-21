@@ -9,9 +9,9 @@ namespace CustomCampaignTools.GameSupport;
 
 public static class GameManager
 {
-    public static GameConfiguration currentGameConfiguration;
+    public static GameConfiguration currentGameConfiguration { get; private set; }
 
-    public static void InitializeGameConfiguration()
+    public static void OnInitialize()
     {
         string supportLibraryLoadPath;
         if (MelonUtils.CurrentGameAttribute.Name == "BONELAB")
@@ -34,23 +34,18 @@ public static class GameManager
         currentGameConfiguration.OnInitialize();
     }
 
-    public static void OnLateInitialize()
+    internal static void OnLateInitialize()
     {
         currentGameConfiguration.OnLateInitialize();
     }
 
-    public static void OnUIRigCreated()
-    {
-        currentGameConfiguration.OnUIRigCreated();
-    }
-
-    public static void OnLevelLoaded(LevelInfo info)
+    internal static void OnLevelLoaded(LevelInfo info)
     {
         currentGameConfiguration.OnLevelLoaded(info);
     }
 
-    internal static void OnBootstrapSceneLoaded()
+    internal static void OnSceneWasInitialized(int buildIndex, string sceneName)
     {
-        currentGameConfiguration.OnBootstrapSceneLoaded();
+        currentGameConfiguration.OnSceneWasInitialized(buildIndex, sceneName);
     }
 }

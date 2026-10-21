@@ -17,12 +17,10 @@ namespace CustomCampaignTools.GameSupport
 
         public virtual void OnLateInitialize() { }
 
-        public virtual void RefreshCampaignMenu(Campaign campaign) {}
+        public virtual void RefreshCampaignMenu(Campaign campaign) { }
 
-        public virtual void OnBootstrapSceneLoaded() { }
+        public virtual void OnSceneWasInitialized(int levelIndex, string sceneName) { }
 
         public virtual void OnLevelLoaded(LevelInfo info) { }
-
-        public virtual void OnUIRigCreated() { }
     }
 }

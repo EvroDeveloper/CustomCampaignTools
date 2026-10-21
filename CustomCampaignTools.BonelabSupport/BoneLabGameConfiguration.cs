@@ -21,17 +21,35 @@ public class BoneLabGameConfiguration : GameConfiguration
             return new LevelCrateReference(DataManager.ActiveSave.Progression.BeatGame ? CommonBarcodes.Maps.VoidG114 : CommonBarcodes.Maps.MainMenu);
         }
     }
+
+    public override void OnInitialize()
+    {
+        LogoSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
+        CampaignForcing.gameSpecificForcingAction = () =>
+        {
+            var bootstrapper = UnityEngine.Object.FindObjectOfType<SceneBootstrapper_Bonelab>();
+            if (bootstrapper != null)
+            {
+                Campaign c = CampaignUtilities.GetFromPallet(CampaignForcing.campaignToLoad);
+                if (c == null)
+                {
+                    CampaignLogger.Error($"Could not find campaign with the barcode {CampaignForcing.campaignToLoad}, continuing as normal.");
+                    CampaignForcing.forcedCampaign = false;
+                }
+                bootstrapper.MenuHollowCrateRef = new LevelCrateReference(c.InitialLevel);
+                bootstrapper.VoidG114CrateRef = new LevelCrateReference(c.InitialLevel);
+            }
+        };
+    }
+
     public override void OnLateInitialize()
     {
         BoneMenuCreator.CreateBoneMenu();
-        LogoSprite = ResourceLoader.GetSprite(SupportAssembly, "CampaignIcon.png", new Vector2(0.5f, 0.5f), 100f, true);
-        if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus"))
-        {
-            PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason();
-        }
+        if (HelperMethods.CheckIfAssemblyLoaded("BrowsingPlus")) PatchSwipezPanel();
+        Hooking.OnUIRigCreated += OnUIRigCreated;
     }
 
-    private void PatchSwipezBecauseLemonloaderKeepsFuckingFailingIfIPutThisMethodInOnLateInitializeMelonForSomeReason()
+    private void PatchSwipezPanel()
     {
         SwipezPanelPatches.ManualPatch();
     }
@@ -39,29 +57,6 @@ public class BoneLabGameConfiguration : GameConfiguration
     public override void RefreshCampaignMenu(Campaign campaign)
     {
         CampaignBoneMenu.CreateOrRefreshCampaignPage(campaign);
-    }
-
-    public override void OnBootstrapSceneLoaded()
-    {
-        CampaignLogger.Msg("Bonelab Bootstrapper Scene Loaded - Checking for Forced Campaign Load");
-        if (CampaignForcing.forcedCampaign)
-        {
-            AssetWarehouse.OnReady((Il2CppSystem.Action)(() =>
-            {
-                var bootstrapper = UnityEngine.Object.FindObjectOfType<SceneBootstrapper_Bonelab>();
-                if (bootstrapper != null)
-                {
-                    Campaign c = CampaignUtilities.GetFromPallet(CampaignForcing.campaignToLoad);
-                    if (c == null)
-                    {
-                        CampaignLogger.Error($"Could not find campaign with the barcode {CampaignForcing.campaignToLoad}, continuing as normal.");
-                        CampaignForcing.forcedCampaign = false;
-                    }
-                    bootstrapper.MenuHollowCrateRef = new LevelCrateReference(c.InitialLevel);
-                    bootstrapper.VoidG114CrateRef = new LevelCrateReference(c.InitialLevel);
-                }
-            }));
-        }
     }
 
     public override void OnLevelLoaded(LevelInfo info)
@@ -72,7 +67,7 @@ public class BoneLabGameConfiguration : GameConfiguration
         }
     }
 
-    public override void OnUIRigCreated()
+    public void OnUIRigCreated()
     {
         BoneLabPlayerMenuMangler.MangleMenu();
 

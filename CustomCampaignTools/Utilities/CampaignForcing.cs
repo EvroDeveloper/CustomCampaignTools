@@ -1,3 +1,4 @@
+using System;
 using Il2CppSLZ.Marrow.Warehouse;
 
 namespace CustomCampaignTools.Utilities;
@@ -7,6 +8,7 @@ public static class CampaignForcing
     public static bool forcedCampaign = false;
     public static Barcode campaignToLoad;
     public static bool overrideUnlocks = false;
+    internal static Action gameSpecificForcingAction;
 
     [CampaignArgument("-customcampaigntools.forcedcampaign", extraArgs: 1)]
     public static void OnForcedCampaign(string[] args)
@@ -19,5 +21,13 @@ public static class CampaignForcing
     public static void OnOverrideUnlocks()
     {
         overrideUnlocks = true;
+    }
+
+    public static void OnSceneWasInitialized(int buildIndex)
+    {
+        if(buildIndex == 0 && forcedCampaign)
+        {
+            AssetWarehouse.OnReady(gameSpecificForcingAction);
+        }
     }
 }
