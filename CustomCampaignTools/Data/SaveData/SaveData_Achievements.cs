@@ -60,7 +60,12 @@ public partial class CampaignSaveData
             yield return new AwaitTask<Texture2D>(achievementData.LoadIconTask(), out var tex);
             achievementIcon = tex.Value;
         }
-        achievementIcon = achievementIcon.CPUResize(336, 336);
+        yield return new AwaitTask<Color32[]>(achievementIcon.CPUResizeBackground(336, 336), out var pixels);
+
+        achievementIcon = new Texture2D(336, 336, TextureFormat.RGBA32, false);
+        achievementIcon.SetPixels32(pixels.Value);
+        achievementIcon.Apply();
+        
         achievementIcon.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         NotificationType notificationType = achievementIcon == null ? NotificationType.Information : NotificationType.CustomIcon;

@@ -56,4 +56,28 @@ public static class Texture2DResizeExtension
 
         return resized;
     }
+
+    public static Task<Color32[]> CPUResizeBackground(this Texture2D texture2D, int width, int height)
+    {
+        return Task.Run(() => ResizeTexture(texture2D.GetPixels32(), texture2D.width, texture2D.height, width, height));
+    }
+
+    private static Color32[] ResizeTexture(Color32[] pixels, int srcWidth, int srcHeight, int width, int height)
+    {
+        var result = new Color32[width * height];
+
+        for (int y = 0; y < height; y++)
+        {
+            int sourceY = y * srcHeight / height;
+
+            for (int x = 0; x < width; x++)
+            {
+                int sourceX = x * srcWidth / width;
+
+                result[y * width + x] = pixels[sourceY * srcWidth + sourceX];
+            }
+        }
+
+        return result;
+    }
 }
