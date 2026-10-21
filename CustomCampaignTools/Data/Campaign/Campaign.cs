@@ -269,11 +269,6 @@ public partial class Campaign
 
     public static List<string> RegisteredJsonPaths = [];
 
-    public static void OnInitialize()
-    {
-        Hooking.OnLevelLoaded += OnLevelLoaded;
-    }
-
     public static void OnLevelLoaded(LevelInfo info)
     {
         if(!CampaignUtilities.TryGetCampaignLevel(info.levelReference.Barcode, out CampaignLevel.Session)) return;

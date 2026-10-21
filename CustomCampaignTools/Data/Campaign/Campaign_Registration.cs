@@ -18,8 +18,6 @@ public partial class Campaign
             Campaign campaign = new(data);
             campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
 
-            AssetWarehouse._onReady += new Action(campaign.LoadRequiredAssets);
-
             CampaignUtilities.AddCampaign(campaign);
 
             return campaign;
@@ -89,17 +87,5 @@ public partial class Campaign
 
         campaignValueHolder.PalletBarcode = new(pallet.Barcode);
         return RegisterCampaign(campaignValueHolder);
-    }
-
-    internal void LoadRequiredAssets()
-    {
-        if (LoadSceneMusicReference.TryGetDataCard(out var _loadMusicDatacard))
-        {
-            _loadMusicDatacard.AudioClip.LoadAsset(new Action<AudioClip>((a) =>
-            {
-                LoadSceneMusic = a;
-                LoadSceneMusic.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }));
-        }
     }
 }

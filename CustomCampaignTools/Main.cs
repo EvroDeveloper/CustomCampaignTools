@@ -4,6 +4,8 @@ using CustomCampaignTools.Patching;
 using CustomCampaignTools.Timing;
 using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Utilities.Patching;
+using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
 using System;
 using System.Reflection;
@@ -27,11 +29,10 @@ internal class Main : MelonMod
         // Create Bonemenu
         GameManager.OnLateInitialize();
 
-        Campaign.OnInitialize();
-
-        Hooking.OnLevelLoaded += LevelInitialized;
-        Hooking.OnLevelUnloaded += LevelUnloaded;
+        Hooking.OnLevelLoaded += OnLevelInitialized;
+        Hooking.OnLevelUnloaded += OnLevelUnloaded;
         Hooking.OnUIRigCreated += OnUIRigCreated;
+        Hooking.OnMarrowGameStarted += OnMarrowGameStarted;
     }
 
     public override void OnSceneWasInitialized(int buildIndex, string sceneName)
@@ -42,15 +43,14 @@ internal class Main : MelonMod
         }
     }
 
-    internal static void LevelInitialized(LevelInfo info)
+    internal static void OnLevelInitialized(LevelInfo info)
     {
         GameManager.OnLevelLoaded(info);
-
-        SafeActions.InvokeActionSafe(LevelLoadingPatches.OnNextSceneLoaded);
-        LevelLoadingPatches.OnNextSceneLoaded = () => {};
+        Campaign.OnLevelLoaded(info);
+        LevelLoadingPatches.OnLevelLoaded(info);
     }
 
-    private static void LevelUnloaded()
+    private static void OnLevelUnloaded()
     {
         if (Campaign.SessionActive)
         {
@@ -63,5 +63,11 @@ internal class Main : MelonMod
     private static void OnUIRigCreated()
     {
         GameManager.OnUIRigCreated();
+    }
+
+    internal static DataCardReference<MonoDisc> DefaultLoadSceneMusic { get; private set; }
+    private static void OnMarrowGameStarted()
+    {
+        DefaultLoadSceneMusic = MarrowSettings.RuntimeInstance._loadMusic;
     }
 }

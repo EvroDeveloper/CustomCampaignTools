@@ -1,10 +1,12 @@
 using System;
+using BoneLib;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.Timing;
 using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Utilities.Patching;
 using HarmonyLib;
 using Il2CppCysharp.Threading.Tasks;
+using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.SceneStreaming;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
@@ -82,6 +84,10 @@ public static class LevelLoadingPatches
                     };
                 }
             }
+            if(destinationCampaign.LoadSceneMusicReference.IsValid())
+                MarrowSettings.RuntimeInstance._loadMusic = destinationCampaign.LoadSceneMusicReference;
+            else
+                MarrowSettings.RuntimeInstance._loadMusic = Main.DefaultLoadSceneMusic;
         }
         else
         {
@@ -91,8 +97,15 @@ public static class LevelLoadingPatches
             }
             Campaign.Session = null;
             CampaignLevel.Session = null;
+            MarrowSettings.RuntimeInstance._loadMusic = Main.DefaultLoadSceneMusic;
         }
 
         RigReplacementUtility.OnLevelLoadStart(destinationCampaign);
+    }
+
+    public static void OnLevelLoaded(LevelInfo info)
+    {
+        SafeActions.InvokeActionSafe(OnNextSceneLoaded);
+        OnNextSceneLoaded = () => {};
     }
 }

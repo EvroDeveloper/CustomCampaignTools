@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CustomCampaignTools.Patching;
 
-[HarmonyPatch(typeof(Audio2dManager))]
+//[HarmonyPatch(typeof(Audio2dManager))]
 public static class LoadMusicPatches
 {
     private static string _loadingMusicName = "music_LoadingSplash";
@@ -28,17 +28,17 @@ public static class LoadMusicPatches
         }
     }
 
-    [HarmonyPatch(nameof(Audio2dManager.CueMusic), [typeof(AudioClip), typeof(float), typeof(float), typeof(float), typeof(bool)])]
-    [HarmonyPatch(nameof(Audio2dManager.CueMusic), [typeof(double), typeof(AudioClip), typeof(float), typeof(float), typeof(float), typeof(bool)])]
-    [HarmonyPatch(nameof(Audio2dManager.CueMusicInternal))]
-    [HarmonyPrefix]
+    //[HarmonyPatch(nameof(Audio2dManager.CueMusic), [typeof(AudioClip), typeof(float), typeof(float), typeof(float), typeof(bool)])]
+    //[HarmonyPatch(nameof(Audio2dManager.CueMusic), [typeof(double), typeof(AudioClip), typeof(float), typeof(float), typeof(float), typeof(bool)])]
+    //[HarmonyPatch(nameof(Audio2dManager.CueMusicInternal))]
+    //[HarmonyPrefix]
     public static void CueMusicPatch(Audio2dManager __instance, ref AudioClip musicClip)
     {
         SwapLoadingMusic(ref musicClip);
     }
 
-    [HarmonyPatch(nameof(Audio2dManager.StopSpecificMusic))]
-    [HarmonyPrefix]
+    //[HarmonyPatch(nameof(Audio2dManager.StopSpecificMusic))]
+    //[HarmonyPrefix]
     public static void StopMusicPatch(Audio2dManager __instance, ref AudioClip specificClip)
     {
         SwapLoadingMusic(ref specificClip);
