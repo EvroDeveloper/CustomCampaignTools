@@ -8,8 +8,12 @@ namespace CustomCampaignTools.Notifications;
 /// </summary>
 public static class Notifications
 {
-    public static Dictionary<Notification, NotificationData> PendingNotificationLink = [];
+    public static readonly Dictionary<Notification, NotificationData> PendingNotificationLink = [];
 
+    /// <summary>
+    /// Send a NotificationData to BoneMenu's Notification System, with Links for extra features
+    /// </summary>
+    /// <param name="notificationData"></param>
     public static void Send(NotificationData notificationData)
     {
         Notification notification = notificationData;

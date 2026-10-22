@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CustomCampaignTools.BonelabSupport.Patching;
+using CustomCampaignTools.Notifications;
 
 namespace CustomCampaignTools.BonelabSupport
 {
@@ -66,7 +67,7 @@ namespace CustomCampaignTools.BonelabSupport
                         if(c.Achievements.TryGetValue(key, out var achievement))
                         {
 #if DEBUG
-                            achievementPage.CreateFunction(achievement.Name, Color.yellow, () => c.saveData.FireAchievementNotification(achievement));
+                            achievementPage.CreateFunction(achievement.Name, Color.yellow, () => new AchievementGetNotification(c, achievement).PlayNotification());
 #else                            
                             achievementPage.CreateFunction(achievement.Name, Color.yellow, null);
 #endif

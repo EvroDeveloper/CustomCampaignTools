@@ -70,11 +70,11 @@ public class CampaignLogger : ILoggerSource
     /// </summary>
     /// <param name="campaign"></param>
     /// <param name="message"></param>
-    public static void Error(ILoggerSource loggerSource, object message)
+    public static void Error(ILoggerSource loggerSource, object message, bool forceNotify = false)
     {
         loggerSource ??= instance;
         loggerInstance.Error($"[{loggerSource.GetName()}] {message}");
-        if(EnableErrorNotifications) new LogErrorNotification(loggerSource, message).PlayNotification();
+        if(EnableErrorNotifications || forceNotify) new LogErrorNotification(loggerSource, message).PlayNotification();
     }
 
     /// <summary>

@@ -17,10 +17,7 @@ public class NotificationData
     public AudioClip SoundEffect;
     public Action OnNotificationPlayed;
 
-    public NotificationData()
-    {
-        
-    }
+    public NotificationData() { }
 
     public NotificationData(NotificationText Title, NotificationText Message, float Duration = 2f, Texture2D Icon = null, NotificationType NotificationType = NotificationType.Information, AudioClip SoundEffect = null, Action OnNotificationPlayed = null)
     {
@@ -38,7 +35,7 @@ public class NotificationData
         return new Notification()
         {
             Title = data.Title,
-            ShowTitleOnPopup = string.IsNullOrEmpty(data.Title.Text),
+            ShowTitleOnPopup = !string.IsNullOrEmpty(data.Title.Text),
             Message = data.Message,
             CustomIcon = data.Icon,
             Type = data.Icon ? NotificationType.CustomIcon : data.NotificationType,
