@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace SimpleSerializables.Utils
 {
@@ -38,6 +38,47 @@ namespace SimpleSerializables.Utils
         {
             string json = File.ReadAllText(path);
             return DeserializeObject<T>(json);
+        }
+
+        /// <summary>
+        /// Serialize an object with Type Inferrence
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string SerializedObjectInferred(object obj)
+        {
+            TypeIdWrapper wrapper = new(obj);
+            return SerializeObject(wrapper);
+        }
+
+        /// <summary>
+        /// Deserializes an object of an unknown type, source json must have been generated with type inferrence from <see cref="SerializedObjectInferred"/>
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="obj">The deserialized object</param>
+        /// <param name="type">The type stored in the json</param>
+        /// <returns>Return true if the object could be deserialized with type inferrence</returns>
+        public static bool TryDeserializeObjectInferred(string json, out object obj, out Type type)
+        {
+            TypeIdWrapper wrapper = DeserializeObject<TypeIdWrapper>(json);
+            type = wrapper.type;
+            obj = wrapper.storedObject;
+            return wrapper.DeserializeSucceeded;
+        }
+
+        public static bool TryDeserializeObjectInferred<T>(string json, out T obj, out Type type)
+        {
+            obj = default(T);
+
+            if (TryDeserializeObjectInferred(json, out var objS, out type))
+            {
+                if (typeof(T).IsAssignableFrom(type))
+                {
+                    obj = (T)objS;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

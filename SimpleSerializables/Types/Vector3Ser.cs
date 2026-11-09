@@ -19,6 +19,13 @@ namespace SimpleSerializables.Types
             z = vector.z;
         }
 
+        public Vector3Ser(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
         public Vector3 ToVector3()
         {
             return new Vector3(x, y, z);
@@ -27,6 +34,11 @@ namespace SimpleSerializables.Types
         public static implicit operator Vector3(Vector3Ser vector3)
         {
             return vector3.ToVector3();
+        }
+
+        public static implicit operator Vector3Ser(Vector3 vector3)
+        {
+            return new Vector3Ser(vector3);
         }
     }
 }
