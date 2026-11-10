@@ -19,9 +19,9 @@ public static class NotificationSoundPatches
     {
         FieldInfo queuedNotifsField = typeof(Notifier).GetField("QueuedNotifications", BindingFlags.Static | BindingFlags.NonPublic);
         Notification upNext = ((Queue<Notification>)queuedNotifsField.GetValue(null)).Peek();
-        if(Notifications.PendingNotificationLink.ContainsKey(upNext))
+        if(NotificationManager.PendingNotificationLink.ContainsKey(upNext))
         {
-            NotificationData notificationData = Notifications.PendingNotificationLink[upNext];
+            NotificationData notificationData = NotificationManager.PendingNotificationLink[upNext];
             if(notificationData.SoundEffect != null)
             {
                 Audio3dManager.Play2dOneShot(notificationData.SoundEffect, Audio3dManager.ui, new(1f), new(1f));
@@ -30,7 +30,7 @@ public static class NotificationSoundPatches
             {
                 SafeActions.InvokeActionSafe(notificationData.OnNotificationPlayed);
             }
-            Notifications.PendingNotificationLink.Remove(upNext);
+            NotificationManager.PendingNotificationLink.Remove(upNext);
         }
     }
 }

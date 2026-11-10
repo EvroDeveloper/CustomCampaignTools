@@ -5,7 +5,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
 using SimpleSerializables.Types;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {

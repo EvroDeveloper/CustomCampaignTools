@@ -1,5 +1,6 @@
 using System;
 using CustomCampaignTools.Utilities.Patching;
+using CustomCampaignTools.SaveData.Version1;
 using HarmonyLib;
 using Il2CppSLZ.Bonelab;
 

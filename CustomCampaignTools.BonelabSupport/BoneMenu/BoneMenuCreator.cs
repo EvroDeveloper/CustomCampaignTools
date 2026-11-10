@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BoneLib;
 using BoneLib.BoneMenu;
-using CustomCampaignTools.Data;
 using CustomCampaignTools.Debug;
 using UnityEngine;
 

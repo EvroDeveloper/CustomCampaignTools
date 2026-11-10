@@ -1,6 +1,7 @@
 ﻿#if MELONLOADER
 using Il2CppUltEvents;
 using MelonLoader;
+using CustomCampaignTools.SaveData.Version1;
 #else
 using UltEvents;
 #endif

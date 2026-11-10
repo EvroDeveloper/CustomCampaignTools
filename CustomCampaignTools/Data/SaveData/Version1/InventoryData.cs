@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace CustomCampaignTools.Data
+namespace CustomCampaignTools.SaveData.Version1
 {
     public class InventoryData
     {

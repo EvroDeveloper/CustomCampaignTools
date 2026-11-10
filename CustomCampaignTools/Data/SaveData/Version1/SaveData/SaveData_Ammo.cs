@@ -1,34 +1,11 @@
 using System.Collections.Generic;
-using CustomCampaignTools.Data;
 using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {
-    [JsonProperty("LoadedAmmoSaves")]
-    private List<LegacyAmmoSave> LegacyLoadedAmmoSaves
-    {
-        set
-        {
-            if (value == null)
-                return;
-
-            SavedAmmo ??= [];
-
-            foreach (LegacyAmmoSave ammoSave in value)
-            {
-                string levelBarcode = ammoSave.LevelBarcode?.ID;
-                if (string.IsNullOrEmpty(levelBarcode) || SavedAmmo.ContainsKey(levelBarcode))
-                    continue;
-
-                SavedAmmo[levelBarcode] = new AmmoCount(ammoSave.LightAmmo, ammoSave.MediumAmmo, ammoSave.HeavyAmmo);
-            }
-
-        }
-    }
-
     [JsonProperty]
     public Dictionary<string, AmmoCount> SavedAmmo = [];
 

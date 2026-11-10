@@ -317,7 +317,10 @@ public sealed class EncounterManager
                 continue;
 
             ConfigureSpawner(group, spawner, spawnerIndex);
-            spawner.SpawnSpawnable();
+            if (spawner.TryGetComponent(out RandomizeCrate randomizer))
+                randomizer.SelectAndSpawnRandomCrate(group.useSpawnEffect);
+            else
+                spawner.SpawnSpawnable();
             return true;
         }
 
@@ -356,14 +359,6 @@ public sealed class EncounterManager
             }
         }
 
-        if (group._crateRandLookup != null
-            && group._crateRandLookup.TryGetValue(spawner, out RandomizeCrate randomizer)
-            && randomizer != null)
-        {
-            SpawnableCrateReference randomCrate = randomizer.SelectRandomCrate();
-            if (randomCrate != null)
-                spawner.spawnableCrateReference = randomCrate;
-        }
     }
 
     private void Pause()

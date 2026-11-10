@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 // yeah nobody using ts :sob:
 public partial class CampaignSaveData

@@ -4,6 +4,7 @@ using Il2CppSLZ.Marrow.Interaction;
 using Il2CppSLZ.Marrow.Utilities;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using CustomCampaignTools.SaveData.Version1;
 #endif
 using System;
 using System.Collections.Generic;

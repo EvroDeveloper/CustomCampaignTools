@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace CustomCampaignTools.Notifications;
 
-public class AchievementGetNotification : NotificationBase
+public class AchievementGetNotification : AsyncNotification
 {
-    public readonly AchievementData achievementData;
-    public readonly Campaign campaign;
+    private readonly AchievementData achievementData;
+    private readonly Campaign campaign;
     private Texture2D cachedIcon;
     private AudioClip cachedAchievementSound;
     public AchievementGetNotification(Campaign campaign, AchievementData achievementData)
@@ -17,12 +17,7 @@ public class AchievementGetNotification : NotificationBase
         this.campaign = campaign;
     }
 
-    public override void PlayNotification()
-    {
-        MelonCoroutines.Start(CoPlayNotification());
-    }
-
-    public IEnumerator CoPlayNotification()
+    public override IEnumerator ExecuteBeforeNotification()
     {
         if(campaign.AchievementUnlockSoundReference.TryGetDataCard(out var disc))
         {
@@ -46,12 +41,6 @@ public class AchievementGetNotification : NotificationBase
         cachedIcon.Apply();
         
         cachedIcon.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
-        Notifications.Send(this);
-
-        yield return new WaitForSeconds(5f);
-        
-        cachedIcon.hideFlags = HideFlags.None;
     }
 
     public override NotificationData ToNotification()

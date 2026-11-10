@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Threading.Tasks;
-using Il2CppSystem.Threading.Tasks;
 using Il2CppCysharp.Threading.Tasks;
 using SysTask = System.Threading.Tasks.Task;
 using Il2Task = Il2CppSystem.Threading.Tasks.Task;

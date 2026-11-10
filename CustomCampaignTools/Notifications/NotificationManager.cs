@@ -6,7 +6,7 @@ namespace CustomCampaignTools.Notifications;
 /// <summary>
 /// Handles the Sending of CampaignTools' Extended Notifications
 /// </summary>
-public static class Notifications
+public static class NotificationManager
 {
     public static readonly Dictionary<Notification, NotificationData> PendingNotificationLink = [];
 
@@ -19,5 +19,14 @@ public static class Notifications
         Notification notification = notificationData;
         PendingNotificationLink.Add(notification, notificationData);
         Notifier.Send(notification);
+    }
+
+    /// <summary>
+    /// Send a Campaign Notification
+    /// </summary>
+    /// <param name="notificationBase">The notification to send</param>
+    public static void Send(NotificationBase notificationBase)
+    {
+        notificationBase.PlayNotification();
     }
 }

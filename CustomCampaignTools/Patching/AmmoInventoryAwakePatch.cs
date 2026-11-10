@@ -4,7 +4,7 @@ using HarmonyLib;
 using System;
 using CustomCampaignTools.Utilities;
 using CustomCampaignTools.Utilities.Patching;
-using CustomCampaignTools.Data;
+using CustomCampaignTools.SaveData.Version1;
 
 namespace CustomCampaignTools.Patching;
 

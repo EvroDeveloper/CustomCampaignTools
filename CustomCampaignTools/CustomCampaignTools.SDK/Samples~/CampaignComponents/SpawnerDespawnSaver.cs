@@ -54,24 +54,17 @@ namespace CustomCampaignTools.SDK
         public void OnSpawn(CrateSpawner c, GameObject g)
         {
             _objectToSave = g;
-            if (g.TryGetComponent(out Poolee p))
-            {
-                var despawnHook = g.AddComponent<CrateDespawnerHook>();
-                despawnHook.OnDespawnDelegate += (g) => { hasBeenDespawned = true; };
-            }
+            if(!g.TryGetComponent(out Poolee p)) return;
 
-            var brain = g.GetComponentInChildren<AIBrain>();
-            if (brain)
-            {
-                brain.onDeathDelegate += (Action<AIBrain>)((g) => hasBeenDespawned = true);
-            }
+            var despawnHook = g.AddComponent<CrateDespawnerHook>();
+
+            despawnHook.OnDespawnDelegate += (g) => { hasBeenDespawned = true; };
+            if (g.TryGetComponent(out AIBrain brain)) brain.onDeathDelegate += (Action<AIBrain>)((g) => hasBeenDespawned = true);
+
             if (_loadedFromSave && Campaign.Session.saveData.LoadedSavePoint.DespawnedSpawners.Contains(uniqueID.Get()))
             {
-                if (g.TryGetComponent(out Poolee p2))
-                {
-                    p2.Despawn();
-                    hasBeenDespawned = true;
-                }
+                p.Despawn();
+                hasBeenDespawned = true;
             }
         }
 #else

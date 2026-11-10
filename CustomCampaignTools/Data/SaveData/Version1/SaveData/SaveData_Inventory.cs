@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using BoneLib;
-using CustomCampaignTools.Data;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {

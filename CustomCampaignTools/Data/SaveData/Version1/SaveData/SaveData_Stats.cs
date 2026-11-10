@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {

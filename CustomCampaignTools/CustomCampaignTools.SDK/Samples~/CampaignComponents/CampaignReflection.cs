@@ -58,7 +58,7 @@ namespace CustomCampaignTools.SDK
         public bool GetSavePointValid()
         {
 #if MELONLOADER
-            return Campaign.Session.saveData.LoadedSavePoint.IsValid(out _);
+            return Campaign.Session.saveData.TryGetSavePoint(out _);
 #else
             return false;
 #endif
@@ -66,8 +66,8 @@ namespace CustomCampaignTools.SDK
         public string GetSavePointLevelBarcode()
         {
 #if MELONLOADER
-            if(Campaign.Session.saveData.LoadedSavePoint.IsValid(out _))
-                return Campaign.Session.saveData.LoadedSavePoint.LevelBarcode;
+            if(Campaign.Session.saveData.TryGetSavePoint(out var savepoint))
+                return savepoint.LevelBarcode;
             else
                 return "";
 #else
@@ -77,7 +77,7 @@ namespace CustomCampaignTools.SDK
         public string GetSavePointLevelName()
         {
 #if MELONLOADER
-            if(MarrowGame.assetWarehouse.TryGetCrate<LevelCrate>(Campaign.Session.saveData.LoadedSavePoint.LevelBarcode, out var level))
+            if(Campaign.Session.saveData.TryGetSavePoint(out var savepoint) && Campaign.Session.TryGetLevel(savepoint.LevelBarcode, out var level))
                 return level.Title;
             else
                 return "";

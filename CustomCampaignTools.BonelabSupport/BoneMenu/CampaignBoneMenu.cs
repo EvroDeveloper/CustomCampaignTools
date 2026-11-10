@@ -1,9 +1,5 @@
 ﻿using BoneLib.BoneMenu;
-using Il2CppSLZ.Marrow.Warehouse;
 using MelonLoader;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using CustomCampaignTools.BonelabSupport.Patching;
 using CustomCampaignTools.Notifications;
@@ -67,7 +63,7 @@ namespace CustomCampaignTools.BonelabSupport
                         if(c.Achievements.TryGetValue(key, out var achievement))
                         {
 #if DEBUG
-                            achievementPage.CreateFunction(achievement.Name, Color.yellow, () => new AchievementGetNotification(c, achievement).PlayNotification());
+                            achievementPage.CreateFunction(achievement.Name, Color.yellow, () => NotificationManager.Send(new AchievementGetNotification(c, achievement)));
 #else                            
                             achievementPage.CreateFunction(achievement.Name, Color.yellow, null);
 #endif

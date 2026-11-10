@@ -5,7 +5,9 @@ using CustomCampaignTools.Debug;
 using CustomCampaignTools.Utilities;
 using Il2CppSLZ.Marrow.Warehouse;
 using Newtonsoft.Json;
+using CustomCampaignTools.SaveData.Version1;
 using UnityEngine;
+using CustomCampaignTools.SaveData;
 
 namespace CustomCampaignTools;
 
@@ -16,7 +18,7 @@ public partial class Campaign
         try
         {
             Campaign campaign = new(data);
-            campaign.saveData = CampaignSaveData.LoadFromDisk(campaign);
+            campaign.saveData = SaveDataUtilities.LoadFromDisk(campaign);
 
             CampaignUtilities.AddCampaign(campaign);
 

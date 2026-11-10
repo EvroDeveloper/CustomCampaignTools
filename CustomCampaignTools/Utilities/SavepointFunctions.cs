@@ -3,6 +3,7 @@ using CustomCampaignTools.Debug;
 using CustomCampaignTools.Utilities;
 using MelonLoader;
 using System.Collections;
+using CustomCampaignTools.SaveData.Version1;
 using UnityEngine;
 
 namespace CustomCampaignTools

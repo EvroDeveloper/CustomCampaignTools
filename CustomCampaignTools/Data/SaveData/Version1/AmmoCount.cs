@@ -1,13 +1,13 @@
-using SimpleSerializables.Types;
 using Il2CppSLZ.Marrow;
+using Newtonsoft.Json;
 
-namespace CustomCampaignTools.Data;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public struct AmmoCount
 {
-    public int LightAmmo { get; set; }
-    public int MediumAmmo { get; set; }
-    public int HeavyAmmo { get; set; }
+    public int LightAmmo;
+    public int MediumAmmo;
+    public int HeavyAmmo;
 
     public AmmoCount(int light, int medium, int heavy)
     {
@@ -23,6 +23,7 @@ public struct AmmoCount
         HeavyAmmo = ammoInventory.GetCartridgeCount("heavy");
     }
 
+    [JsonIgnore]
     public readonly int Total => LightAmmo + MediumAmmo + HeavyAmmo;
 
     public static AmmoCount GetFromPlayer()
@@ -83,19 +84,5 @@ public static class AmmoInventoryExtensions
     {
         ammoInventory.ClearAmmo();
         ammoInventory.AddAmmoCount(ammoCount);
-    }
-}
-
-
-public struct LegacyAmmoSave
-{
-    public BarcodeSer LevelBarcode { get; set; }
-    public int LightAmmo { get; set; }
-    public int MediumAmmo { get; set; }
-    public int HeavyAmmo { get; set; }
-
-    public LegacyAmmoSave()
-    {
-        
     }
 }

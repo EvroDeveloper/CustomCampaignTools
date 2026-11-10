@@ -1,6 +1,7 @@
 #if MELONLOADER
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.Attributes;
+using CustomCampaignTools.SaveData.Version1;
 using MelonLoader;
 #endif
 using System;

@@ -15,7 +15,7 @@ public class NotificationBase
 
     public virtual void PlayNotification()
     {
-        Notifications.Send(this);
+        NotificationManager.Send(this);
     }
 
     public static implicit operator NotificationData(NotificationBase notif)

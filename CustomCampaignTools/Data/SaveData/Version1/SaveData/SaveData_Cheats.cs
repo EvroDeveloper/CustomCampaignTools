@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {

@@ -3,6 +3,7 @@ using CustomCampaignTools.AvatarRestriction;
 using CustomCampaignTools.Debug;
 using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.SaveData.Version1;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Warehouse;
 using System;

@@ -26,8 +26,8 @@ namespace CustomCampaignTools
         {
             get
             {
-                if (_crate != null) return _crate;
-                MarrowGame.assetWarehouse.TryGetCrate(Barcode, out _crate);
+                if (_crate == null)
+                    MarrowGame.assetWarehouse.TryGetCrate(Barcode, out _crate);
                 return _crate;
             }
         }

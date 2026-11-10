@@ -13,3 +13,4 @@ using MelonLoader;
 
 [assembly: InternalsVisibleTo("CustomCampaignTools.BonelabSupport")]
 [assembly: InternalsVisibleTo("CustomCampaignTools.BoneworksSupport")]
+[assembly: InternalsVisibleTo("CustomCampaignTools.Tests")]

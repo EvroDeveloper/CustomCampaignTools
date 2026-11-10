@@ -3,7 +3,7 @@ using CustomCampaignTools.GameSupport;
 using CustomCampaignTools.Notifications;
 using Newtonsoft.Json;
 
-namespace CustomCampaignTools;
+namespace CustomCampaignTools.SaveData.Version1;
 
 public partial class CampaignSaveData
 {
@@ -23,8 +23,7 @@ public partial class CampaignSaveData
         SaveToDisk();
         GameManager.currentGameConfiguration.RefreshCampaignMenu(campaign);
 
-        AchievementGetNotification notif = new(campaign, achievement);
-        notif.PlayNotification();
+        NotificationManager.Send(new AchievementGetNotification(campaign, achievement));
         
         return true;
     }

@@ -3,8 +3,8 @@ using MelonLoader;
 using Il2CppTMPro;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using CustomCampaignTools.Debug;
-using CustomCampaignTools.Data;
 using CustomCampaignTools.Utilities;
+using CustomCampaignTools.SaveData.Version1;
 using Il2CppSLZ.Marrow.Warehouse;
 #else
 using TMPro;
