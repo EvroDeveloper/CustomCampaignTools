@@ -28,6 +28,8 @@ public sealed class EncounterManager
         public bool InitialDelayComplete;
         public bool Complete;
         public object Coroutine;
+        public object MaxDeadCoroutine;
+        public bool MaxDeadDespawnActive;
 
         public GroupRuntime(SpawnGroup group) => Group = group;
     }
@@ -241,6 +243,7 @@ public sealed class EncounterManager
     private IEnumerator CoRunGroup(GroupRuntime runtime)
     {
         SpawnGroup group = runtime.Group;
+        runtime.MaxDeadCoroutine = MelonCoroutines.Start(CoMonitorMaxDead(runtime));
 
         if (!runtime.InitialDelayComplete)
         {
@@ -286,6 +289,7 @@ public sealed class EncounterManager
         if (!_running)
             yield break;
 
+        StopMaxDeadMonitor(runtime);
         group.WaitAndDespawnAllDead();
         while (_running && group._deadBrains != null && group._deadBrains.Count > 0)
             yield return null;
@@ -297,6 +301,34 @@ public sealed class EncounterManager
         runtime.Coroutine = null;
         if (!group.isComplete)
             group.CompleteGroup();
+    }
+
+    private IEnumerator CoMonitorMaxDead(GroupRuntime runtime)
+    {
+        SpawnGroup group = runtime.Group;
+
+        while (_running && !runtime.Complete)
+        {
+            if (!group.IsOverMaxDead())
+            {
+                // Re-arm after the previous cleanup has brought the group back
+                // to its configured limit.
+                runtime.MaxDeadDespawnActive = false;
+            }
+            else if (!runtime.MaxDeadDespawnActive)
+            {
+                // The stock method waits despawnInterval and removes enough
+                // dead brains to return to maxDead. Do not start overlapping
+                // instances while that cleanup is still in progress.
+                runtime.MaxDeadDespawnActive = true;
+                group.DespawnToMaxDeadCount();
+            }
+
+            yield return null;
+        }
+
+        runtime.MaxDeadCoroutine = null;
+        runtime.MaxDeadDespawnActive = false;
     }
 
     private bool TrySpawn(SpawnGroup group)
@@ -443,11 +475,25 @@ public sealed class EncounterManager
 
         foreach (GroupRuntime runtime in _groups)
         {
-            if (runtime.Coroutine == null)
-                continue;
-            MelonCoroutines.Stop(runtime.Coroutine);
-            runtime.Coroutine = null;
+            if (runtime.Coroutine != null)
+            {
+                MelonCoroutines.Stop(runtime.Coroutine);
+                runtime.Coroutine = null;
+            }
+
+            StopMaxDeadMonitor(runtime);
         }
+    }
+
+    private static void StopMaxDeadMonitor(GroupRuntime runtime)
+    {
+        if (runtime.MaxDeadCoroutine != null)
+        {
+            MelonCoroutines.Stop(runtime.MaxDeadCoroutine);
+            runtime.MaxDeadCoroutine = null;
+        }
+
+        runtime.MaxDeadDespawnActive = false;
     }
 
     private int IndexOf(SpawnGroup group)
